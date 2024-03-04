@@ -36,7 +36,7 @@ where TContext : DbContext, new()
         }
     }
 
-    public IList<TEntity> GetList(Expression<Func<TEntity, bool>> filter = null)
+    public virtual IList<TEntity> GetList(Expression<Func<TEntity, bool>> filter = null)
     {
         using (var context = new TContext())
         {

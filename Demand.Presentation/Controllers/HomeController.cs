@@ -1,4 +1,4 @@
-﻿using Demand.Business.Abstract;
+﻿using Demand.Business.Abstract.CompanyService;
 using Demand.Presentation.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -17,7 +17,7 @@ namespace Demand.Presentation.Controllers
 
         public IActionResult Index()
         {
-            var aa = _companyService.GetList();
+            var aa = _companyService.GetById(2);
             return View();
         }
 

@@ -1,5 +1,6 @@
 ﻿using Demand.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq.Expressions;
 
 namespace Demand.Core.DataAccess.EntityFramework;
@@ -33,6 +34,14 @@ where TContext : DbContext, new()
         using (var context = new TContext())
         {
             return context.Set<TEntity>().SingleOrDefault(filter);
+        }
+    }
+
+    public IList<TEntity> GetAll()
+    {
+        using (var context = new TContext())
+        {
+            return context.Set<TEntity>().ToList();
         }
     }
 

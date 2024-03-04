@@ -1,4 +1,5 @@
-﻿using Demand.Business.Abstract.CompanyService;
+﻿using Demand.Business.Abstract.AuthorizationService;
+using Demand.Business.Abstract.CompanyService;
 using Demand.Presentation.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,16 +9,16 @@ namespace Demand.Presentation.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ICompanyService _companyService;
-        public HomeController(ILogger<HomeController> logger, ICompanyService companyService)
+        private readonly IAuthorizationService _authorizationService;
+        public HomeController(ILogger<HomeController> logger, IAuthorizationService authorizationService)
         {
             _logger = logger;
-            _companyService = companyService;
+            _authorizationService = authorizationService;
         }
 
         public IActionResult Index()
         {
-            var aa = _companyService.GetById(2);
+            _authorizationService.Login();
             return View();
         }
 

@@ -1,6 +1,7 @@
 ﻿using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.Demand;
+using Demand.Domain.Entities.Personnel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
@@ -22,6 +23,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
 
 
         public virtual DbSet<Company> Companies { get; set; }
+        public virtual DbSet<PersonnelEntity> Personnel { get; set; }
         public virtual DbSet<CompanyLocation> CompanyLocations { get; set; }
         public virtual DbSet<DemandEntity> Demands { get; set; }
     }

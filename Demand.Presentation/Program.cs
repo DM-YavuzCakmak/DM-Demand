@@ -1,9 +1,12 @@
-using Autofac.Core;
 using Demand.Business.Abstract.CompanyService;
+using Demand.Business.Abstract.DemandService;
 using Demand.Business.Concrete.CompanyService;
+using Demand.Business.Concrete.DemandService;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
+using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Demand;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,9 @@ builder.Services.AddDbContext<DemandContext>(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+
+builder.Services.AddScoped<IDemandRepository, DemandRepository>();
+builder.Services.AddScoped<IDemandService, DemandService>();
 #endregion
 
 var app = builder.Build();

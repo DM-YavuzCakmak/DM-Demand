@@ -3,7 +3,7 @@
 namespace Demand.Domain.Entities.Company;
 
 [Table("Company")]
-public class CompanyEntity : BaseEntity
+public class Company : BaseEntity
 {
     public string Name { get; set; }
 }

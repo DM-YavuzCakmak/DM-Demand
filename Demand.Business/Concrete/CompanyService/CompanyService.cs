@@ -2,7 +2,7 @@
 using Demand.Core.Utilities.Results.Abstract;
 using Demand.Core.Utilities.Results.Concrete;
 using Demand.Domain.Entities.Company;
-using Demand.Infrastructure.DataAccess.Abstract;
+using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
 
 namespace Demand.Business.Concrete.CompanyService
 {
@@ -15,14 +15,14 @@ namespace Demand.Business.Concrete.CompanyService
             _companyRepository = companyRepository;
         }
 
-        public IDataResult<CompanyEntity> GetById(long id)
+        public IDataResult<Company> GetById(long id)
         {
-            return new SuccessDataResult<CompanyEntity>(_companyRepository.Get(x => x.Id == id));
+            return new SuccessDataResult<Company>(_companyRepository.Get(x => x.Id == id));
         }
 
-        public IDataResult<List<CompanyEntity>> GetList()
+        public IDataResult<List<Company>> GetList()
         {
-            return new SuccessDataResult<List<CompanyEntity>>(_companyRepository.GetList().ToList());
+            return new SuccessDataResult<List<Company>>(_companyRepository.GetList().ToList());
         }
     }
 }

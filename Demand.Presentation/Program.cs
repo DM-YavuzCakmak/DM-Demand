@@ -1,8 +1,8 @@
 using Autofac.Core;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Concrete.CompanyService;
-using Demand.Infrastructure.DataAccess.Abstract;
-using Demand.Infrastructure.DataAccess.Concrete.EntityFramework;
+using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
 using Microsoft.EntityFrameworkCore;
 

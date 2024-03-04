@@ -20,7 +20,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         }
 
 
-        public virtual DbSet<CompanyEntity> Companies { get; set; }
-        public virtual DbSet<CompanyLocationEntity> CompanyLocations { get; set; }
+        public virtual DbSet<Company> Companies { get; set; }
+        public virtual DbSet<CompanyLocation> CompanyLocations { get; set; }
     }
 }

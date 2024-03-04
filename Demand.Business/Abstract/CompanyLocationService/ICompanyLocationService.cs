@@ -4,7 +4,7 @@ namespace Demand.Business.Abstract.CompanyLocation
 {
     public interface ICompanyLocationService
     {
-        IDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocation>> GetList();
-        IDataResult<Demand.Domain.Entities.CompanyLocation.CompanyLocation> GetById(long id);
+        IDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocationEntity>> GetList();
+        IDataResult<Demand.Domain.Entities.CompanyLocation.CompanyLocationEntity> GetById(long id);
     }
 }

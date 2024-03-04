@@ -13,14 +13,14 @@ namespace Demand.Business.Concrete.CompanyLocation
             _companyLocationRepository = companyLocationRepository;
         }
 
-        public IDataResult<Domain.Entities.CompanyLocation.CompanyLocation> GetById(long id)
+        public IDataResult<Domain.Entities.CompanyLocation.CompanyLocationEntity> GetById(long id)
         {
-            return new SuccessDataResult<Demand.Domain.Entities.CompanyLocation.CompanyLocation>(_companyLocationRepository.Get(x => x.Id == id));
+            return new SuccessDataResult<Demand.Domain.Entities.CompanyLocation.CompanyLocationEntity>(_companyLocationRepository.Get(x => x.Id == id));
         }
 
-        public IDataResult<List<Domain.Entities.CompanyLocation.CompanyLocation>> GetList()
+        public IDataResult<List<Domain.Entities.CompanyLocation.CompanyLocationEntity>> GetList()
         {
-            return new SuccessDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocation>>(_companyLocationRepository.GetList().ToList());
+            return new SuccessDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocationEntity>>(_companyLocationRepository.GetList().ToList());
 
         }
     }

@@ -14,9 +14,7 @@
     <Folder Include="Entities\DemandMedia\" />
     <Folder Include="Entities\Demand\" />
     <Folder Include="Entities\DemandProcess\" />
-    <Folder Include="Entities\Role\" />
     <Folder Include="Entities\PersonnelRole\" />
-    <Folder Include="Entities\Personnel\" />
   </ItemGroup>
 
 </Project>

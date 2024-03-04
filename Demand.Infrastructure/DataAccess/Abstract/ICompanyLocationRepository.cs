@@ -2,6 +2,6 @@
 using Demand.Domain.Entities.CompanyLocation;
 
 namespace Demand.Infrastructure.DataAccess.Abstract;
-public interface ICompanyLocationRepository : IEntityRepository<CompanyLocation>
+public interface ICompanyLocationRepository : IEntityRepository<CompanyLocationEntity>
 {
 }

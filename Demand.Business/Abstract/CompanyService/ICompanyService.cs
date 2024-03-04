@@ -5,7 +5,7 @@ namespace Demand.Business.Abstract.CompanyService
 {
     public interface ICompanyService
     {
-        IDataResult<List<Company>> GetList();
-        IDataResult<Company> GetById(long id);
+        IDataResult<List<CompanyEntity>> GetList();
+        IDataResult<CompanyEntity> GetById(long id);
     }
 }

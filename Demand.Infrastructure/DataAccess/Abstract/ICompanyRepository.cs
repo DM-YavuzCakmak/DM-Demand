@@ -3,7 +3,7 @@ using Demand.Domain.Entities.Company;
 
 namespace Demand.Infrastructure.DataAccess.Abstract;
 
-public interface ICompanyRepository : IEntityRepository<Company>
+public interface ICompanyRepository : IEntityRepository<CompanyEntity>
 {
 
 }

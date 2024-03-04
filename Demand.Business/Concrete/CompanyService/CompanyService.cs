@@ -15,14 +15,14 @@ namespace Demand.Business.Concrete.CompanyService
             _companyRepository = companyRepository;
         }
 
-        public IDataResult<Company> GetById(long id)
+        public IDataResult<CompanyEntity> GetById(long id)
         {
-            return new SuccessDataResult<Company>(_companyRepository.Get(x => x.Id == id));
+            return new SuccessDataResult<CompanyEntity>(_companyRepository.Get(x => x.Id == id));
         }
 
-        public IDataResult<List<Company>> GetList()
+        public IDataResult<List<CompanyEntity>> GetList()
         {
-            return new SuccessDataResult<List<Company>>(_companyRepository.GetList().ToList());
+            return new SuccessDataResult<List<CompanyEntity>>(_companyRepository.GetList().ToList());
         }
     }
 }

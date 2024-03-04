@@ -5,7 +5,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
 
 namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework
 {
-    public class CompanyLocationRepository : EfEntityRepositoryBase<CompanyLocation, DemandContext>, ICompanyLocationRepository
+    public class CompanyLocationRepository : EfEntityRepositoryBase<CompanyLocationEntity, DemandContext>, ICompanyLocationRepository
     {
     }
 }

@@ -21,7 +21,13 @@ namespace Demand.Presentation.Controllers
         public IActionResult Index()
         {
             _authorizationService.Login();
-            return View();
+
+            List<DemandEntity> demands = new List<DemandEntity>
+        {
+            new DemandEntity { Id = 1, CreatedAt = 1, CompanyLocationId = 1, CreatedDate = DateTime.Parse("01.01.2024"), Status = 0 }
+        };
+
+            return View(demands);
         }
 
         public IActionResult Privacy()

@@ -1,7 +1,8 @@
-﻿
+﻿@using Demand.Domain.Entities.Demand
+@model List<DemandEntity>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,60 +24,59 @@
                 <thead>
                     <tr>
                         <th> Demand No <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Demander <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Location <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Demand Date <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Created At <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Company Location Id <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Created Date <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Status <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Action <span class="icon-arrow">&UpArrow;</span></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td> 1</td>
-                        <td> Samet Baş </td>
-                        <td> Efes </td>
-                        <td> 01.01.2024 </td>
-                        <td>
-                            <p class="status cancelled">Cancelled</p>
-                        </td>
-                        <td>
-                            <button class="edit-button">Edit</button>
-                            <button class="view-button">View</button>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td> 2</td>
-                        <td> Yavuz Çakmak  </td>
-                        <td> Center Office </td>
-                        <td> 01.01.2024 </td>
-                        <td>
-                            <p class="status pending">Pending</p>
-                        </td>
-                        <td>
-                            <button class="edit-button">Edit</button>
-                            <button class="view-button">View</button>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td> 1</td>
-                        <td> Samet Baş </td>
-                        <td> Efes </td>
-                        <td> 01.01.2024 </td>
-                        <td>
-                            <p class="status approved">Approved</p>
-                        </td>
-                        <td>
-                            <button class="edit-button">Edit</button>
-                            <button class="view-button">View</button>
-                        </td>
-                    </tr>
-                   
+                    @foreach (var demand in Model)
+                    {
+                        <tr>
+                            <td>@demand.Id</td>
+                            <td>@demand.CreatedAt</td>
+                            <td>@demand.CompanyLocationId</td>
+                            <td>@demand.CreatedDate.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <p class="status @GetStatusClass(demand.Status)">@GetStatusText(demand.Status)</p>
+                            </td>
+                            <td>
+                                <button class="edit-button">Edit</button>
+                                <button class="view-button">View</button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </section>
     </main>
     <script src="script.js"></script>
-
 </body>
 
 </html>
+
+@functions {
+    string GetStatusClass(byte status)
+    {
+        switch (status)
+        {
+            case 0: return "cancelled";
+            case 1: return "pending";
+            case 2: return "approved";
+            default: return "";
+        }
+    }
+
+    string GetStatusText(byte status)
+    {
+        switch (status)
+        {
+            case 0: return "Cancelled";
+            case 1: return "Pending";
+            case 2: return "Approved";
+            default: return "";
+        }
+    }
+}

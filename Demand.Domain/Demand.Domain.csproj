@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\DemandProcess\**" />
-    <EmbeddedResource Remove="Entities\DemandProcess\**" />
-    <None Remove="Entities\DemandProcess\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Demand.Core\Demand.Core.csproj" />
   </ItemGroup>
 

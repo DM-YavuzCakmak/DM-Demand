@@ -2,7 +2,11 @@
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
+using Demand.Domain.Entities.DemandProcess;
+using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.PersonnelRole;
+using Demand.Domain.Entities.Role;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
@@ -25,6 +29,10 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<PersonnelEntity> Personnel { get; set; }
         public virtual DbSet<CompanyLocation> CompanyLocations { get; set; }
         public virtual DbSet<DemandEntity> Demands { get; set; }
-        public virtual DbSet<DemandMediaEntity> DemandMedia { get; set; }
+        public virtual DbSet<DemandMediaEntity> DemandMedias { get; set; }
+        public virtual DbSet<DemandProcessEntity> DemandProcesses { get; set; }
+        public virtual DbSet<DepartmentEntity> Departments { get; set; }
+        public virtual DbSet<PersonnelRoleEntity> PersonnelRoles { get; set; }
+        public virtual DbSet<RoleEntity> Roles { get; set; }
     }
 }

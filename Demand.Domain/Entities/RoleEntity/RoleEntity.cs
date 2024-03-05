@@ -1,5 +1,5 @@
 ﻿namespace Demand.Domain.Entities.Role;
-public class Role : BaseEntity
+public class RoleEntity : BaseEntity
 {
     public string Name { get; set; }
 }

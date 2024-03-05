@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataAccess\Concrete\DemandMedia\**" />
+    <EmbeddedResource Remove="DataAccess\Concrete\DemandMedia\**" />
+    <None Remove="DataAccess\Concrete\DemandMedia\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Demand.Domain\Demand.Domain.csproj" />
   </ItemGroup>
 

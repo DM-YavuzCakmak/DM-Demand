@@ -1,5 +1,7 @@
 ﻿using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyService;
+using Demand.Business.Abstract.DemandService;
+using Demand.Domain.Entities.Demand;
 using Demand.Presentation.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

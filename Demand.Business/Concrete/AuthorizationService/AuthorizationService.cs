@@ -15,6 +15,6 @@ public class AuthorizationService : IAuthorizationService
     public void Login()
     {
         var aa = _personnelRepository.GetAll();
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

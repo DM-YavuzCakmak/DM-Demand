@@ -1,8 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" />
+</head>
+
+<body>
+    <main class="table" id="demandTable">
+        <section class="table__header">
+            <h1>Demand List</h1>
+            <div class="input-group">
+                <input type="search" placeholder="Search Data...">
+                <img src="images/search.png" alt="">
+            </div>
+        </section>
+        <section class="tableBody">
+            <table>
+                <thead>
+                    <tr>
+                        <th> Demand No <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Demander <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Location <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Demand Date <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Status <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Action <span class="icon-arrow">&UpArrow;</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td> 1</td>
+                        <td> Samet Baş </td>
+                        <td> Efes </td>
+                        <td> 01.01.2024 </td>
+                        <td>
+                            <p class="status cancelled">Cancelled</p>
+                        </td>
+                        <td>
+                            <button class="edit-button">Edit</button>
+                            <button class="view-button">View</button>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td> 2</td>
+                        <td> Yavuz Çakmak  </td>
+                        <td> Center Office </td>
+                        <td> 01.01.2024 </td>
+                        <td>
+                            <p class="status pending">Pending</p>
+                        </td>
+                        <td>
+                            <button class="edit-button">Edit</button>
+                            <button class="view-button">View</button>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td> 1</td>
+                        <td> Samet Baş </td>
+                        <td> Efes </td>
+                        <td> 01.01.2024 </td>
+                        <td>
+                            <p class="status approved">Approved</p>
+                        </td>
+                        <td>
+                            <button class="edit-button">Edit</button>
+                            <button class="view-button">View</button>
+                        </td>
+                    </tr>
+                   
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

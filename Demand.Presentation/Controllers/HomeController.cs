@@ -1,6 +1,7 @@
 ﻿using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Abstract.DemandService;
+using Demand.Business.Concrete.DemandService;
 using Demand.Domain.Entities.Demand;
 using Demand.Presentation.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,21 +12,21 @@ namespace Demand.Presentation.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAuthorizationService _authorizationService;
-        public HomeController(ILogger<HomeController> logger, IAuthorizationService authorizationService)
+        private readonly IDemandService _demandService;
+        public HomeController(ILogger<HomeController> logger, IDemandService demandService)
         {
             _logger = logger;
-            _authorizationService = authorizationService;
+            _demandService = demandService;
         }
 
         public IActionResult Index()
         {
-            _authorizationService.Login();
+            var aa = _demandService.GetAll();
 
             List<DemandEntity> demands = new List<DemandEntity>
-        {
-            new DemandEntity { Id = 1, CreatedAt = 1, CompanyLocationId = 1, CreatedDate = DateTime.Parse("01.01.2024"), Status = 0 }
-        };
+           {
+               new DemandEntity { Id = 1, CreatedAt = 1, CompanyLocationId = 1, CreatedDate = DateTime.Parse("01.01.2024"), Status = 0 }
+           };
 
             return View(demands);
         }

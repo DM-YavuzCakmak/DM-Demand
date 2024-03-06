@@ -7,7 +7,7 @@ public class DemandEntity : BaseEntity
 {
     public long CompanyLocationId { get; set; }
     public long DepartmentId { get; set; }
-    public byte Status { get; set; }
+    public int Status { get; set; }
     public string Description { get; set; }
     public DateTime RequirementDate { get; set; }
 }

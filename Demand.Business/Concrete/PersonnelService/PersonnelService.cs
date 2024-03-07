@@ -29,5 +29,10 @@ namespace Demand.Business.Concrete.PersonnelService
         {
             return new SuccessDataResult<List<PersonnelEntity>>(_personnelRepository.GetList().ToList());
         }
+
+        IDataResult<PersonnelEntity> IPersonnelService.GetByEmail(string email)
+        {
+            return new SuccessDataResult<PersonnelEntity>(_personnelRepository.Get(x => x.Email == email));
+        }
     }
 }

@@ -1,21 +1,16 @@
-﻿using Demand.Business.Abstract.CompanyLocation;
-using Demand.Business.Abstract.CompanyService;
-using Demand.Business.Abstract.DemandMediaService;
+﻿using Demand.Business.Abstract.DemandMediaService;
 using Demand.Business.Abstract.DemandService;
-using Demand.Business.Abstract.Department;
-using Demand.Business.Abstract.PersonnelService;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
+
 
 namespace Demand.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DemandsController : ControllerBase
+    public class DemandsController : Controller
     {
         private readonly IDemandService _demandService;
         private readonly ILogger<HomeController> _logger;
@@ -29,6 +24,13 @@ namespace Demand.Presentation.Controllers
             _demandMediaService = demandMediaService;
             _webHostEnvironment = webHostEnvironment;
         }
+
+        public IActionResult Detail(int id)
+        {
+            var demand = _demandService.GetById(id);
+            return View(demand);
+        }
+
 
         [HttpPost("AddDemand")]
         public IActionResult AddDemand([FromForm] DemandViewModel demandViewModel)
@@ -142,5 +144,7 @@ namespace Demand.Presentation.Controllers
 
             return null;
         }
+
+    
     }
 }

@@ -13,5 +13,6 @@ namespace Demand.Business.Abstract.PersonnelService
     {
         IDataResult<List<PersonnelEntity>> GetList();
         IDataResult<PersonnelEntity> GetById(long id);
+        IDataResult<PersonnelEntity> GetByEmail(string email);
     }
 }

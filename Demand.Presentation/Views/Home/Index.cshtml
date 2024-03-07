@@ -1,5 +1,6 @@
-﻿@using Demand.Domain.Entities.Demand
-@model List<DemandEntity>
+﻿@using Demand.Domain.ViewModels
+@model List<DemandViewModel>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,9 +9,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/ayasofyacamii.jpg') center/cover fixed;
+            z-index: -1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #logo {
+            position: absolute;
+            top: 20px;
+            left: 130px;
+            max-width: 150px;
+            max-height: 150px;
+        }
+
+        main {
+            margin-top: 70px;
+        }
+    </style>
 </head>
 
 <body>
+    <img id="logo" src="images/dem_logo.png" alt="Logo">
     <main class="table" id="demandTable">
         <section class="table__header">
             <h1>Demand List</h1>
@@ -36,12 +67,12 @@
                     @foreach (var demand in Model)
                     {
                         <tr>
-                            <td>@demand.Id</td>
-                            <td>@demand.CreatedAt</td>
-                            <td>@demand.CompanyLocationId</td>
-                            <td>@demand.CreatedDate.ToString("dd.MM.yyyy")</td>
+                            <td>@demand.DemandId</td>
+                            <td>@demand.DemanderName</td>
+                            <td>@demand.LocationName</td>
+                            <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
                             <td>
-                                <p class="status @GetStatusClass(demand.Status)">@GetStatusText(demand.Status)</p>
+                                <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
                             </td>
                             <td>
                                 <button class="edit-button">Edit</button>
@@ -59,72 +90,81 @@
         <div class="popup-header">
             <h2>Create Demand</h2>
         </div>
-        <div class="popup-content">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="companyName">Company Name:</label>
-                    <select id="companyName" name="companyName">
-                        <option value="company1">Company 1</option>
-                        <option value="company2">Company 2</option>
-                    </select>
+        <form id="siteform" enctype="multipart/form-data">
+            <div class="popup-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Company Name:</label>
+                        <select id="companyName" name="companyName">
+                            <option value="Please Select Company">Please Select Company</option>
+                            @foreach (var company in ViewBag.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location:</label>
+                        <select id="location" name="location" onchange="updateLocationId()">
+                        </select>
+                        <input type="hidden" id="locationId" name="locationId" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="location">Location:</label>
-                    <select id="location" name="location">
-                        <option value="location1">Location 1</option>
-                        <option value="location2">Location 2</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="requestDate">Request Date:</label>
+                        <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department">Department:</label>
+                        <select id="department" name="department">
+                            <option value="Please Select department">Please Select department</option>
+                            @foreach (var department in ViewBag.Department)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group file-group">
+                        <label for="file1" id="file1Label">File 1:</label>
+                        <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
+                        <span class="file-name" id="file1Name"></span>
+                    </div>
+
+                    <div class="form-group file-group">
+                        <label for="file2" id="file2Label">File 2:</label>
+                        <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
+                        <span class="file-name" id="file2Name"></span>
+                    </div>
+
+                    <div class="form-group file-group">
+                        <label for="file3" id="file3Label">File 3:</label>
+                        <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
+                        <span class="file-name" id="file3Name"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description"></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="sendButton" type="button" onclick="sendDemand()">Send</button>
                 </div>
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="requestDate">Request Date:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="01.03.2024" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="department">Department:</label>
-                    <select id="department" name="department">
-                        <option value="department1">Department 1</option>
-                        <option value="department2">Department 2</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group file-group">
-                    <label for="file1" id="file1Label">File 1:</label>
-                    <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
-                    <span class="file-name" id="file1Name"></span>
-                </div>
-
-                <div class="form-group file-group">
-                    <label for="file2" id="file2Label">File 2:</label>
-                    <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
-                    <span class="file-name" id="file2Name"></span>
-                </div>
-
-                <div class="form-group file-group">
-                    <label for="file3" id="file3Label">File 3:</label>
-                    <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
-                    <span class="file-name" id="file3Name"></span>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description"></textarea>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button id="sendButton" onclick="sendDemand()">Send</button>
-            </div>
-        </div>
+        </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="script.js"></script>
 </body>
 
@@ -140,6 +180,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
+
     .create-demand-button {
         background-color: #3498db;
         color: #fff;
@@ -156,9 +197,9 @@
         }
 
     .edit-button {
-        background-color: #ffcc80; 
-        color: #fff; 
-        font-weight: bold; 
+        background-color: #ffcc80;
+        color: #fff;
+        font-weight: bold;
         padding: 8px 15px;
         border: none;
         border-radius: 5px;
@@ -174,8 +215,8 @@
 
     .view-button {
         background-color: #85a3ff;
-        color: #fff; 
-        font-weight: bold; 
+        color: #fff;
+        font-weight: bold;
         padding: 8px 15px;
         border: none;
         border-radius: 5px;
@@ -184,7 +225,7 @@
     }
 
         .view-button:hover {
-            background-color: #6b8cf9; 
+            background-color: #6b8cf9;
             color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -213,9 +254,9 @@
     }
 
     .file-group label {
-        background-color: #27ae60; 
-        color: #fff; 
-        font-weight: bold; 
+        background-color: #27ae60;
+        color: #fff;
+        font-weight: bold;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
@@ -234,7 +275,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        max-width: 200px; 
+        max-width: 200px;
     }
 
     .file-group input[type="file"]:focus + label,
@@ -244,7 +285,7 @@
 
         .file-group input[type="file"]:focus + label:hover,
         .file-group input[type="file"]:not(:focus) + label:hover {
-            background-color: #218c53; 
+            background-color: #218c53;
         }
 
     .file-group input[type="file"] {
@@ -277,6 +318,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
+
     .popup-header {
         display: flex;
         justify-content: space-between;
@@ -291,7 +333,7 @@
     }
 
 
-   
+
     .button-group {
         width: 100%;
         text-align: right;
@@ -300,8 +342,9 @@
     #description {
         height: 125px;
         width: 500px;
-        resize: none; 
+        resize: none;
     }
+
     #sendButton {
         background-color: #4CAF50;
         color: #fff;
@@ -310,6 +353,7 @@
         border-radius: 5px;
         cursor: pointer;
     }
+
     .form-group {
         width: calc(50% - 10px);
         margin-bottom: 10px;
@@ -336,7 +380,36 @@
 </style>
 
 <script>
-
+    $(document).ready(function () {
+        $('#companyName').change(function () {
+            var selectedCompanyId = $(this).val();
+            $.ajax({
+                url: 'api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
+                type: 'GET',
+                success: function (data) {
+                    $('#location').empty();
+                    $.each(data.data, function (index, item) {
+                        $('#location').append($('<option>', {
+                            value: item.id,
+                            text: item.name
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching locations:', error);
+                }
+            });
+        });
+    });
+    function updateLocationId() {
+        var locationId = $('#location').val();
+        $('#locationId').val(locationId);
+    }
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeCreateDemandPopup();
+        }
+    });
     function updateFileName(inputId) {
         var input = document.getElementById(inputId);
         var label = document.getElementById(inputId + 'Label');
@@ -361,7 +434,6 @@
             });
         }
     }
-
     function closeCreateDemandPopup() {
         var overlay = document.getElementById("overlay");
         var popup = document.getElementById("createDemandPopup");
@@ -373,6 +445,37 @@
                 closeCreateDemandPopup();
             });
         }
+    }
+
+    function sendDemand() {
+        var formData = new FormData();
+
+        formData.append('DepartmentId', document.getElementById('department').value);
+        formData.append('Description', document.getElementById('description').value);
+        formData.append('CompanyLocationId', document.getElementById('location').value);
+
+        var fileInput = document.getElementById('file1');
+        formData.append('File1', fileInput.files[0]);
+
+        var fileInput2 = document.getElementById('file2');
+        formData.append('File2', fileInput2.files[0]);
+
+        var fileInput3 = document.getElementById('file3');
+        formData.append('File3', fileInput3.files[0]);
+
+        $.ajax({
+            url: 'api/Demands/AddDemand',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                console.log(result);
+            },
+            error: function (error) {
+                console.error('Error sending demand:', error);
+            }
+        });
     }
 </script>
 @functions {

@@ -6,5 +6,8 @@ namespace Demand.Business.Abstract.CompanyLocation
     {
         IDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocation>> GetList();
         IDataResult<Demand.Domain.Entities.CompanyLocation.CompanyLocation> GetById(long id);
+        IDataResult <List<Demand.Domain.Entities.CompanyLocation.CompanyLocation>> GetLocationByCompanyId(long companyId);
+
+
     }
 }

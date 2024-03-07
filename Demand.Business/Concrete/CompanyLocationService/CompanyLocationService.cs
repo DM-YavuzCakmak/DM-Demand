@@ -23,5 +23,11 @@ namespace Demand.Business.Concrete.CompanyLocation
             return new SuccessDataResult<List<Demand.Domain.Entities.CompanyLocation.CompanyLocation>>(_companyLocationRepository.GetList().ToList());
 
         }
+        public IDataResult<List<Domain.Entities.CompanyLocation.CompanyLocation>> GetLocationByCompanyId(long companyId)
+        {
+            var locations = _companyLocationRepository.GetList(x => x.CompanyId == companyId).ToList();
+
+            return new SuccessDataResult<List<Domain.Entities.CompanyLocation.CompanyLocation>>(locations);
+        }
     }
 }

@@ -9,10 +9,15 @@ namespace Demand.Business.Concrete.DemandService
     public class DemandService : IDemandService
     {
         private readonly IDemandRepository _demandRepository;
-
         public DemandService(IDemandRepository demandRepository)
         {
             _demandRepository = demandRepository;
+        }
+
+        public DemandEntity AddDemand(DemandEntity demand)
+        {
+           _demandRepository.Add(demand);
+            return demand;
         }
 
         public IDataResult<IList<DemandEntity>> GetAll()

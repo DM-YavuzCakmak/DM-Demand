@@ -1,5 +1,6 @@
 ﻿using Demand.Business.Abstract.CompanyLocation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Demand.Presentation.Controllers
 {
@@ -23,6 +24,12 @@ namespace Demand.Presentation.Controllers
         public IActionResult GetById(long Id)
         {
             return Ok(_companyLocationService.GetById(Id));
+        }
+
+        [HttpGet("GetLocations")]
+        public ActionResult GetLocations(int companyId)
+        {
+            return Ok(_companyLocationService.GetLocationByCompanyId(companyId));
         }
     }
 }

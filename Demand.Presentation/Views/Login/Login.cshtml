@@ -35,30 +35,30 @@
 </body>
 </html>
 
+
 <script>
-    function submitLoginForm() {
-        var userEmail = document.getElementById('userEmail').value;
-        var password = document.getElementById('password').value;
+	function submitLoginForm() {
+		var userEmail = document.getElementById('userEmail').value;
+		var password = document.getElementById('password').value;
 
-        console.log("USER EMAİL ", userEmail);
-        console.log("PASSWORD ", password);
+		console.log("USER EMAİL ", userEmail);
+		console.log("PASSWORD ", password);
 
-        var data = {
-            UserEmail: userEmail,
-            Password: password
-        };
+		var data = {
+			UserEmail: userEmail,
+			Password: password
+		};
 
-        $.ajax({
-            type: 'POST',
-            url: '/Home/Authenticate'
-            data: data,
-            success: function (result) {
-                // Başarılı sonuç işlemleri buraya ekleyebilirsiniz
-                console.log(result);
-            },
-            error: function (error) {
-                console.error(error);
-            }
-        });
-    }
+		$.ajax({
+			type: 'POST',
+			url: '@Url.Action("Login", "Login")',
+			data: data,
+			success: function (result) {
+				$('#resultMessage').text(result);
+			},
+			error: function (error) {
+				console.error(error);
+			}
+		});
+	}
 </script>

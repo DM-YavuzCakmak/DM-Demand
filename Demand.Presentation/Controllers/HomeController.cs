@@ -1,9 +1,22 @@
 ﻿using Demand.Business.Abstract.AuthorizationService;
+using Demand.Business.Abstract.CompanyLocation;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Abstract.DemandService;
+using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Concrete.DemandService;
+using Demand.Core.Entities;
+using Demand.Core.Utilities.Results.Abstract;
+using Demand.Domain.Entities.Company;
+using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.Demand;
+using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.Personnel;
+using Demand.Domain.ViewModels;
+using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Presentation.Models;
+using Kep.Helpers.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -13,22 +26,52 @@ namespace Demand.Presentation.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IDemandService _demandService;
-        public HomeController(ILogger<HomeController> logger, IDemandService demandService)
+        private readonly IPersonnelService _personnelService;
+        private readonly ICompanyLocationService _companyLocationService;
+        private readonly ICompanyService _companyService;
+        private readonly IDepartmentService _departmentService;
+
+        public HomeController(ILogger<HomeController> logger, IDemandService demandService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, ICompanyService companyService, IDepartmentService departmentService)
         {
             _logger = logger;
             _demandService = demandService;
+            _personnelService = personnelService;
+            _companyLocationService = companyLocationService;
+            _companyService = companyService;
+            _departmentService = departmentService;
         }
 
         public IActionResult Index()
         {
-            var aa = _demandService.GetAll();
+            List<DemandViewModel> demandViewModels = new List<DemandViewModel>();
+            List<DemandEntity> DemandList = _demandService.GetAll().Data.ToList();
+            foreach (var demand in DemandList)
+            {
+                DemandViewModel viewModel = new DemandViewModel
+                {
+                    DemandId = demand.Id,
+                    DemandDate = demand.CreatedDate,
+                    Status = demand.Status,
+                };
+                IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
+                if (personnelResult.IsNotNull())
+                {
+                    viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                }
+                IDataResult<CompanyLocation> companyLocation = _companyLocationService.GetById(demand.CompanyLocationId);
+                if (companyLocation.IsNotNull())
+                {
+                    viewModel.LocationName = companyLocation.Data.Name;
+                }
+                demandViewModels.Add(viewModel);
+            }
 
-            List<DemandEntity> demands = new List<DemandEntity>
-           {
-               new DemandEntity { Id = 1, CreatedAt = 1, CompanyLocationId = 1, CreatedDate = DateTime.Parse("01.01.2024"), Status = 0 }
-           };
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies= companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department= departments;
 
-            return View(demands);
+            return View(demandViewModels);
         }
 
         public IActionResult Privacy()
@@ -42,10 +85,24 @@ namespace Demand.Presentation.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Login()
-        {
-            return View();
-        }
+		[HttpPost]
+		public ActionResult Authenticate(LoginViewModel model)
+		{
+			// Kullanıcı doğrulama işlemleri burada yapılır
+			// Örnek olarak, model içindeki bilgileri kontrol edebilirsiniz
 
-    }
+			if (model.UserEmail == "example@email.com" && model.Password == "123456")
+			{
+				// Başarılı giriş durumu
+				return Content("Giriş başarılı!");
+			}
+			else
+			{
+				// Başarısız giriş durumu
+				return Content("Giriş başarısız!");
+			}
+		}
+
+
+	}
 }

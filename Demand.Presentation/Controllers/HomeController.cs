@@ -18,6 +18,7 @@ using Demand.Presentation.Models;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using System.Diagnostics;
 
 namespace Demand.Presentation.Controllers
@@ -73,6 +74,45 @@ namespace Demand.Presentation.Controllers
 
             return View(demandViewModels);
         }
+
+        public IActionResult GetFilterData(int? status = null, long? locationId = null, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            List<DemandViewModel> demandViewModels = new List<DemandViewModel>();
+            List<DemandEntity> DemandList = _demandService.GetList(x =>
+                                                                    (status == null || x.Status == status) &&
+                                                                    (locationId == null || x.CompanyLocationId == locationId) &&
+                                                                    (startDate == null || x.RequirementDate >= startDate) &&
+                                                                    (endDate == null || x.RequirementDate <= endDate)).Data.ToList();
+            foreach (var demand in DemandList)
+            {
+                DemandViewModel viewModel = new DemandViewModel
+                {
+                    DemandId = demand.Id,
+                    DemandDate = demand.CreatedDate,
+                    Status = demand.Status,
+                };
+                IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
+                if (personnelResult.IsNotNull())
+                {
+                    viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                }
+                IDataResult<CompanyLocation> companyLocation = _companyLocationService.GetById(demand.CompanyLocationId);
+                if (companyLocation.IsNotNull())
+                {
+                    viewModel.LocationName = companyLocation.Data.Name;
+                }
+                demandViewModels.Add(viewModel);
+            }
+
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department = departments;
+
+            return View(demandViewModels);
+        }
+
+
 
         public IActionResult Privacy()
         {

@@ -3,10 +3,13 @@ using Demand.Business.Abstract.DemandMediaService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.PersonnelService;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
+using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +29,9 @@ namespace Demand.Presentation.Controllers
         private readonly IDemandProcessService _demandProcessService;
         private readonly ICompanyService _companyService;
         private readonly IDepartmentService _departmentService;
+        private readonly IPersonnelService _personnelService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -36,6 +40,7 @@ namespace Demand.Presentation.Controllers
             _demandProcessService = demandProcessService;
             _companyService = companyService;
             _departmentService = departmentService;
+            _personnelService = personnelService;
         }
 
         public IActionResult Detail(long id)
@@ -173,9 +178,113 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity3);
             }
-            //DemandProcess'e kayıt at
+
+            PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
+
+            PersonnelEntity parentPersonnel = personnelEntity.Parent;
+            int i = 0;
+            while (parentPersonnel != null)
+            {
+                i++;
+                DemandProcessEntity demandProcessEntity = new DemandProcessEntity
+                {
+                    DemandId = addedDemand.Id,
+                    ManagerId = parentPersonnel.Id,
+                    IsDeleted = false,
+                    HierarchyOrder = i,
+                    Desciription = string.Empty,
+                    Status = 0,
+                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                    CreatedDate = DateTime.Now,
+                    UpdatedAt = null,
+                    UpdatedDate = null,
+                };
+                _demandProcessService.AddDemandProcess(demandProcessEntity);
+                if (i == 1)
+                {
+                    //Send Mail
+                }
+
+                parentPersonnel = parentPersonnel.Parent;
+            }
+
 
             return Ok(addedDemand);
+        }
+
+        [HttpPut("ChangeStatus")]
+        public  IActionResult ChangeStatus([FromBody] DemandStatusChangeViewModel demandStatusChangeViewModel)
+        {
+            if (demandStatusChangeViewModel.Status != 1 && demandStatusChangeViewModel.Status != 2)
+            {
+                return BadRequest("Talep Sadece İptal ve Onay Durumuna Alınabilir.");
+            }
+            if (demandStatusChangeViewModel.Status == 1 && string.IsNullOrWhiteSpace(demandStatusChangeViewModel.Description))
+            {
+                return BadRequest("Talep İptal Edilirken Açıklama Girmek Zorunludur.");
+            }
+
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            #endregion
+
+            List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
+
+            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value));
+            if (demandProcessEntity == null)
+            {
+                return BadRequest("Talebe Ait Durum Değiştirme Yetkiniz Bulunmamaktadır.");
+            }
+
+            if (demandProcessEntity.Status != 0)
+            {
+                return BadRequest("Talep Durumu Değiştirmeye Uygun Değildir.");
+            }
+
+            demandProcessEntity.Status = demandStatusChangeViewModel.Status;
+            demandProcessEntity.Desciription = demandStatusChangeViewModel.Description ?? string.Empty;
+            demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            demandProcessEntity.UpdatedDate = DateTime.Now;
+
+            _demandProcessService.UpdateDemandProcess(demandProcessEntity);
+
+            if (demandProcessEntity.Status == 2)//Approve
+            {
+                DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
+                if (nextDemandProcessEntity != null)
+                {
+                    //Send Mail nextDemandProcessEntity
+                }
+                else
+                {
+                    DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
+                    demandEntity.Status = 2;
+                    demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                    demandEntity.UpdatedDate = DateTime.Now;
+
+                    _demandService.Update(demandEntity);
+                }
+            }
+            else if (demandProcessEntity.Status == 1)//Cancelled
+            {
+                DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
+                demandEntity.Status = 1;
+                demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                demandEntity.UpdatedDate = DateTime.Now;
+
+                _demandService.Update(demandEntity);
+
+                List<DemandProcessEntity> previousDemandProcessList = demandProcessEntities.Where(x => x.HierarchyOrder < demandProcessEntity.HierarchyOrder).ToList();
+                if (previousDemandProcessList != null && previousDemandProcessList.Count > 0)
+                {
+                    //Send Mail previousDemandProcessList
+                }
+
+                // Send Mail demandProcessEntity.CreatedAt (Açan Kişiye de iptal Bildirimi için)
+            }
+
+            return Ok(demandProcessEntity);
         }
 
         private byte[] GetFile(IFormFile file)

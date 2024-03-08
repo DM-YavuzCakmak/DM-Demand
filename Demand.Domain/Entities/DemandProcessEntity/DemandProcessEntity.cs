@@ -21,7 +21,7 @@ namespace Demand.Domain.Entities.DemandProcess
 
         public string Desciription { get; set; }
 
-        public bool? Status { get; set; }
+        public int Status { get; set; }
 
         public int? HierarchyOrder { get; set; }
 

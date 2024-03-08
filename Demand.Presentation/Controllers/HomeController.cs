@@ -78,30 +78,35 @@ namespace Demand.Presentation.Controllers
         {
             return View();
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login([FromBody] LoginViewModel model)
+        {
+            var result = _personnelService.GetByEmail(model.UserEmail);
+
+            if (result.Success)
+            {
+                PersonnelEntity personnel = result.Data;
+
+                if (personnel != null && personnel.Password == model.Password)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            // HTTP 400 - Bad Request durumu ve özel mesaj
+            return StatusCode(400, new { success = false, message = "Kullanıcı adı veya şifre hatalı." });
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-		[HttpPost]
-		public ActionResult Authenticate(LoginViewModel model)
-		{
-			// Kullanıcı doğrulama işlemleri burada yapılır
-			// Örnek olarak, model içindeki bilgileri kontrol edebilirsiniz
-
-			if (model.UserEmail == "example@email.com" && model.Password == "123456")
-			{
-				// Başarılı giriş durumu
-				return Content("Giriş başarılı!");
-			}
-			else
-			{
-				// Başarısız giriş durumu
-				return Content("Giriş başarısız!");
-			}
-		}
 
 
 	}

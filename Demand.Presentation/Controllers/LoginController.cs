@@ -1,6 +1,7 @@
 ﻿using Demand.Business.Abstract.PersonnelService;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
+using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Demand.Presentation.Controllers
@@ -18,25 +19,24 @@ namespace Demand.Presentation.Controllers
         }
         public IActionResult Index()
         {
-            return View(new LoginViewModel());
+            return View();
         }
 
-
-        public IActionResult Login(LoginViewModel model)
+        [HttpPost]
+        public IActionResult Login([FromBody] LoginViewModel model)
         {
             var result = _personnelService.GetByEmail(model.UserEmail);
 
-            if (result.Success)
+            if (result.Data.IsNotNull())
             {
                 PersonnelEntity personnel = result.Data;
 
                 if (personnel != null && personnel.Password == model.Password)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return Json(new { success = true });
                 }
             }
-            ViewBag.ErrorMessage = "Kullanıcı adı veya şifre hatalı.";
-            return View("Login");
+            return Json(new { success = false, message = "Kullanıcı adı veya şifre hatalı." });
         }
     }
 }

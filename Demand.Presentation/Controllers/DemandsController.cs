@@ -25,10 +25,40 @@ namespace Demand.Presentation.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Detail(int id)
+
+        public IActionResult Detail(long id)
         {
-            var demand = _demandService.GetById(id);
-            return View(demand);
+            //DemandViewModel demand = GetDemandById(id); 
+
+            //if (demand.File1 != null)
+            //{
+            //    demand.File1Base64 = ConvertFileToBase64(demand.File1);
+            //}
+            //if (demand.File2 != null)
+            //{
+            //    demand.File2Base64 = ConvertFileToBase64(demand.File2);
+            //}
+            //if (demand.File3 != null)
+            //{
+            //    demand.File3Base64 = ConvertFileToBase64(demand.File3);
+            //}
+
+            return View(/*demand*/);
+        }
+
+        //private DemandViewModel GetDemandById(long id)
+        //{
+        //    var demand = _demandService.GetById(id);
+        //}
+
+        private string ConvertFileToBase64(IFormFile file)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                byte[] fileBytes = memoryStream.ToArray();
+                return Convert.ToBase64String(fileBytes);
+            }
         }
 
 

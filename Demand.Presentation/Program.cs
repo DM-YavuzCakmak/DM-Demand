@@ -29,6 +29,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Demand;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +83,13 @@ builder.Services.AddScoped<IDemandProcessService, DemandProcessService>();
 
 
 #endregion
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(o =>
+            {});
+
+builder.Services.AddHttpContextAccessor();
+
 
 var app = builder.Build();
 

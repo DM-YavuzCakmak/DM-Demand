@@ -10,6 +10,7 @@ namespace Demand.Domain.ViewModels
 {
     public class DemandViewModel
     {
+        public long? CompanyId { get; set; }
         public long? DemandId { get; set; }
         public string? DemanderName { get; set; }
         public string? LocationName { get; set; }

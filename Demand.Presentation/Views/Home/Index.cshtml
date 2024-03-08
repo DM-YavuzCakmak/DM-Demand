@@ -9,45 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
-    <style>
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('images/ayasofyacamii.jpg') center/cover fixed;
-            z-index: -1;
-        }
 
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        #logo {
-            position: absolute;
-            top: 20px;
-            left: 130px;
-            max-width: 150px;
-            max-height: 150px;
-        }
-
-        main {
-            margin-top: 70px;
-        }
-    </style>
 </head>
 
 <body>
-    <img id="logo" src="images/dem_logo.png" alt="Logo">
+    <img id="logo" src="~/images/dem_logo.png" alt="Logo">
     <main class="table" id="demandTable">
         <section class="table__header">
             <h1>Demand List</h1>
             <div class="input-group">
                 <input type="search" placeholder="Search Data...">
-                <img src="images/search.png" alt="">
+                <img src="~/images/search.png" alt="">
             </div>
             <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Create Demand</button>
         </section>
@@ -384,7 +356,7 @@
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();
             $.ajax({
-                url: 'api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
+                url: '/api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
                 type: 'GET',
                 success: function (data) {
                     $('#location').empty();

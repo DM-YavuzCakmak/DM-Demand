@@ -8,6 +8,7 @@ using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.ViewModels;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -89,8 +90,11 @@ namespace Demand.Presentation.Controllers
         [HttpPost("AddDemand")]
         public IActionResult AddDemand([FromForm] DemandViewModel demandViewModel)
         {
+            #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
+            #endregion
+
             if (demandViewModel == null)
             {
                 return BadRequest("Invalid demand data");
@@ -204,5 +208,11 @@ namespace Demand.Presentation.Controllers
 
             return null;
         }
+
+        private void AddDemandProcess()
+        {
+
+        }
+
     }
 }

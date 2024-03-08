@@ -77,7 +77,7 @@ builder.Services.AddScoped<IDemandMediaRepository, DemandMediaRepository>();
 builder.Services.AddScoped<IDemandMediaService, DemandMediaService>();
 #endregion
 
-#region DemandMedia
+#region DemanProcess
 builder.Services.AddScoped<IDemandProcessRepository, DemandProcessRepository>();
 builder.Services.AddScoped<IDemandProcessService, DemandProcessService>();
 #endregion
@@ -86,8 +86,7 @@ builder.Services.AddScoped<IDemandProcessService, DemandProcessService>();
 #endregion
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(o =>
-            {});
+            .AddCookie(o =>{});
 
 builder.Services.AddHttpContextAccessor();
 
@@ -109,6 +108,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

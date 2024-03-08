@@ -17,7 +17,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('images/ayasofyacamii.jpg') center/cover fixed;
+            background: url('~/images/ayasofyacamii.jpg');
             z-index: -1;
         }
 
@@ -41,13 +41,13 @@
 </head>
 
 <body>
-    <img id="logo" src="images/dem_logo.png" alt="Logo">
+    <img id="logo" src="~/images/dem_logo.png" alt="Logo">
     <main class="table" id="demandTable">
         <section class="table__header">
             <h1>Demand List</h1>
             <div class="input-group">
                 <input type="search" placeholder="Search Data...">
-                <img src="images/search.png" alt="">
+                <img src="~/images/search.png" alt="">
             </div>
             <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Create Demand</button>
         </section>
@@ -384,7 +384,7 @@
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();
             $.ajax({
-                url: 'api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
+                url: '/api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
                 type: 'GET',
                 success: function (data) {
                     $('#location').empty();

@@ -77,8 +77,7 @@ builder.Services.AddScoped<IDemandMediaService, DemandMediaService>();
 #endregion
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(o =>
-            {});
+            .AddCookie(o =>{});
 
 builder.Services.AddHttpContextAccessor();
 

@@ -2,6 +2,7 @@ using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyLocation;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Abstract.DemandMediaService;
+using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
@@ -9,11 +10,13 @@ using Demand.Business.Concrete.AuthorizationService;
 using Demand.Business.Concrete.CompanyLocation;
 using Demand.Business.Concrete.CompanyService;
 using Demand.Business.Concrete.DemandMediaService;
+using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Business.Concrete.DepartmentService;
 using Demand.Business.Concrete.PersonnelService;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Infrastructure.DataAccess.Abstract.DemandMedia;
+using Demand.Infrastructure.DataAccess.Abstract.DemandProcess;
 using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
@@ -71,6 +74,11 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 #region DemandMedia
 builder.Services.AddScoped<IDemandMediaRepository, DemandMediaRepository>();
 builder.Services.AddScoped<IDemandMediaService, DemandMediaService>();
+#endregion
+
+#region DemandMedia
+builder.Services.AddScoped<IDemandProcessRepository, IDemandProcessRepository>();
+builder.Services.AddScoped<IDemandProcessService, DemandProcessService>();
 #endregion
 
 

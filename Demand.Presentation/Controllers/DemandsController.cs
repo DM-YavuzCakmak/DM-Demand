@@ -1,4 +1,5 @@
 ﻿using Demand.Business.Abstract.DemandMediaService;
+using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
@@ -18,13 +19,15 @@ namespace Demand.Presentation.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IDemandMediaService _demandMediaService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IDemandProcessService _demandProcessService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService)
         {
             _logger = logger;
             _demandService = demandService;
             _demandMediaService = demandMediaService;
             _webHostEnvironment = webHostEnvironment;
+            _demandProcessService = demandProcessService;
         }
 
 
@@ -123,7 +126,7 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity1.IsDeleted = false;
                 demandMediaEntity1.CreatedDate = DateTime.Now;
                 demandMediaEntity1.UpdatedDate = null;
-                demandMediaEntity1.CreatedAt = 2;
+                demandMediaEntity1.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity1);
             }
 
@@ -135,7 +138,7 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity2.IsDeleted = false;
                 demandMediaEntity2.CreatedDate = DateTime.Now;
                 demandMediaEntity2.UpdatedDate = null;
-                demandMediaEntity2.CreatedAt = 2;
+                demandMediaEntity2.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity2);
             }
 
@@ -147,9 +150,11 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity3.IsDeleted = false;
                 demandMediaEntity3.CreatedDate = DateTime.Now;
                 demandMediaEntity3.UpdatedDate = null;
-                demandMediaEntity3.CreatedAt = 2;
+                demandMediaEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity3);
             }
+            //DemandProcess'e kayıt at
+
             return Ok(addedDemand);
         }
         private byte[] GetFile(IFormFile file)

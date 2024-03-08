@@ -1,8 +1,12 @@
-﻿using Demand.Business.Abstract.DemandMediaService;
+﻿using Demand.Business.Abstract.CompanyService;
+using Demand.Business.Abstract.DemandMediaService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
+using Demand.Business.Abstract.Department;
+using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
+using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -19,35 +23,52 @@ namespace Demand.Presentation.Controllers
         private readonly IDemandMediaService _demandMediaService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IDemandProcessService _demandProcessService;
+        private readonly ICompanyService _companyService;
+        private readonly IDepartmentService _departmentService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService)
         {
             _logger = logger;
             _demandService = demandService;
             _demandMediaService = demandMediaService;
             _webHostEnvironment = webHostEnvironment;
             _demandProcessService = demandProcessService;
+            _companyService = companyService;
+            _departmentService = departmentService;
         }
-
 
         public IActionResult Detail(long id)
         {
-            //DemandViewModel demand = GetDemandById(id); 
+            DemandEntity demand = _demandService.GetById(id).Data;
+            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
 
-            //if (demand.File1 != null)
-            //{
-            //    demand.File1Base64 = ConvertFileToBase64(demand.File1);
-            //}
-            //if (demand.File2 != null)
-            //{
-            //    demand.File2Base64 = ConvertFileToBase64(demand.File2);
-            //}
-            //if (demand.File3 != null)
-            //{
-            //    demand.File3Base64 = ConvertFileToBase64(demand.File3);
-            //}
 
-            return View(/*demand*/);
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                CompanyId = 1,
+                DemandId = id,
+                DemandDate = demand.CreatedDate,
+                //DemanderName = demand.cr,
+                DepartmentId = demand.DepartmentId,
+                Description = demand.Description,
+                CreatedDate = demand.CreatedDate,
+                IsDeleted = demand.IsDeleted,
+                RequirementDate = demand.RequirementDate,
+                CompanyLocationId = demand.CompanyLocationId,
+                CreatedAt = demand.CreatedAt,
+                //LocationName = de,
+                Status = demand.Status,
+                UpdatedAt = demand.UpdatedAt,
+                UpdatedDate = demand.UpdatedDate,
+                //File1 = demandMediaEntities.FirstOrDefault()
+            };
+
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department = departments;
+
+            return View(demandViewModel);
         }
 
         //private DemandViewModel GetDemandById(long id)
@@ -65,10 +86,10 @@ namespace Demand.Presentation.Controllers
             }
         }
 
-
         [HttpPost("AddDemand")]
         public IActionResult AddDemand([FromForm] DemandViewModel demandViewModel)
-        {   var claimsIdentity = (ClaimsIdentity)User.Identity;
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
             if (demandViewModel == null)
             {
@@ -152,6 +173,7 @@ namespace Demand.Presentation.Controllers
 
             return Ok(addedDemand);
         }
+
         private byte[] GetFile(IFormFile file)
         {
             using var ms = new MemoryStream();
@@ -159,6 +181,7 @@ namespace Demand.Presentation.Controllers
             var fileBytes = ms.ToArray();
             return fileBytes;
         }
+
         private DemandMediaEntity SaveFileAndCreateEntity(IFormFile file, long demandId)
         {
             if (file != null && file.Length > 0)
@@ -181,7 +204,5 @@ namespace Demand.Presentation.Controllers
 
             return null;
         }
-
-    
     }
 }

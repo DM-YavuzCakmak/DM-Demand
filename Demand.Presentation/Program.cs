@@ -27,6 +27,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepositor
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Demand;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandProcess;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -77,7 +78,7 @@ builder.Services.AddScoped<IDemandMediaService, DemandMediaService>();
 #endregion
 
 #region DemandMedia
-builder.Services.AddScoped<IDemandProcessRepository, IDemandProcessRepository>();
+builder.Services.AddScoped<IDemandProcessRepository, DemandProcessRepository>();
 builder.Services.AddScoped<IDemandProcessService, DemandProcessService>();
 #endregion
 

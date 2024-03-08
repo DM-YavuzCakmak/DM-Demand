@@ -11,7 +11,8 @@ namespace Demand.Business.Abstract.DemandMediaService
 {
     public interface IDemandMediaService
     {
-            IDataResult<IList<DemandMediaEntity>> GetAll();
+        IDataResult<IList<DemandMediaEntity>> GetAll();
         DemandMediaEntity AddDemandMedia(DemandMediaEntity demandMedia);
+        IList<DemandMediaEntity> GetByDemandId(long id);
     }
 }

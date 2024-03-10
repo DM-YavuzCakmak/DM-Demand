@@ -104,47 +104,86 @@
         <h2>View Demand Detail</h2>
     </div>
     <form id="siteform" enctype="multipart/form-data">
-        <div class="form-row">
-            <div class="form-group">
-                <label for="companyName">Company Name:</label>
-                <select id="companyName" name="companyName" disabled>
-                    <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
-                </select>
+        <main class="table" id="demandTable">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyName">Company Name:</label>
+                    <select id="companyName" name="companyName" disabled>
+                        <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <select id="location" name="location" disabled>
+                        <option value="@Model.CompanyLocationId" selected="selected">@Model.LocationName</option>
+                    </select>
+                    <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="location">Location:</label>
-                <select id="location" name="location" disabled>
-                    <option value="@Model.CompanyLocationId" selected="selected">@Model.LocationName</option>
-                </select>
-                <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
-            </div>
-        </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="requestDate">Request Date:</label>
+                    <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
+                </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label for="requestDate">Request Date:</label>
-                <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
+                <div class="form-group">
+                    <label for="department">Department:</label>
+                    <select id="department" name="department" disabled>
+                        <option value="@Model.DepartmentId" selected="selected">@Model.DepartmentName</option>
+                    </select>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="department">Department:</label>
-                <select id="department" name="department" disabled>
-                    <option value="@Model.DepartmentId" selected="selected">@Model.DepartmentName</option>
-                </select>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" readonly>@Model.Description</textarea>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" readonly>@Model.Description</textarea>
+            <div class="form-row">
+                @if (Model.File1Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File1Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="file1.pdf" class="btn btn-primary">File1 İndir</a>
+                }
+                else
+                {
+                    <span>File1 bulunmamaktadır</span>
+                }
             </div>
-        </div>
-        <div class="button-group">
-            <button id="declineButton" class="decline-button">Decline</button>
-            <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
-        </div>
+            <div class="form-row">
+                @if (Model.File2Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File2Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="file2.pdf" class="btn btn-primary">File2 İndir</a>
+                }
+                else
+                {
+                    <span>File2 bulunmamaktadır</span>
+                }
+            </div>
+            <div class="form-row">
+                @if (Model.File3Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File3Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="file3.pdf" class="btn btn-primary">File3 İndir</a>
+                }
+                else
+                {
+                    <span>File3 bulunmamaktadır</span>
+                }
+            </div>
+            <div class="form-row button-group">
+                <button id="declineButton" class="decline-button">Decline</button>
+                <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Approve</button>
+            </div>
+        </main>
     </form>
+    <div id="overlay"></div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="script.js"></script>

@@ -1,0 +1,323 @@
+﻿@using Demand.Domain.ViewModels
+@model DemandViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" />
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        #logo {
+            max-width: 150px;
+            max-height: 150px;
+        }
+
+        main {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            width: calc(50% - 10px);
+            margin-bottom: 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+
+        .button-group {
+            display: flex;
+            margin-top: 20px;
+        }
+
+
+        .popup-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                color: white;
+            }
+
+            .form-group select,
+            .form-group input[type="text"],
+            .form-group textarea {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+        .update-button {
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .update-button:hover {
+                background-color: #4cae4c;
+            }
+
+        #description {
+            height: 125px;
+            width: 100%;
+            resize: none;
+            background-color: lightgray;
+        }
+
+        #requestDate {
+            background-color: lightgray;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="popup-header">
+        <h2>Edit Demand</h2>
+    </div>
+    <form id="siteform" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="companyName">Company Name:</label>
+                <select id="companyName" name="companyName">
+                    @foreach (var company in ViewBag.Companies)
+                    {
+                        if (Model.CompanyId == company.Id)
+                        {
+                            <option value="@company.Id" selected>@company.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@company.Id">@company.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <select id="location" name="location">
+                    @foreach (var location in ViewBag.Locations)
+                    {
+
+                        if (Model.CompanyLocationId == location.Id)
+                        {
+                            <option value="@location.Id" selected>@location.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@location.Id">@location.Name</option>
+                        }
+                    }
+                    <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="requestDate">Request Date:</label>
+                <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <select id="department" name="department">
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        if (Model.DepartmentId == department.Id)
+                        {
+                             <option value="@department.Id" selected>@department.Name</option>
+                        }
+                       else
+                        {
+                            <option value="@department.Id">@department.Name</option>
+
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="description"> Description:</label>
+                <textarea id="description" name="description">@Model.Description</textarea>
+            </div>
+        </div>
+        <div class="button-group">
+            <button onclick="updateDemand()" type="button" class="update-button">Update</button>
+        </div>
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
+<style>
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    #description {
+        height: 125px;
+        width: 500px;
+        resize: none;
+    }
+
+    #sendButton {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .form-group {
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('#companyName').change(function () {
+            var selectedCompanyId = $(this).val();
+            $.ajax({
+                url: 'api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
+                type: 'GET',
+                success: function (data) {
+                    $('#location').empty();
+                    $.each(data.data, function (index, item) {
+                        $('#location').append($('<option>', {
+                            value: item.id,
+                            text: item.name
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching locations:', error);
+                }
+            });
+        });
+    });
+
+    function updateDemand() {
+        var demandId = @Model.DemandId;
+        var companyId = $('#companyName').val();
+        var locationId = $('#location').val();
+        var departmentId = $('#department').val();
+        var description = $('#description').val();
+        console.log("departmentId", departmentId);
+        var updateDemandViewModel = {
+            DemandId: demandId,
+            CompanyId: companyId,
+            CompanyLocationId: locationId,
+            DepartmentId: departmentId,
+            Description: description
+        };
+
+        $.ajax({
+            url: '/api/Demands/UpdateDemand',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updateDemandViewModel),
+            success: function (result) {
+                location.reload();
+            },
+            error: function (error) {
+                console.error('Error updating demand:', error);
+            }
+        });
+    }
+    function updateLocationId() {
+        var locationId = $('#location').val();
+        $('#locationId').val(locationId);
+    }
+</script>

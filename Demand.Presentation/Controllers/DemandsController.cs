@@ -85,6 +85,44 @@ namespace Demand.Presentation.Controllers
             return View(demandViewModel);
         }
 
+        [HttpGet("Edit/{id}")]
+        public IActionResult Edit(long id)
+        {
+            DemandEntity demand = _demandService.GetById(id).Data;
+            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
+            CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
+            Company company = _companyService.GetById(companyLocation.CompanyId).Data;
+            PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
+            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                CompanyId = company.Id,
+                DemandId = id,
+                DemandDate = demand.CreatedDate,
+                DemanderName = personnel.FirstName + " " + personnel.LastName,
+                DepartmentId = demand.DepartmentId,
+                Description = demand.Description,
+                CreatedDate = demand.CreatedDate,
+                IsDeleted = demand.IsDeleted,
+                RequirementDate = demand.RequirementDate,
+                CompanyLocationId = demand.CompanyLocationId,
+                CreatedAt = demand.CreatedAt,
+                LocationName = companyLocation.Name,
+                Status = demand.Status,
+                UpdatedAt = demand.UpdatedAt,
+                UpdatedDate = demand.UpdatedDate,
+                CompanyName = company.Name,
+                DepartmentName = department.Name
+            };
+            List<CompanyLocation> locations = _companyLocationService.GetAll().Data.ToList(); 
+            ViewBag.Locations = locations;
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Departments = departments;
+            return View(demandViewModel);
+
+        }
         private string ConvertFileToBase64(IFormFile file)
         {
             using (MemoryStream memoryStream = new MemoryStream())
@@ -330,6 +368,29 @@ namespace Demand.Presentation.Controllers
 
         private void AddDemandProcess()
         {
+
+        }
+
+        [HttpPost("UpdateDemand")]
+        public IActionResult UpdateDemand([FromBody] UpdateDemandViewModel updateDemandViewModel )
+        {
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            long userId =long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            #endregion
+            DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId).Data;
+
+            demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId;
+            demandEntity.DepartmentId = updateDemandViewModel.DepartmentId;
+            demandEntity.Description =updateDemandViewModel.Description;
+            demandEntity.UpdatedAt = userId;
+            demandEntity.UpdatedDate = DateTime.Now;
+
+
+            _demandService.Update(demandEntity);
+
+            return Ok(demandEntity);
 
         }
 

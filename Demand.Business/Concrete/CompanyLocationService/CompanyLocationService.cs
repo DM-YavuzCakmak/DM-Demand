@@ -1,6 +1,7 @@
 ﻿using Demand.Business.Abstract.CompanyLocation;
 using Demand.Core.Utilities.Results.Abstract;
 using Demand.Core.Utilities.Results.Concrete;
+using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 
 namespace Demand.Business.Concrete.CompanyLocation
@@ -11,6 +12,11 @@ namespace Demand.Business.Concrete.CompanyLocation
         public CompanyLocationService(ICompanyLocationRepository companyLocationRepository)
         {
             _companyLocationRepository = companyLocationRepository;
+        }
+
+        public IDataResult<IList<Domain.Entities.CompanyLocation.CompanyLocation>> GetAll()
+        {
+            return new SuccessDataResult<IList<Domain.Entities.CompanyLocation.CompanyLocation>>(_companyLocationRepository.GetAll());
         }
 
         public IDataResult<Domain.Entities.CompanyLocation.CompanyLocation> GetById(long id)

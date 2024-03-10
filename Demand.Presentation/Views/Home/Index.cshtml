@@ -1,6 +1,12 @@
 ﻿@using Demand.Domain.ViewModels
+@using System.Security.Claims
 @model List<DemandViewModel>
 
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +24,7 @@
         <section class="table__header">
             <h1>Demand List</h1>
             <div class="input-group">
-                <input type="search" placeholder="Search Data...">
+                <input type="search" id="searchInput" placeholder="Search Data...">
                 <img src="~/images/search.png" alt="">
             </div>
             <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Create Demand</button>
@@ -47,7 +53,10 @@
                                 <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
                             </td>
                             <td>
-                                <button class="edit-button">Edit</button>
+                                @if (demand.CreatedAt == userId)
+                                {
+                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Edit</a>
+                                }
                                 <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">View</a>
                             </td>
                         </tr>
@@ -369,6 +378,20 @@
                 },
                 error: function (error) {
                     console.error('Error fetching locations:', error);
+                }
+            });
+        });
+
+        $('#searchInput').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+
+            $('tbody tr').each(function () {
+                var rowText = $(this).text().toLowerCase();
+
+                if (rowText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
                 }
             });
         });

@@ -14,6 +14,7 @@ using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
+using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -75,8 +76,20 @@ namespace Demand.Presentation.Controllers
                 UpdatedAt = demand.UpdatedAt,
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
-                DepartmentName = department.Name
+                DepartmentName = department.Name,
             };
+            if (demandMediaEntities.IsNotNullOrEmpty())
+            {
+                demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
+                if (demandMediaEntities.Count > 1)
+                {
+                    demandViewModel.File2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[1].Path);
+                }
+                if (demandMediaEntities.Count > 2)
+                {
+                    demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
+                }
+            }
 
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
@@ -307,6 +320,7 @@ namespace Demand.Presentation.Controllers
             return fileBytes;
         }
 
+
         private DemandMediaEntity SaveFileAndCreateEntity(IFormFile file, long demandId)
         {
             if (file != null && file.Length > 0)
@@ -323,7 +337,7 @@ namespace Demand.Presentation.Controllers
                 return new DemandMediaEntity
                 {
                     DemandId = demandId,
-                    Path = filePath
+                    Path = "\\uploads\\" + uniqueFileName
                 };
             }
 

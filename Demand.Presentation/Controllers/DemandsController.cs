@@ -74,7 +74,6 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name
-                //File1 = demandMediaEntities.FirstOrDefault()
             };
 
             List<Company> companies = _companyService.GetList().Data.ToList();
@@ -151,6 +150,7 @@ namespace Demand.Presentation.Controllers
                 DemandMediaEntity demandMediaEntity1 = SaveFileAndCreateEntity(demandViewModel.File1, addedDemand.Id);
                 demandMediaEntity1.DemandId = addedDemand.Id;
                 demandMediaEntity1.Path = demandMediaEntity1.Path;
+                demandMediaEntity1.FileName = file1FileName;
                 demandMediaEntity1.IsDeleted = false;
                 demandMediaEntity1.CreatedDate = DateTime.Now;
                 demandMediaEntity1.UpdatedDate = null;
@@ -163,6 +163,7 @@ namespace Demand.Presentation.Controllers
                 DemandMediaEntity demandMediaEntity2 = SaveFileAndCreateEntity(demandViewModel.File2, addedDemand.Id);
                 demandMediaEntity2.DemandId = addedDemand.Id;
                 demandMediaEntity2.Path = demandMediaEntity2.Path;
+                demandMediaEntity2.FileName = file2FileName;
                 demandMediaEntity2.IsDeleted = false;
                 demandMediaEntity2.CreatedDate = DateTime.Now;
                 demandMediaEntity2.UpdatedDate = null;
@@ -175,6 +176,7 @@ namespace Demand.Presentation.Controllers
                 DemandMediaEntity demandMediaEntity3 = SaveFileAndCreateEntity(demandViewModel.File3, addedDemand.Id);
                 demandMediaEntity3.DemandId = addedDemand.Id;
                 demandMediaEntity3.Path = demandMediaEntity3.Path;
+                demandMediaEntity3.FileName = file3FileName;
                 demandMediaEntity3.IsDeleted = false;
                 demandMediaEntity3.CreatedDate = DateTime.Now;
                 demandMediaEntity3.UpdatedDate = null;

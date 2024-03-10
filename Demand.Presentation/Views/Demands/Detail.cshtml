@@ -42,77 +42,43 @@
 
 <body>
     <div class="popup-header">
-        <h2>Create Demand</h2>
+        <h2>View Demand Detail</h2>
     </div>
     <form id="siteform" enctype="multipart/form-data">
-        <div class="popup-content">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="companyName">Company Name:</label>
-                    <select id="companyName" name="companyName">
-                        <option value="Please Select Company">Please Select Company</option>
-                        @foreach (var company in ViewBag.Companies)
-                        {
-                            <option value="@company.Id" selected="@(Model.CompanyId == company.Id ? "selected" : "")">@company.Name</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="location">Location:</label>
-                    <select id="location" name="location" onchange="updateLocationId()">
-                    </select>
-                    <input type="hidden" id="locationId" name="locationId" />
-                </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="companyName">Company Name:</label>
+                <select id="companyName" name="companyName" disabled>
+                    <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
+                </select>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="requestDate">Request Date:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
-                </div>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <select id="location" name="location" disabled>
+                    <option value="@Model.CompanyLocationId" selected="selected">@Model.LocationName</option>
+                </select>
+                <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="department">Department:</label>
-                    <select id="department" name="department">
-                        <option value="Please Select department">Please Select department</option>
-                        @foreach (var department in ViewBag.Department)
-                        {
-                            <option value="@department.Id">@department.Name</option>
-                        }
-                    </select>
-                </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="requestDate">Request Date:</label>
+                <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
             </div>
 
-            <div class="form-row">
-                <div class="form-group file-group">
-                    <label for="file1" id="file1Label">File 1:</label>
-                    <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
-                    <span class="file-name" id="file1Name"></span>
-                </div>
-
-                <div class="form-group file-group">
-                    <label for="file2" id="file2Label">File 2:</label>
-                    <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
-                    <span class="file-name" id="file2Name"></span>
-                </div>
-
-                <div class="form-group file-group">
-                    <label for="file3" id="file3Label">File 3:</label>
-                    <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
-                    <span class="file-name" id="file3Name"></span>
-                </div>
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <select id="department" name="department" disabled>
+                    <option value="@Model.DepartmentId" selected="selected">@Model.DepartmentName</option>
+                </select>
             </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" name="description"></textarea>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button id="sendButton" type="button" onclick="sendDemand()">Send</button>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" readonly>@Model.Description</textarea>
             </div>
         </div>
     </form>

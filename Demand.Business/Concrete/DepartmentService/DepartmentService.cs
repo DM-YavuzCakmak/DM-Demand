@@ -25,5 +25,12 @@ namespace Demand.Business.Concrete.DepartmentService
         {
             return new SuccessDataResult<IList<DepartmentEntity>>(_departmentRepository.GetAll());
         }
+
+        public IDataResult<DepartmentEntity> GetById(long id)
+        {
+            return new SuccessDataResult<DepartmentEntity>(_departmentRepository.Get(x => x.Id == id));
+        }
+
+
     }
 }

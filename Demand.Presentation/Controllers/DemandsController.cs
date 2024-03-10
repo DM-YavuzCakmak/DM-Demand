@@ -32,8 +32,9 @@ namespace Demand.Presentation.Controllers
         private readonly ICompanyService _companyService;
         private readonly IDepartmentService _departmentService;
         private readonly IPersonnelService _personnelService;
+        private readonly ICompanyLocationService _companyLocationService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -42,50 +43,47 @@ namespace Demand.Presentation.Controllers
             _demandProcessService = demandProcessService;
             _companyService = companyService;
             _departmentService = departmentService;
+            _companyLocationService = companyLocationService;
+            _personnelService = personnelService;
         }
 
-    public IActionResult Detail(long id)
-    {
-        DemandEntity demand = _demandService.GetById(id).Data;
-        List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
-        CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
-        Company company = _companyService.GetById(companyLocation.CompanyId).Data;
-        PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
-            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
-        DemandViewModel demandViewModel = new DemandViewModel
+        public IActionResult Detail(long id)
         {
-            CompanyId = company.Id,
-            DemandId = id,
-            DemandDate = demand.CreatedDate,
-            DemanderName = personnel.FirstName + " " + personnel.LastName,
-            DepartmentId = demand.DepartmentId,
-            Description = demand.Description,
-            CreatedDate = demand.CreatedDate,
-            IsDeleted = demand.IsDeleted,
-            RequirementDate = demand.RequirementDate,
-            CompanyLocationId = demand.CompanyLocationId,
-            CreatedAt = demand.CreatedAt,
-            LocationName = companyLocation.Name,
-            Status = demand.Status,
-            UpdatedAt = demand.UpdatedAt,
-            UpdatedDate = demand.UpdatedDate,
-            CompanyName = company.Name,
-            DepartmentName = department.Name
-            //File1 = demandMediaEntities.FirstOrDefault()
-        };
+            DemandEntity demand = _demandService.GetById(id).Data;
+            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
+            CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
+            Company company = _companyService.GetById(companyLocation.CompanyId).Data;
+            PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
+            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                CompanyId = company.Id,
+                DemandId = id,
+                DemandDate = demand.CreatedDate,
+                DemanderName = personnel.FirstName + " " + personnel.LastName,
+                DepartmentId = demand.DepartmentId,
+                Description = demand.Description,
+                CreatedDate = demand.CreatedDate,
+                IsDeleted = demand.IsDeleted,
+                RequirementDate = demand.RequirementDate,
+                CompanyLocationId = demand.CompanyLocationId,
+                CreatedAt = demand.CreatedAt,
+                LocationName = companyLocation.Name,
+                Status = demand.Status,
+                UpdatedAt = demand.UpdatedAt,
+                UpdatedDate = demand.UpdatedDate,
+                CompanyName = company.Name,
+                DepartmentName = department.Name
+                //File1 = demandMediaEntities.FirstOrDefault()
+            };
 
-        List<Company> companies = _companyService.GetList().Data.ToList();
-        ViewBag.Companies = companies;
-        List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
-        ViewBag.Department = departments;
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department = departments;
 
-        return View(demandViewModel);
-    }
-
-        //private DemandViewModel GetDemandById(long id)
-        //{
-        //    var demand = _demandService.GetById(id);
-        //}
+            return View(demandViewModel);
+        }
 
         private string ConvertFileToBase64(IFormFile file)
         {
@@ -218,7 +216,7 @@ namespace Demand.Presentation.Controllers
         }
 
         [HttpPut("ChangeStatus")]
-        public  IActionResult ChangeStatus([FromBody] DemandStatusChangeViewModel demandStatusChangeViewModel)
+        public IActionResult ChangeStatus([FromBody] DemandStatusChangeViewModel demandStatusChangeViewModel)
         {
             if (demandStatusChangeViewModel.Status != 1 && demandStatusChangeViewModel.Status != 2)
             {

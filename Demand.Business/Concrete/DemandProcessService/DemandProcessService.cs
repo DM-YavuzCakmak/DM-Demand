@@ -1,18 +1,9 @@
-﻿using Demand.Business.Abstract.DemandMediaService;
-using Demand.Business.Abstract.DemandProcessService;
+﻿using Demand.Business.Abstract.DemandProcessService;
 using Demand.Core.Utilities.Results.Abstract;
 using Demand.Core.Utilities.Results.Concrete;
-using Demand.Domain.Entities.Demand;
-using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandProcess;
-using Demand.Infrastructure.DataAccess.Abstract.DemandMedia;
 using Demand.Infrastructure.DataAccess.Abstract.DemandProcess;
-using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Demand.Business.Concrete.DemandProcessService
 {
@@ -36,6 +27,12 @@ namespace Demand.Business.Concrete.DemandProcessService
         {
             return new SuccessDataResult<DemandProcessEntity>(_demandProcessRepository.Get(x => x.Id == id));
         }
+
+        public IDataResult<IList<DemandProcessEntity>> GetList(Expression<Func<DemandProcessEntity, bool>> filter)
+        {
+            return new SuccessDataResult<IList<DemandProcessEntity>>(_demandProcessRepository.GetList(filter));
+        }
+
         public DemandProcessEntity UpdateDemandProcess(DemandProcessEntity updatedDemandProcess)
         {
             _demandProcessRepository.Update(updatedDemandProcess);

@@ -12,14 +12,25 @@ using System.Threading.Tasks;
 
 namespace Demand.Business.Concrete.PersonnelService
 {
-    public class PersonnelService: IPersonnelService
+    public class PersonnelService : IPersonnelService
     {
         private readonly IPersonnelRepository _personnelRepository;
 
         public PersonnelService(IPersonnelRepository personnelRepository)
         {
-                _personnelRepository = personnelRepository;
+            _personnelRepository = personnelRepository;
         }
+
+        public List<PersonnelEntity> GetAllParentList(long id)
+        {
+            List<PersonnelEntity> personnelEntities = new List<PersonnelEntity>();
+
+            PersonnelEntity mainPersonnelEntity = _personnelRepository.Get(x => x.Id == id);
+
+            return personnelEntities;
+
+        }
+
         public IDataResult<PersonnelEntity> GetById(long id)
         {
             return new SuccessDataResult<PersonnelEntity>(_personnelRepository.Get(x => x.Id == id));

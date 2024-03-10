@@ -5,6 +5,7 @@ using Demand.Domain.Entities.DemandProcess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,6 @@ namespace Demand.Business.Abstract.DemandProcessService
         DemandProcessEntity AddDemandProcess(DemandProcessEntity demandProcessEntity);
         DemandProcessEntity UpdateDemandProcess(DemandProcessEntity updatedDemandProcess);
         IDataResult<DemandProcessEntity> GetById(long id);
-
-
+        IDataResult<IList<DemandProcessEntity>> GetList(Expression<Func<DemandProcessEntity, bool>> filter);
     }
 }

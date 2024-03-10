@@ -5,6 +5,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.Demand;
@@ -209,7 +210,8 @@ namespace Demand.Presentation.Controllers
                 _demandProcessService.AddDemandProcess(demandProcessEntity);
                 if (i == 1)
                 {
-                    //Send Mail
+                    if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
+                        EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "New Demand", "Böyle bir şey talep etti.");
                 }
 
                 if (parentPersonnel.ParentId != null)

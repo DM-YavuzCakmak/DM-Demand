@@ -5,6 +5,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.Demand;
@@ -13,6 +14,7 @@ using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
+using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -74,8 +76,20 @@ namespace Demand.Presentation.Controllers
                 UpdatedAt = demand.UpdatedAt,
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
-                DepartmentName = department.Name
+                DepartmentName = department.Name,
             };
+            if (demandMediaEntities.IsNotNullOrEmpty())
+            {
+                demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
+                if (demandMediaEntities.Count > 1)
+                {
+                    demandViewModel.File2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[1].Path);
+                }
+                if (demandMediaEntities.Count > 2)
+                {
+                    demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
+                }
+            }
 
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
@@ -247,7 +261,8 @@ namespace Demand.Presentation.Controllers
                 _demandProcessService.AddDemandProcess(demandProcessEntity);
                 if (i == 1)
                 {
-                    //Send Mail
+                    if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
+                        EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "New Demand", "Böyle bir şey talep etti.");
                 }
 
                 if (parentPersonnel.ParentId != null)
@@ -343,6 +358,7 @@ namespace Demand.Presentation.Controllers
             return fileBytes;
         }
 
+
         private DemandMediaEntity SaveFileAndCreateEntity(IFormFile file, long demandId)
         {
             if (file != null && file.Length > 0)
@@ -359,7 +375,7 @@ namespace Demand.Presentation.Controllers
                 return new DemandMediaEntity
                 {
                     DemandId = demandId,
-                    Path = filePath
+                    Path = "\\uploads\\" + uniqueFileName
                 };
             }
 

@@ -30,7 +30,7 @@ namespace Demand.Domain.ViewModels
         public IFormFile? File1 { get; set; }
         public IFormFile? File2 { get; set; }
         public IFormFile? File3 { get; set; }
-        public string? File1Path { get; set; }
+        public byte[]? File1Path { get; set; }
         public byte[]? File2Path { get; set; }
         public byte[]? File3Path { get; set; }
 

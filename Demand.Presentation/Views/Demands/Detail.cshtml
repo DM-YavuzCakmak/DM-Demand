@@ -65,7 +65,7 @@
             .form-group label {
                 display: block;
                 margin-bottom: 5px;
-                color:white;
+                color: white;
             }
 
             .form-group select,
@@ -89,12 +89,12 @@
             width: 100%;
             resize: none;
             background-color: lightgray;
-            pointer-events: none; 
+            pointer-events: none;
         }
 
         #requestDate {
             background-color: lightgray;
-            pointer-events: none; 
+            pointer-events: none;
         }
     </style>
 </head>
@@ -139,6 +139,10 @@
                 <label for="description">Description:</label>
                 <textarea id="description" name="description" readonly>@Model.Description</textarea>
             </div>
+        </div>
+        <div class="button-group">
+            <button id="declineButton" class="decline-button">Decline</button>
+            <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
         </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -225,7 +229,7 @@
 
     .popup-header h2 {
         margin: 0;
-        color:white;
+        color: white;
     }
 
     .file-group input[type="file"] {
@@ -314,8 +318,40 @@
 
 
     .button-group {
-        width: 100%;
-        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .decline-button {
+        background-color: #d9534f;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-right: 10px;
+    }
+
+    .approve-button {
+        background-color: #5cb85c;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .decline-button:hover {
+        background-color: #c9302c;
+    }
+
+    .approve-button:hover {
+        background-color: #4cae4c;
     }
 
     #description {
@@ -425,34 +461,23 @@
             });
         }
     }
-
-    function sendDemand() {
-        var formData = new FormData();
-
-        formData.append('DepartmentId', document.getElementById('department').value);
-        formData.append('Description', document.getElementById('description').value);
-        formData.append('CompanyLocationId', document.getElementById('location').value);
-
-        var fileInput = document.getElementById('file1');
-        formData.append('File1', fileInput.files[0]);
-
-        var fileInput2 = document.getElementById('file2');
-        formData.append('File2', fileInput2.files[0]);
-
-        var fileInput3 = document.getElementById('file3');
-        formData.append('File3', fileInput3.files[0]);
+    function changeStatus() {
+        var demandId = @Model.DemandId;
+        var demandStatusChangeViewModel = {
+            DemandId: demandId,
+            Status: 2
+        };
 
         $.ajax({
-            url: 'api/Demands/AddDemand',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function (result) {
-                console.log(result);
+            url: 'Demands/ChangeStatus',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(demandStatusChangeViewModel),
+            success: function (statusResult) {
+                console.log(statusResult);
             },
             error: function (error) {
-                console.error('Error sending demand:', error);
+                console.error('Talep durumu değiştirme hatası:', error);
             }
         });
     }

@@ -15,6 +15,7 @@ using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using System.Security.Claims;
 
 
@@ -186,7 +187,8 @@ namespace Demand.Presentation.Controllers
 
             PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
-            PersonnelEntity parentPersonnel = personnelEntity.Parent;
+            PersonnelEntity parentPersonnel = _personnelService.GetById((long)personnelEntity.ParentId).Data;
+
             int i = 0;
             while (parentPersonnel != null)
             {
@@ -210,7 +212,10 @@ namespace Demand.Presentation.Controllers
                     //Send Mail
                 }
 
-                parentPersonnel = parentPersonnel.Parent;
+                if (parentPersonnel.ParentId != null)
+                    parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
+                else
+                    break;
             }
 
 

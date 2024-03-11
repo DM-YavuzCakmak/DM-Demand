@@ -1,7 +1,6 @@
 ﻿@using Demand.Domain.ViewModels
 @model List<DemandViewModel>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <title>DEM MUSEUMS</title>
 </head>
 
@@ -351,6 +351,7 @@
         }
 </style>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
 <script>
     $(document).ready(function () {
         $('#companyName').change(function () {
@@ -443,9 +444,27 @@
             processData: false,
             success: function (result) {
                 console.log(result);
+                toastr.success("Demand Created", "Success");
             },
             error: function (error) {
-                console.error('Error sending demand:', error);
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+                toastr.error("Unexpected Error", "Error");
             }
         });
     }
@@ -466,7 +485,7 @@
     {
         switch (status)
         {
-            case 0: return "Pending"; 
+            case 0: return "Pending";
             case 1: return "Cancelled";
             case 2: return "Approved";
             default: return "";

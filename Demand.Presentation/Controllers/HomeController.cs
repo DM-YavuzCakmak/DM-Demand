@@ -63,6 +63,7 @@ namespace Demand.Presentation.Controllers
                     DemandId = demand.Id,
                     DemandDate = demand.CreatedDate,
                     Status = demand.Status,
+                    DemandTitle=demand.DemandTitle,
                     CreatedAt = demand.CreatedAt
                 };
                 IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);

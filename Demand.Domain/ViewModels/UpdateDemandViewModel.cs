@@ -10,6 +10,7 @@ namespace Demand.Domain.ViewModels
     {
         public long DemandId { get; set; }
         public long CompanyId { get; set; }
+        public string DemandTitle { get; set; }
         public long CompanyLocationId { get; set; }
         public long DepartmentId { get; set; }
         public string Description { get; set; }

@@ -12,6 +12,7 @@ namespace Demand.Domain.ViewModels
     {
         public long? CompanyId { get; set; }
         public long? DemandId { get; set; }
+        public string? DemandTitle { get; set; }
         public string? DemanderName { get; set; }
         public string? LocationName { get; set; }
         public DateTime DemandDate { get; set; }

@@ -131,20 +131,20 @@
 
 <body>
     <div class="popup-header">
-        <h2>View Demand Detail</h2>
+        <h2>Talep Detayı</h2>
     </div>
     <form id="siteform" enctype="multipart/form-data">
         <main class="table" id="demandTable">
             <div class="form-row">
                 <div class="form-group">
-                    <label for="companyName">Company Name:</label>
+                    <label for="companyName">Şirket Adı:</label>
                     <select id="companyName" name="companyName" disabled>
                         <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="location">Location:</label>
+                    <label for="location">Lokasyon:</label>
                     <select id="location" name="location" disabled>
                         <option value="@Model.CompanyLocationId" selected="selected">@Model.LocationName</option>
                     </select>
@@ -154,12 +154,12 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="requestDate">Request Date:</label>
+                    <label for="requestDate">Talep Tarihi:</label>
                     <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
                 </div>
 
                 <div class="form-group">
-                    <label for="department">Department:</label>
+                    <label for="department">Departman:</label>
                     <select id="department" name="department" disabled>
                         <option value="@Model.DepartmentId" selected="selected">@Model.DepartmentName</option>
                     </select>
@@ -167,7 +167,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="description">Description:</label>
+                    <label for="description">Açıklama:</label>
                     <textarea id="description" name="description" readonly>@Model.Description</textarea>
                 </div>
             </div>
@@ -176,11 +176,11 @@
                 {
                     var base64 = Convert.ToBase64String(Model.File1Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file1.pdf" class="btn btn-primary">File1 İndir</a>
+                    <a href="@pdfSrc" download="file1.pdf" class="btn btn-primary">Dosya Eki İndir</a>
                 }
                 else
                 {
-                    <span>File1 bulunmamaktadır</span>
+                    <span>Dosya eki bulunmamaktadır</span>
                 }
             </div>
             <div class="form-row">
@@ -188,11 +188,11 @@
                 {
                     var base64 = Convert.ToBase64String(Model.File2Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file2.pdf" class="btn btn-primary">File2 İndir</a>
+                    <a href="@pdfSrc" download="file2.pdf" class="btn btn-primary">Dosya Eki İndir</a>
                 }
                 else
                 {
-                    <span>File2 bulunmamaktadır</span>
+                    <span>Dosya eki bulunmamaktadır</span>
                 }
             </div>
             <div class="form-row">
@@ -200,20 +200,20 @@
                 {
                     var base64 = Convert.ToBase64String(Model.File3Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file3.pdf" class="btn btn-primary">File3 İndir</a>
+                    <a href="@pdfSrc" download="file3.pdf" class="btn btn-primary">Dosya Eki İndir</a>
                 }
                 else
                 {
-                    <span>File3 bulunmamaktadır</span>
+                    <span>Dosya eki bulunmamaktadır</span>
                 }
             </div>
         <div class="form-group">
-            <label for="declineDescription">Decline Description:</label>
-            <textarea id="declineDescription" name="declineDescription" placeholder="Enter your decline reason"></textarea>
+            <label for="declineDescription">Red Gerekçesi:</label>
+            <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
         </div>
         <div class="button-group">
-            <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Decline</button>
-            <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Approve</button>
+            <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+            <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
         </div>
         </main>
     </form>
@@ -585,9 +585,9 @@
     {
         switch (status)
         {
-            case 0: return "Pending";
-            case 1: return "Cancelled";
-            case 2: return "Approved";
+            case 0: return "pending";
+            case 1: return "cancelled";
+            case 2: return "approved";
             default: return "";
         }
     }
@@ -596,9 +596,9 @@
     {
         switch (status)
         {
-            case 0: return "Pending"; 
-            case 1: return "Cancelled";
-            case 2: return "Approved";
+            case 0: return "Beklemede";
+            case 1: return "Reddedildi";
+            case 2: return "Onaylandı";
             default: return "";
         }
     }

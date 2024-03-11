@@ -162,6 +162,7 @@ namespace Demand.Presentation.Controllers
             var demandEntity = new DemandEntity
             {
                 CompanyLocationId = (long)demandViewModel.CompanyLocationId,
+                DemandTitle = demandViewModel.DemandTitle,
                 DepartmentId = (long)demandViewModel.DepartmentId,
                 Status = 0,
                 Description = demandViewModel.Description,
@@ -400,6 +401,7 @@ namespace Demand.Presentation.Controllers
             demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId;
             demandEntity.DepartmentId = updateDemandViewModel.DepartmentId;
             demandEntity.Description =updateDemandViewModel.Description;
+            demandEntity.DemandTitle = updateDemandViewModel.DemandTitle;
             demandEntity.UpdatedAt = userId;
             demandEntity.UpdatedDate = DateTime.Now;
 

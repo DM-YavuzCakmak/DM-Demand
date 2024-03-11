@@ -5,6 +5,7 @@ namespace Demand.Domain.Entities.Demand;
 [Table("Demand")]
 public class DemandEntity : BaseEntity
 {
+    public string  DemandTitle{ get; set; }
     public long CompanyLocationId { get; set; }
     public long DepartmentId { get; set; }
     public int Status { get; set; }

@@ -23,23 +23,24 @@
     <img id="logo" src="~/images/dem_logo.png" alt="Logo">
     <main class="table" id="demandTable">
         <section class="table__header">
-            <h1>Demand List</h1>
+            <h1>Talep Listesi</h1>
             <div class="input-group">
-                <input type="search" id="searchInput" placeholder="Search Data...">
+                <input type="search" id="searchInput" placeholder="Arama...">
                 <img src="~/images/search.png" alt="">
             </div>
-            <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Create Demand</button>
+            <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Talep Oluştur</button>
         </section>
         <section class="tableBody">
             <table>
                 <thead>
                     <tr>
-                        <th> Demand No <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Demander Name <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Location <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Demand Date <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Status <span class="icon-arrow">&UpArrow;</span></th>
-                        <th> Action <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +48,7 @@
                     {
                         <tr>
                             <td>@demand.DemandId</td>
+                            <td>@demand.DemandTitle</td>
                             <td>@demand.DemanderName</td>
                             <td>@demand.LocationName</td>
                             <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
@@ -56,9 +58,9 @@
                             <td>
                                 @if (demand.CreatedAt == userId)
                                 {
-                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Edit</a>
+                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                 }
-                                <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">View</a>
+                                <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Görüntüle</a>
                             </td>
                         </tr>
                     }
@@ -70,15 +72,21 @@
 
     <div id="createDemandPopup" class="popup">
         <div class="popup-header">
-            <h2>Create Demand</h2>
+            <h2>Talep Oluştur</h2>
         </div>
         <form id="siteform" enctype="multipart/form-data">
             <div class="popup-content">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="companyName">Company Name:</label>
+                        <label for="demandtitle">Başlık:</label>
+                        <input type="text" id="demandtitle" placeholder="Talep Başlığı" name="demandtitle" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Şirket Adı:</label>
                         <select id="companyName" name="companyName">
-                            <option value="Please Select Company">Please Select Company</option>
+                            <option value="Please Select Company">Lütfen şirket seçin...</option>
                             @foreach (var company in ViewBag.Companies)
                             {
                                 <option value="@company.Id">@company.Name</option>
@@ -87,7 +95,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="location">Location:</label>
+                        <label for="location">Lokasyon:</label>
                         <select id="location" name="location" onchange="updateLocationId()">
                         </select>
                         <input type="hidden" id="locationId" name="locationId" />
@@ -96,14 +104,14 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="requestDate">Request Date:</label>
+                        <label for="requestDate">Talep Tarihi:</label>
                         <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
                     </div>
 
                     <div class="form-group">
-                        <label for="department">Department:</label>
+                        <label for="department">Departman:</label>
                         <select id="department" name="department">
-                            <option value="Please Select department">Please Select department</option>
+                            <option value="Please Select department">Lütfen departman seçin..</option>
                             @foreach (var department in ViewBag.Department)
                             {
                                 <option value="@department.Id">@department.Name</option>
@@ -114,19 +122,19 @@
 
                 <div class="form-row">
                     <div class="form-group file-group">
-                        <label for="file1" id="file1Label">File 1:</label>
+                        <label for="file1" id="file1Label">Dosya Eki:</label>
                         <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
                         <span class="file-name" id="file1Name"></span>
                     </div>
 
                     <div class="form-group file-group">
-                        <label for="file2" id="file2Label">File 2:</label>
+                        <label for="file2" id="file2Label">Dosya Eki:</label>
                         <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
                         <span class="file-name" id="file2Name"></span>
                     </div>
 
                     <div class="form-group file-group">
-                        <label for="file3" id="file3Label">File 3:</label>
+                        <label for="file3" id="file3Label">Dosya Eki:</label>
                         <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
                         <span class="file-name" id="file3Name"></span>
                     </div>
@@ -134,13 +142,13 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="description">Description:</label>
+                        <label for="description">Açıklama:</label>
                         <textarea id="description" name="description"></textarea>
                     </div>
                 </div>
 
                 <div class="button-group">
-                    <button id="sendButton" type="button" onclick="sendDemand()">Send</button>
+                    <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
                 </div>
             </div>
         </form>
@@ -180,7 +188,7 @@
 
     .edit-button {
         background-color: #ffcc80;
-        color: #fff;
+        color: black;
         font-weight: bold;
         padding: 8px 15px;
         border: none;
@@ -197,7 +205,7 @@
 
     .view-button {
         background-color: #85a3ff;
-        color: #fff;
+        color: black;
         font-weight: bold;
         padding: 8px 15px;
         border: none;
@@ -449,6 +457,7 @@
 
         formData.append('DepartmentId', document.getElementById('department').value);
         formData.append('Description', document.getElementById('description').value);
+        formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
 
         var fileInput = document.getElementById('file1');
@@ -492,9 +501,9 @@
     {
         switch (status)
         {
-            case 0: return "Pending";
-            case 1: return "Cancelled";
-            case 2: return "Approved";
+            case 0: return "Beklemede";
+            case 1: return "Reddedildi";
+            case 2: return "Onaylandı";
             default: return "";
         }
     }

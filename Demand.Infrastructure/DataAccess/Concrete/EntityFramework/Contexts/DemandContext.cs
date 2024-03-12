@@ -1,11 +1,14 @@
 ﻿using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
+using Demand.Domain.Entities.CurrencyTypeEntity;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
+using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
+using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,5 +37,9 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<DepartmentEntity> Departments { get; set; }
         public virtual DbSet<PersonnelRoleEntity> PersonnelRoles { get; set; }
         public virtual DbSet<RoleEntity> Roles { get; set; }
+        public virtual DbSet<RequestInfoEntity> RequestInfos { get; set; }
+        public virtual DbSet<CurrencyTypeEntity> CurrencyTypes { get; set; }
+        public virtual DbSet<DemandOfferEntity> DemandOffers { get; set; }
+
     }
 }

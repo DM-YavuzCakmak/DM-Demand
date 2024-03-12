@@ -5,6 +5,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.RequestInfo;
 using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
@@ -13,6 +14,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.ViewModels;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
@@ -36,8 +38,9 @@ namespace Demand.Presentation.Controllers
         private readonly IDepartmentService _departmentService;
         private readonly IPersonnelService _personnelService;
         private readonly ICompanyLocationService _companyLocationService;
+        private readonly IRequestInfoService _requestInfoService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -48,6 +51,7 @@ namespace Demand.Presentation.Controllers
             _departmentService = departmentService;
             _companyLocationService = companyLocationService;
             _personnelService = personnelService;
+            _requestInfoService = requestInfoService;
         }
 
         public IActionResult Detail(long id)
@@ -236,6 +240,49 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity3.UpdatedDate = null;
                 demandMediaEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity3);
+            }
+            if (demandViewModel.Material.IsNotNull() && demandViewModel.Quantity.IsNotNull() && demandViewModel.Unit.IsNotNull())
+            {
+                RequestInfoEntity requestInfoEntity = new RequestInfoEntity();
+                requestInfoEntity.DemandId = addedDemand.Id;
+                requestInfoEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                requestInfoEntity.CreatedDate = DateTime.Now;
+                requestInfoEntity.IsDeleted = false;
+                requestInfoEntity.UpdatedDate = null;
+                requestInfoEntity.UpdatedAt = null;
+                requestInfoEntity.Metarial = demandViewModel.Material;
+                requestInfoEntity.Quantity = demandViewModel.Quantity;
+                requestInfoEntity.Unit = demandViewModel.Unit;
+                _requestInfoService.Add(requestInfoEntity);
+
+            }
+            if (demandViewModel.Material2.IsNotNull() && demandViewModel.Quantity2.IsNotNull() && demandViewModel.Unit2.IsNotNull())
+            {
+                RequestInfoEntity requestInfoEntity2 = new RequestInfoEntity();
+                requestInfoEntity2.DemandId = addedDemand.Id;
+                requestInfoEntity2.CreatedDate = DateTime.Now;
+                requestInfoEntity2.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                requestInfoEntity2.IsDeleted = false;
+                requestInfoEntity2.UpdatedDate = null;
+                requestInfoEntity2.UpdatedAt = null;
+                requestInfoEntity2.Metarial = demandViewModel.Material2;
+                requestInfoEntity2.Quantity = demandViewModel.Quantity2;
+                requestInfoEntity2.Unit = demandViewModel.Unit2;
+                _requestInfoService.Add(requestInfoEntity2);
+            }
+            if (demandViewModel.Material3.IsNotNull() && demandViewModel.Quantity3.IsNotNull() && demandViewModel.Unit3.IsNotNull())
+            {
+                RequestInfoEntity requestInfoEntity3 = new RequestInfoEntity();
+                requestInfoEntity3.DemandId = addedDemand.Id;
+                requestInfoEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                requestInfoEntity3.CreatedDate = DateTime.Now;
+                requestInfoEntity3.IsDeleted = false;
+                requestInfoEntity3.UpdatedDate = null;
+                requestInfoEntity3.UpdatedAt = null;
+                requestInfoEntity3.Metarial = demandViewModel.Material3;
+                requestInfoEntity3.Quantity = demandViewModel.Quantity3;
+                requestInfoEntity3.Unit = demandViewModel.Unit3;
+                _requestInfoService.Add(requestInfoEntity3);
             }
 
             PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;

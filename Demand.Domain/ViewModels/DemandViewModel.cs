@@ -10,6 +10,7 @@ namespace Demand.Domain.ViewModels
 {
     public class DemandViewModel
     {
+        #region DemandTableFields
         public long? CompanyId { get; set; }
         public long? DemandId { get; set; }
         public string? DemandTitle { get; set; }
@@ -28,12 +29,31 @@ namespace Demand.Domain.ViewModels
         public DateTime? UpdatedDate { get; set; }
         public long? CreatedAt { get; set; }
         public long? UpdatedAt { get; set; }
+        #endregion
+        #region DemandMediaTableFields
         public IFormFile? File1 { get; set; }
         public IFormFile? File2 { get; set; }
         public IFormFile? File3 { get; set; }
         public byte[]? File1Path { get; set; }
         public byte[]? File2Path { get; set; }
         public byte[]? File3Path { get; set; }
-
+        #endregion
+        #region RequestInfoTableFields
+        public string? Material { get; set; }
+        public int? Quantity { get; set; }
+        public string? Unit { get; set; }
+        public string? Material2 { get; set; }
+        public int? Quantity2 { get; set; }
+        public string? Unit2 { get; set; }
+        public string? Material3 { get; set; }
+        public int? Quantity3 { get; set; }
+        public string? Unit3 { get; set; }
+        #endregion
+        #region CurrencyTypeTableFields
+        public int? CurrencyTypeId { get; set; }
+        public string? CurrencyTypeText { get; set; }
+        #endregion
+        #region DemandOfferTableFields
+        #endregion
     }
 }

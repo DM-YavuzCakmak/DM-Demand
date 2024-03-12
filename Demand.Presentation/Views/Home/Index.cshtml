@@ -119,27 +119,65 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-row">
-                    <div class="form-group file-group">
+                    <div class="form-group" style="width: 400px; margin-right: 5px;">
+                        <label for="material">Malzeme:</label>
+                        <input type="text" id="material" placeholder="Malzeme" name="material" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="quantity">Miktar:</label>
+                        <input type="text" id="quantity" placeholder="Miktar" name="quantity" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="unit">Birim:</label>
+                        <input type="text" id="unit" placeholder="Birim" name="unit" />
+                    </div>
+                    <div class="form-group file-group" style="margin-top:20px">
                         <label for="file1" id="file1Label">Dosya Eki:</label>
                         <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
                         <span class="file-name" id="file1Name"></span>
                     </div>
+                </div>
 
-                    <div class="form-group file-group">
+                <div class="form-row">
+                    <div class="form-group" style="width: 400px; margin-right: 5px;">
+                        <label for="material2">Malzeme:</label>
+                        <input type="text" id="material2" placeholder="Malzeme" name="material2" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="quantity2">Miktar:</label>
+                        <input type="text" id="quantity2" placeholder="Miktar" name="quantity2" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="unit2">Birim:</label>
+                        <input type="text" id="unit2" placeholder="Birim" name="unit2" />
+                    </div>
+                    <div class="form-group file-group" style="margin-top:20px">
                         <label for="file2" id="file2Label">Dosya Eki:</label>
                         <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
                         <span class="file-name" id="file2Name"></span>
                     </div>
+                </div>
 
-                    <div class="form-group file-group">
+                <div class="form-row">
+                    <div class="form-group" style="width: 400px; margin-right: 5px;">
+                        <label for="material3">Malzeme:</label>
+                        <input type="text" id="material3" placeholder="Malzeme" name="material3" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="quantity3">Miktar:</label>
+                        <input type="text" id="quantity3" placeholder="Miktar" name="quantity3" />
+                    </div>
+                    <div class="form-group" style="width: 150px; margin-right: 5px;">
+                        <label for="unit3">Birim:</label>
+                        <input type="text" id="unit3" placeholder="Birim" name="unit3" />
+                    </div>
+                    <div class="form-group file-group" style="margin-top:20px">
                         <label for="file3" id="file3Label">Dosya Eki:</label>
                         <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
                         <span class="file-name" id="file3Name"></span>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="description">Açıklama:</label>
@@ -229,7 +267,7 @@
         background-color: #fff;
         padding: 20px;
         width: 80%;
-        height: 80%;
+        height: 90%;
         border-radius: 15px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 1001;
@@ -316,10 +354,25 @@
         margin-bottom: 10px;
     }
 
+    .popup .button-group {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
     .form-row {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
+    }
+
+    .form-row2 {
+        height: 100px;
+        margin-top:-10px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        margin-top:-10px;
     }
 
 
@@ -459,7 +512,16 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
-
+        formData.append('Material', document.getElementById('material').value);
+        console.log(('Material', document.getElementById('material').value));
+        formData.append('Quantity', document.getElementById('quantity').value);
+        formData.append('Unit', document.getElementById('unit').value);
+        formData.append('Material2', document.getElementById('material2').value);
+        formData.append('Quantity2', document.getElementById('quantity2').value);
+        formData.append('Unit2', document.getElementById('unit2').value);
+        formData.append('Material3', document.getElementById('material3').value);
+        formData.append('Quantity3', document.getElementById('quantity3').value);
+        formData.append('Unit3', document.getElementById('unit3').value);
         var fileInput = document.getElementById('file1');
         formData.append('File1', fileInput.files[0]);
 

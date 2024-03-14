@@ -53,38 +53,41 @@ namespace Demand.Presentation.Controllers
             var claims = claimsIdentity.Claims;
             var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             List<DemandViewModel> demandViewModels = new List<DemandViewModel>();
-
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department = departments;
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
-            List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 7 || demandProcesses.Select(d=> d.DemandId).Contains(x.Id))).Data.ToList();
-            foreach (var demand in DemandList)
+            if (demandProcesses.Count>0)
             {
-                DemandViewModel viewModel = new DemandViewModel
+                List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 7 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.ToList();
+                foreach (var demand in DemandList)
                 {
-                    DemandId = demand.Id,
-                    DemandDate = demand.CreatedDate,
-                    Status = demand.Status,
-                    DemandTitle=demand.DemandTitle,
-                    CreatedAt = demand.CreatedAt
-                };
-                IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
-                if (personnelResult.IsNotNull())
-                {
-                    viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
-                }
-                IDataResult<CompanyLocation> companyLocation = _companyLocationService.GetById(demand.CompanyLocationId);
-                if (companyLocation.IsNotNull())
-                {
-                    viewModel.LocationName = companyLocation.Data.Name;
-                }
-                demandViewModels.Add(viewModel);
+                    DemandViewModel viewModel = new DemandViewModel
+                    {
+                        DemandId = demand.Id,
+                        DemandDate = demand.CreatedDate,
+                        Status = demand.Status,
+                        DemandTitle = demand.DemandTitle,
+                        CreatedAt = demand.CreatedAt
+                    };
+                    IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
+                    if (personnelResult.IsNotNull())
+                    {
+                        viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                    }
+                    IDataResult<CompanyLocation> companyLocation = _companyLocationService.GetById(demand.CompanyLocationId);
+                    if (companyLocation.IsNotNull())
+                    {
+                        viewModel.LocationName = companyLocation.Data.Name;
+                    }
+                    demandViewModels.Add(viewModel);
 
-                List<Company> companies = _companyService.GetList().Data.ToList();
-                ViewBag.Companies = companies;
-                List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
-                ViewBag.Department = departments;
+                   
+                }
+                return View(demandViewModels);
             }
             return View(demandViewModels);
-
         }
 
         public IActionResult GetFilterData(int? status = null, long? locationId = null, DateTime? startDate = null, DateTime? endDate = null)

@@ -55,7 +55,7 @@ namespace Demand.Presentation.Controllers
             List<DemandViewModel> demandViewModels = new List<DemandViewModel>();
 
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
-            List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || demandProcesses.Select(d=> d.DemandId).Contains(x.Id))).Data.ToList();
+            List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 7 || demandProcesses.Select(d=> d.DemandId).Contains(x.Id))).Data.ToList();
             foreach (var demand in DemandList)
             {
                 DemandViewModel viewModel = new DemandViewModel

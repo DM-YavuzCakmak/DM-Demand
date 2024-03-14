@@ -44,6 +44,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+           
         }
 
         .form-group {
@@ -128,13 +129,12 @@
         }
     </style>
 </head>
-
 <body>
     <div class="popup-header">
         <h2>Talep Detayı</h2>
     </div>
     <form id="siteform" enctype="multipart/form-data">
-        <main class="table" id="demandTable">
+        <main class="table" id="demandTable" style="overflow-y: auto !important;">
             <div class="form-row">
                 <div class="form-group">
                     <label for="companyName">Şirket Adı:</label>
@@ -142,7 +142,6 @@
                         <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="location">Lokasyon:</label>
                     <select id="location" name="location" disabled>
@@ -151,19 +150,38 @@
                     <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label for="requestDate">Talep Tarihi:</label>
                     <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
                 </div>
-
                 <div class="form-group">
                     <label for="department">Departman:</label>
                     <select id="department" name="department" disabled>
                         <option value="@Model.DepartmentId" selected="selected">@Model.DepartmentName</option>
                     </select>
                 </div>
+            </div>
+            <div class="form-row">
+                <table class="offer-table">
+                    <thead>
+                        <tr>
+                            <th>Malzeme</th>
+                            <th>Miktar</th>
+                            <th>Birim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var requsetInfo in Model.requestInfoViewModels)
+                        {
+                            <tr>
+                                <td>@requsetInfo.Metarial</td>
+                                <td>@requsetInfo.Quantity</td>
+                                <td>@requsetInfo.Unit</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -176,45 +194,54 @@
                 {
                     var base64 = Convert.ToBase64String(Model.File1Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file1.pdf" class="btn btn-primary">Dosya Eki İndir</a>
+                    <a href="@pdfSrc" download="@Model.File1Name" class="btn btn-primary">Dosya Eki İndir</a>
                 }
-                else
-                {
-                    <span>Dosya eki bulunmamaktadır</span>
-                }
-            </div>
-            <div class="form-row">
                 @if (Model.File2Path != null)
                 {
                     var base64 = Convert.ToBase64String(Model.File2Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file2.pdf" class="btn btn-primary">Dosya Eki İndir</a>
+                    <a href="@pdfSrc" download="@Model.File2Name" class="btn btn-primary">Dosya Eki İndir</a>
                 }
-                else
-                {
-                    <span>Dosya eki bulunmamaktadır</span>
-                }
-            </div>
-            <div class="form-row">
                 @if (Model.File3Path != null)
                 {
                     var base64 = Convert.ToBase64String(Model.File3Path);
                     var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="file3.pdf" class="btn btn-primary">Dosya Eki İndir</a>
-                }
-                else
-                {
-                    <span>Dosya eki bulunmamaktadır</span>
+                    <a href="@pdfSrc" download="@Model.File3Name" class="btn btn-primary">Dosya Eki İndir</a>
                 }
             </div>
-        <div class="form-group">
-            <label for="declineDescription">Red Gerekçesi:</label>
-            <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
-        </div>
-        <div class="button-group">
-            <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-            <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
-        </div>
+            <div class="form-row">
+                <table class="offer-table">
+                    <thead>
+                        <tr>
+                            <th>Şirket</th>
+                            <th>Telefon</th>
+                            <th>Miktar</th>
+                            <th>Birim Fiyat</th>
+                            <th>Toplam Fiyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var demandOffer in Model.DemandOffers)
+                        {
+                            <tr>
+                                <td>@demandOffer.CompanyName</td>
+                                <td>@demandOffer.CompanyPhone</td>
+                                <td>@demandOffer.Quantity</td>
+                                <td>@demandOffer.Price</td>
+                                <td>@demandOffer.TotalPrice</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <label for="declineDescription">Red Gerekçesi:</label>
+                <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
+            </div>
+            <div class="button-group">
+                <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+                <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
+            </div>
         </main>
     </form>
     <div id="overlay"></div>
@@ -235,6 +262,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
+
 
     .create-demand-button {
         background-color: #3498db;
@@ -262,11 +290,34 @@
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     }
 
-        .edit-button:hover {
-            background-color: #ffbb66;
-            color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .offer-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .offer-table th, .offer-table td {
+            padding: 8px;
+            border: 1px solid #ccc;
         }
+
+        .offer-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .offer-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .offer-table tr:hover {
+            background-color: #f2f2f2;
+        }
+
+    .edit-button:hover {
+        background-color: #ffbb66;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
     .view-button {
         background-color: #85a3ff;
@@ -489,6 +540,7 @@
             });
         });
     });
+
     function updateLocationId() {
         var locationId = $('#location').val();
         $('#locationId').val(locationId);

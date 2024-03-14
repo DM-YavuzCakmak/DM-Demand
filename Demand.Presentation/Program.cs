@@ -105,7 +105,7 @@ builder.Services.AddScoped<ICurrencyTypeService, CurrencyTypeService>();
 #endregion
 
 
-#region CurrencyType
+#region DemandOffer
 builder.Services.AddScoped<IDemandOfferRepository, DemandOfferRepository>();
 builder.Services.AddScoped<IDemandOfferService, DemandOfferService>();
 #endregion

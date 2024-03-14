@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Demand.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
@@ -54,6 +55,33 @@ namespace Demand.Domain.ViewModels
         public string? CurrencyTypeText { get; set; }
         #endregion
         #region DemandOfferTableFields
+        public List<DemandOfferViewModel>? DemandOffers { get; set; }
+
         #endregion
+        public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
+
+        public string?  File1Name{ get; set; }
+        public string?  File2Name{ get; set; }
+        public string?  File3Name{ get; set; }
+    }
+
+    public class DemandOfferViewModel
+    {
+        public long DemandId { get; set; }
+        public long CurrencyTypeId { get; set; }
+        public long RequestInfoId { get; set; }
+        public decimal? TotalPrice { get; set; }
+        public int? Status { get; set; }
+        public string? CompanyName { get; set; }
+        public string? CompanyPhone { get; set; }
+        public string? Quantity { get; set; }
+        public decimal? Price { get; set; }
+    }
+
+    public class RequestInfoViewModel
+    {
+        public string Metarial { get; set; }
+        public int? Quantity { get; set; }
+        public string Unit { get; set; }
     }
 }

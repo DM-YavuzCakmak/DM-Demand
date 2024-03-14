@@ -1,6 +1,8 @@
 ﻿using Demand.Business.Abstract.CompanyLocation;
 using Demand.Business.Abstract.CompanyService;
+using Demand.Business.Abstract.CurrencyTypeService;
 using Demand.Business.Abstract.DemandMediaService;
+using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
@@ -9,8 +11,10 @@ using Demand.Business.Abstract.RequestInfo;
 using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
+using Demand.Domain.Entities.CurrencyTypeEntity;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
+using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
@@ -39,8 +43,10 @@ namespace Demand.Presentation.Controllers
         private readonly IPersonnelService _personnelService;
         private readonly ICompanyLocationService _companyLocationService;
         private readonly IRequestInfoService _requestInfoService;
+        private readonly ICurrencyTypeService _currencyTypeService;
+        private readonly IDemandOfferService _demandOfferService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -52,66 +58,25 @@ namespace Demand.Presentation.Controllers
             _companyLocationService = companyLocationService;
             _personnelService = personnelService;
             _requestInfoService = requestInfoService;
+            _currencyTypeService = currencyTypeService;
+            _demandOfferService = demandOfferService;
         }
 
         public IActionResult Detail(long id)
         {
+            List<DemandOfferViewModel> demandOfferViewModels = new List<DemandOfferViewModel>();
+            List<RequestInfoViewModel> requestInfoViewModels = new List<RequestInfoViewModel>();
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
             Company company = _companyService.GetById(companyLocation.CompanyId).Data;
             PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
-            DemandViewModel demandViewModel = new DemandViewModel
-            {
-                CompanyId = company.Id,
-                DemandId = id,
-                DemandDate = demand.CreatedDate,
-                DemanderName = personnel.FirstName + " " + personnel.LastName,
-                DepartmentId = demand.DepartmentId,
-                Description = demand.Description,
-                CreatedDate = demand.CreatedDate,
-                IsDeleted = demand.IsDeleted,
-                RequirementDate = demand.RequirementDate,
-                CompanyLocationId = demand.CompanyLocationId,
-                CreatedAt = demand.CreatedAt,
-                LocationName = companyLocation.Name,
-                Status = demand.Status,
-                UpdatedAt = demand.UpdatedAt,
-                UpdatedDate = demand.UpdatedDate,
-                CompanyName = company.Name,
-                DepartmentName = department.Name,
-            };
-            if (demandMediaEntities.IsNotNullOrEmpty())
-            {
-                demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
-                if (demandMediaEntities.Count > 1)
-                {
-                    demandViewModel.File2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[1].Path);
-                }
-                if (demandMediaEntities.Count > 2)
-                {
-                    demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
-                }
-            }
+            List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
+            List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
 
-            List<Company> companies = _companyService.GetList().Data.ToList();
-            ViewBag.Companies = companies;
-            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
-            ViewBag.Department = departments;
+          
 
-            return View(demandViewModel);
-        }
-
-        [HttpGet("Edit/{id}")]
-        public IActionResult Edit(long id)
-        {
-            DemandEntity demand = _demandService.GetById(id).Data;
-            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
-            CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
-            Company company = _companyService.GetById(companyLocation.CompanyId).Data;
-            PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
-            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -132,6 +97,110 @@ namespace Demand.Presentation.Controllers
                 CompanyName = company.Name,
                 DepartmentName = department.Name
             };
+            foreach (var requestInfo in requestInfos)
+            {
+                requestInfoViewModels.Add(new RequestInfoViewModel
+                {
+                    Metarial = requestInfo.Metarial,
+                    Quantity = requestInfo.Quantity,
+                    Unit = requestInfo.Unit
+                });
+            }
+            demandViewModel.requestInfoViewModels = requestInfoViewModels;
+
+            foreach (var demandOffer in demandOffers)
+            {
+                demandOfferViewModels.Add(new DemandOfferViewModel
+                {
+                    DemandId = demandOffer.DemandId,
+                    CurrencyTypeId = demandOffer.CurrencyTypeId,
+                    RequestInfoId = demandOffer.RequestInfoId,
+                    TotalPrice = demandOffer.TotalPrice,
+                    Status = demandOffer.Status,
+                    CompanyName = demandOffer.CompanyName,
+                    CompanyPhone = demandOffer.CompanyPhone,
+                    Quantity = demandOffer.Quantity,
+                    Price = demandOffer.Price
+                });
+            }
+            demandViewModel.DemandOffers = demandOfferViewModels;
+            if (demandMediaEntities.IsNotNullOrEmpty())
+            {
+                demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
+                demandViewModel.File1Name =  demandMediaEntities[0].FileName;
+
+                if (demandMediaEntities.Count > 1)
+                {
+                    demandViewModel.File2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[1].Path);
+                    demandViewModel.File2Name = demandMediaEntities[1].FileName;
+
+                }
+                if (demandMediaEntities.Count > 2)
+                {
+                    demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
+                    demandViewModel.File3Name = demandMediaEntities[2].FileName;
+
+                }
+            }
+
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Department = departments;
+
+            return View(demandViewModel);
+        }
+
+        [HttpGet("Edit/{id}")]
+        public IActionResult Edit(long id)
+        {
+            DemandEntity demand = _demandService.GetById(id).Data;
+            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
+            CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
+            Company company = _companyService.GetById(companyLocation.CompanyId).Data;
+            PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
+            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
+            List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                CompanyId = company.Id,
+                DemandId = id,
+                DemandDate = demand.CreatedDate,
+                DemanderName = personnel.FirstName + " " + personnel.LastName,
+                DepartmentId = demand.DepartmentId,
+                Description = demand.Description,
+                CreatedDate = demand.CreatedDate,
+                IsDeleted = demand.IsDeleted,
+                RequirementDate = demand.RequirementDate,
+                CompanyLocationId = demand.CompanyLocationId,
+                CreatedAt = demand.CreatedAt,
+                LocationName = companyLocation.Name,
+                Status = demand.Status,
+                UpdatedAt = demand.UpdatedAt,
+                UpdatedDate = demand.UpdatedDate,
+                CompanyName = company.Name,
+                DepartmentName = department.Name
+            };
+            if (requestInfos.IsNotNullOrEmpty())
+            {
+                demandViewModel.Material = requestInfos[0].Metarial;
+                demandViewModel.Quantity= requestInfos[0].Quantity;
+                demandViewModel.Unit = requestInfos[0].Unit;
+                if (requestInfos.Count > 1)
+                {
+                    demandViewModel.Material2 = requestInfos[1].Metarial;
+                    demandViewModel.Quantity2 = requestInfos[1].Quantity;
+                    demandViewModel.Unit2 = requestInfos[1].Unit;
+                }
+                if (requestInfos.Count > 2)
+                {
+                    demandViewModel.Material3 = requestInfos[2].Metarial;
+                    demandViewModel.Quantity3 = requestInfos[2].Quantity;
+                    demandViewModel.Unit3 = requestInfos[2].Unit;
+                }
+            }
+            List<CurrencyTypeEntity> currencyTypes = _currencyTypeService.GetAll().Data.ToList();
+            ViewBag.CurrencyTypes = currencyTypes;
             List<CompanyLocation> locations = _companyLocationService.GetAll().Data.ToList(); 
             ViewBag.Locations = locations;
             List<Company> companies = _companyService.GetList().Data.ToList();
@@ -310,7 +379,14 @@ namespace Demand.Presentation.Controllers
                 if (i == 1)
                 {
                     if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
-                        EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "New Demand", "Böyle bir şey talep etti.");
+                    {
+                        string demandLink = "xxxxx";
+                        var emailBody = $"Merhabalar Sayın "+ parentPersonnel.FirstName +" "+ parentPersonnel.LastName +",<br/><br/>" +
+                                    personnelEntity.FirstName +" "+ personnelEntity.LastName + " tarafından,"+ demandEntity.DemandTitle+" başlıklı,"+demandEntity.Id+ " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
+                                    "Talep URL :"+ demandLink + " <br/><br/>" +
+                                    "Saygılarımızla.";
+                        EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi",emailBody);
+                    }
                 }
 
                 if (parentPersonnel.ParentId != null)
@@ -365,7 +441,8 @@ namespace Demand.Presentation.Controllers
                 DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
                 if (nextDemandProcessEntity != null)
                 {
-                    //Send Mail nextDemandProcessEntity
+                    //Send Mail nextDemandProcessEntity SAMET
+                    // Sedadan sonra murata mail gidecek gibi
                 }
                 else
                 {
@@ -389,10 +466,11 @@ namespace Demand.Presentation.Controllers
                 List<DemandProcessEntity> previousDemandProcessList = demandProcessEntities.Where(x => x.HierarchyOrder < demandProcessEntity.HierarchyOrder).ToList();
                 if (previousDemandProcessList != null && previousDemandProcessList.Count > 0)
                 {
-                    //Send Mail previousDemandProcessList
+                    //Send Mail previousDemandProcessList SAMET
+                    // iptal edildiğinde herkese mail gidiyor.
                 }
 
-                // Send Mail demandProcessEntity.CreatedAt (Açan Kişiye de iptal Bildirimi için)
+                // Send Mail demandProcessEntity.CreatedAt (Açan Kişiye de iptal Bildirimi için) SAMET
             }
 
             return Ok(demandProcessEntity);
@@ -441,16 +519,77 @@ namespace Demand.Presentation.Controllers
             #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
-            long userId =long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-            #endregion
-            DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId).Data;
+            long userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            RequestInfoEntity requestInfo = _requestInfoService.GetByDemandId((long)updateDemandViewModel.DemandId).Data;
+            if (updateDemandViewModel.Offer1CompanyName.IsNotNull())
+            {
+                DemandOfferEntity demandOfferEntity = new DemandOfferEntity();
+                demandOfferEntity.CompanyName = updateDemandViewModel.Offer1CompanyName;
+                demandOfferEntity.CompanyPhone = updateDemandViewModel.Offer1CompanyPhone;
+                demandOfferEntity.CreatedAt = userId;
+                demandOfferEntity.CreatedDate = DateTime.Now;
+                demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.Offer1CurrencyType;
+                demandOfferEntity.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity.IsDeleted = false;
+                demandOfferEntity.Price = updateDemandViewModel.Offer1Price;
+                demandOfferEntity.Quantity = updateDemandViewModel.Offer1Amount.ToString(); ;
+                demandOfferEntity.RequestInfoId = requestInfo.Id;
+                demandOfferEntity.Status = 0;
+                demandOfferEntity.TotalPrice = updateDemandViewModel.Offer1TotalPrice;
+                demandOfferEntity.UpdatedAt = null;
+                demandOfferEntity.UpdatedDate = null;
+                _demandOfferService.Add(demandOfferEntity);
+            }
+            if (updateDemandViewModel.Offer2CompanyName.IsNotNull())
+            {
+                DemandOfferEntity demandOfferEntity2 = new DemandOfferEntity();
+                demandOfferEntity2.CompanyName = updateDemandViewModel.Offer2CompanyName;
+                demandOfferEntity2.CompanyPhone = updateDemandViewModel.Offer2CompanyPhone;
+                demandOfferEntity2.CreatedAt = userId;
+                demandOfferEntity2.CreatedDate = DateTime.Now;
+                demandOfferEntity2.CurrencyTypeId = (long)updateDemandViewModel.Offer2CurrencyType;
+                demandOfferEntity2.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity2.IsDeleted = false;
+                demandOfferEntity2.Price = updateDemandViewModel.Offer2Price;
+                demandOfferEntity2.Quantity = updateDemandViewModel.Offer2Amount.ToString(); ;
+                demandOfferEntity2.RequestInfoId = requestInfo.Id;
+                demandOfferEntity2.Status = 0;
+                demandOfferEntity2.TotalPrice = updateDemandViewModel.Offer2TotalPrice;
+                demandOfferEntity2.UpdatedAt = null;
+                demandOfferEntity2.UpdatedDate = null;
+                _demandOfferService.Add(demandOfferEntity2);
+            }
+            if (updateDemandViewModel.Offer3CompanyName.IsNotNull())
+            {
+                DemandOfferEntity demandOfferEntity3 = new DemandOfferEntity();
+                demandOfferEntity3.CompanyName = updateDemandViewModel.Offer3CompanyName;
+                demandOfferEntity3.CompanyPhone = updateDemandViewModel.Offer3CompanyPhone;
+                demandOfferEntity3.CreatedAt = userId;
+                demandOfferEntity3.CreatedDate = DateTime.Now;
+                demandOfferEntity3.CurrencyTypeId = (long)updateDemandViewModel.Offer3CurrencyType;
+                demandOfferEntity3.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity3.IsDeleted = false;
+                demandOfferEntity3.Price = updateDemandViewModel.Offer3Price;
+                demandOfferEntity3.Quantity = updateDemandViewModel.Offer3Amount.ToString(); ;
+                demandOfferEntity3.RequestInfoId = requestInfo.Id;
+                demandOfferEntity3.Status = 0;
+                demandOfferEntity3.TotalPrice = updateDemandViewModel.Offer3TotalPrice;
+                demandOfferEntity3.UpdatedAt = null;
+                demandOfferEntity3.UpdatedDate = null;
+                _demandOfferService.Add(demandOfferEntity3);
+            }
 
-            demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId;
-            demandEntity.DepartmentId = updateDemandViewModel.DepartmentId;
+            #endregion
+            DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
+            string title = demandEntity.DemandTitle;
+            demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId.Value;
+            demandEntity.DepartmentId = updateDemandViewModel.DepartmentId.Value;
             demandEntity.Description =updateDemandViewModel.Description;
             demandEntity.DemandTitle = updateDemandViewModel.DemandTitle;
             demandEntity.UpdatedAt = userId;
             demandEntity.UpdatedDate = DateTime.Now;
+            demandEntity.DemandTitle = title;
+
 
 
             _demandService.Update(demandEntity);

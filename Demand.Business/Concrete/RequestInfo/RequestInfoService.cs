@@ -34,6 +34,11 @@ namespace Demand.Business.Concrete.RequestInfo
             return new SuccessDataResult<IList<RequestInfoEntity>>(_requestInfoRepository.GetAll());
         }
 
+        public IDataResult<RequestInfoEntity> GetByDemandId(long demandId)
+        {
+            return new SuccessDataResult<RequestInfoEntity>(_requestInfoRepository.GetList(x => x.DemandId == demandId).FirstOrDefault());
+        }
+
         public IDataResult<RequestInfoEntity> GetById(long id)
         {
             return new SuccessDataResult<RequestInfoEntity>(_requestInfoRepository.Get(x => x.Id == id));

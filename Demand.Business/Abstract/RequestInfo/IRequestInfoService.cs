@@ -17,5 +17,7 @@ namespace Demand.Business.Abstract.RequestInfo
         RequestInfoEntity Update(RequestInfoEntity requestInfo);
         IDataResult<RequestInfoEntity> GetById(long id);
         IDataResult<IList<RequestInfoEntity>> GetList(Expression<Func<RequestInfoEntity, bool>> filter);
+        IDataResult<RequestInfoEntity> GetByDemandId(long demandId);
+
     }
 }

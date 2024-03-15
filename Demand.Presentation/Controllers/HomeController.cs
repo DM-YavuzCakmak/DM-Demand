@@ -58,7 +58,8 @@ namespace Demand.Presentation.Controllers
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
             ViewBag.Department = departments;
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
-            if (demandProcesses.Count>0)
+            List<DemandProcessEntity> creatorDemandProcesses = _demandProcessService.GetList(x => x.CreatedAt == userId).Data.ToList();
+            if (demandProcesses.Count>0 || userId==7 || creatorDemandProcesses.Count>0)
             {
                 List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 7 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.ToList();
                 foreach (var demand in DemandList)

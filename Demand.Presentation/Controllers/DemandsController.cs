@@ -356,46 +356,58 @@ namespace Demand.Presentation.Controllers
 
             PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
-            PersonnelEntity parentPersonnel = _personnelService.GetById((long)personnelEntity.ParentId).Data;
-
-            int i = 0;
-            while (parentPersonnel != null)
+            if (personnelEntity.ParentId.IsNotNull())
             {
-                i++;
-                DemandProcessEntity demandProcessEntity = new DemandProcessEntity
+                PersonnelEntity parentPersonnel = _personnelService.GetById((long)personnelEntity.ParentId).Data;
+
+                int i = 0;
+                while (parentPersonnel != null)
                 {
-                    DemandId = addedDemand.Id,
-                    ManagerId = parentPersonnel.Id,
-                    IsDeleted = false,
-                    HierarchyOrder = i,
-                    Desciription = string.Empty,
-                    Status = 0,
-                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
-                    CreatedDate = DateTime.Now,
-                    UpdatedAt = null,
-                    UpdatedDate = null,
-                };
-                _demandProcessService.AddDemandProcess(demandProcessEntity);
-                if (i == 1)
-                {
-                    if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
+                    i++;
+                    DemandProcessEntity demandProcessEntity = new DemandProcessEntity
                     {
-                        string demandLink = "xxxxx";
-                        var emailBody = $"Merhabalar Sayın " + parentPersonnel.FirstName + " " + parentPersonnel.LastName + ",<br/><br/>" +
-                                    personnelEntity.FirstName + " " + personnelEntity.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
-                                    "Talep URL :" + demandLink + " <br/><br/>" +
-                                    "Saygılarımızla.";
-                        EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                        DemandId = addedDemand.Id,
+                        ManagerId = parentPersonnel.Id,
+                        IsDeleted = false,
+                        HierarchyOrder = i,
+                        Desciription = string.Empty,
+                        Status = 0,
+                        CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                        CreatedDate = DateTime.Now,
+                        UpdatedAt = null,
+                        UpdatedDate = null,
+                    };
+                    _demandProcessService.AddDemandProcess(demandProcessEntity);
+                    if (i == 1)
+                    {
+                        if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
+                        {
+                            string demandLink = "xxxxx";
+                            var emailBody = $"Merhabalar Sayın " + parentPersonnel.FirstName + " " + parentPersonnel.LastName + ",<br/><br/>" +
+                                        personnelEntity.FirstName + " " + personnelEntity.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
+                                        "Talep URL :" + demandLink + " <br/><br/>" +
+                                        "Saygılarımızla.";
+                            EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                        }
                     }
+
+                    if (parentPersonnel.ParentId != null)
+                        parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
+                    else
+                        break;
                 }
-
-                if (parentPersonnel.ParentId != null)
-                    parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
-                else
-                    break;
             }
+            else
+            {
+                PersonnelEntity personnel = _personnelService.GetById(7).Data;
 
-
+                string demandLink = "xxxxx";
+                var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                            personnelEntity.FirstName + " " + personnelEntity.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol etmenizi rica ederiz.<br/><br/>" +
+                            "Talep URL :" + demandLink + " <br/><br/>" +
+                            "Saygılarımızla.";
+                EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+            }
             return Ok(addedDemand);
         }
 

@@ -1,6 +1,12 @@
 ﻿@using Demand.Domain.ViewModels
+@using System.Security.Claims
 @model DemandViewModel
 
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -200,199 +206,202 @@
                 <textarea id="description" name="description">@Model.Description</textarea>
             </div>
         </div>
-        <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
-            <span>TEKLİF 1</span>
-            <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCompanyName">Firma Adı:</label>
-                <input type="text" id="offerCompanyName" name="offerCompanyName" placeholder="ÖRN : DEM MUSEUMS ">
+        @if (userId == 7)
+        {
+            <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
+                <span>TEKLİF 1</span>
+                <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
             </div>
-
-            <div class="form-group">
-                <label for="offerCompanyPhone">Firma Telefon Numarası:</label>
-                <input type="text" id="offerCompanyPhone" name="offerCompanyPhone" placeholder="ÖRN :5XX XXX XX XX ">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCurrencyType">Para Birimi:</label>
-                <select id="offerCurrencyType" name="offerCurrencyType" style="width:130px">
-                    @foreach (var currencyType in ViewBag.CurrencyTypes)
-                    {
-                        if (Model.CurrencyTypeId == currencyType.Id)
-                        {
-                            <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
-                        }
-                        else
-                        {
-                            <option value="@currencyType.Id">@currencyType.CurrencyType</option>
-                        }
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="offerAmount">Miktar:</label>
-                <input type="text" id="offerAmount" name="offerAmount" value="@Model.Quantity" style="width:100px">
-            </div>
-
-            <div class="form-group">
-                <label for="offerMaterial">Malzeme :</label>
-                <input type="text" id="offerMaterial" name="offerMaterial" value="@Model.Material" style="width:250px">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-row" id="exchangeRateTextbox" style="display: none;">
+            <div class="form-row">
                 <div class="form-group">
-                    <label for="exchangeRate">Dolar/Euro Kuru:</label>
-                    <input type="text" id="exchangeRate" name="exchangeRate" placeholder="ÖRN: 9.50">
+                    <label for="offerCompanyName">Firma Adı:</label>
+                    <input type="text" id="offerCompanyName" name="offerCompanyName" placeholder="ÖRN : DEM MUSEUMS ">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerCompanyPhone">Firma Telefon Numarası:</label>
+                    <input type="text" id="offerCompanyPhone" name="offerCompanyPhone" placeholder="ÖRN :5XX XXX XX XX ">
                 </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerPrice">Fiyat:</label>
-                <input type="text" id="offerPrice" name="offerPrice" placeholder="ÖRN : 75 / 75.00 / 75,00">
-            </div>
 
-            <div class="form-group">
-                <label for="offerTotalPrice">Toplam Fiyat (Türk Lirası):</label>
-                <input type="text" id="offerTotalPrice" name="offerTotalPrice" readonly>
-            </div>
-        </div>
-
-        <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
-            <span>TEKLİF 2</span>
-            <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCompanyName2">Firma Adı:</label>
-                <input type="text" id="offerCompanyName2" name="offerCompanyName2" placeholder="ÖRN : DEM MUSEUMS ">
-            </div>
-
-            <div class="form-group">
-                <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
-                <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" placeholder="ÖRN :5XX XXX XX XX ">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCurrencyType2">Para Birimi:</label>
-                <select id="offerCurrencyType2" name="offerCurrencyType2" style="width:130px">
-                    @foreach (var currencyType in ViewBag.CurrencyTypes)
-                    {
-                        if (Model.CurrencyTypeId == currencyType.Id)
-                        {
-                            <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
-                        }
-                        else
-                        {
-                            <option value="@currencyType.Id">@currencyType.CurrencyType</option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="offerAmount2">Miktar:</label>
-                <input type="text" id="offerAmount2" name="offerAmount2" value="@Model.Quantity" style="width:100px">
-            </div>
-
-            <div class="form-group">
-                <label for="offerMaterial2">Malzeme :</label>
-                <input type="text" id="offerMaterial2" name="offerMaterial2" value="@Model.Material2" style="width:250px">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-row" id="exchangeRateTextbox2" style="display: none;">
+            <div class="form-row">
                 <div class="form-group">
-                    <label for="exchangeRate">Dolar/Euro Kuru:</label>
-                    <input type="text" id="exchangeRate2" name="exchangeRate2" placeholder="ÖRN: 9.50">
+                    <label for="offerCurrencyType">Para Birimi:</label>
+                    <select id="offerCurrencyType" name="offerCurrencyType" style="width:130px">
+                        @foreach (var currencyType in ViewBag.CurrencyTypes)
+                        {
+                            if (Model.CurrencyTypeId == currencyType.Id)
+                            {
+                                <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
+                            }
+                            else
+                            {
+                                <option value="@currencyType.Id">@currencyType.CurrencyType</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="offerAmount">Miktar:</label>
+                    <input type="text" id="offerAmount" name="offerAmount" value="@Model.Quantity" style="width:100px">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerMaterial">Malzeme :</label>
+                    <input type="text" id="offerMaterial" name="offerMaterial" value="@Model.Material" style="width:250px">
                 </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerPrice2">Fiyat:</label>
-                <input type="text" id="offerPrice2" name="offerPrice2" placeholder="ÖRN : 75 / 75.00 / 75,00">
-            </div>
-
-            <div class="form-group">
-                <label for="offerTotalPrice2">Toplam Fiyat (Türk Lirası):</label>
-                <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" readonly>
-            </div>
-        </div>
-
-
-
-
-        <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
-            <span>TEKLİF 3 </span>
-            <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCompanyName3">Firma Adı:</label>
-                <input type="text" id="offerCompanyName3" name="offerCompanyName3" placeholder="ÖRN : DEM MUSEUMS ">
-            </div>
-
-            <div class="form-group">
-                <label for="offerCompanyPhone3">Firma Telefon Numarası:</label>
-                <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" placeholder="ÖRN :5XX XXX XX XX ">
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerCurrencyType3">Para Birimi:</label>
-                <select id="offerCurrencyType3" name="offerCurrencyType3" style="width:130px">
-                    @foreach (var currencyType in ViewBag.CurrencyTypes)
-                    {
-                        if (Model.CurrencyTypeId == currencyType.Id)
-                        {
-                            <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
-                        }
-                        else
-                        {
-                            <option value="@currencyType.Id">@currencyType.CurrencyType</option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="offerAmount3">Miktar:</label>
-                <input type="text" id="offerAmount3" name="offerAmount3" value="@Model.Quantity" style="width:100px">
-            </div>
-
-            <div class="form-group">
-                <label for="offerMaterial3">Malzeme :</label>
-                <input type="text" id="offerMaterial3" name="offerMaterial3" value="@Model.Material3" style="width:250px">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-row" id="exchangeRateTextbox3" style="display: none;">
-                <div class="form-group">
-                    <label for="exchangeRate">Dolar/Euro Kuru:</label>
-                    <input type="text" id="exchangeRate3" name="exchangeRate3" placeholder="ÖRN: 9.50">
+            <div class="form-row">
+                <div class="form-row" id="exchangeRateTextbox" style="display: none;">
+                    <div class="form-group">
+                        <label for="exchangeRate">Dolar/Euro Kuru:</label>
+                        <input type="text" id="exchangeRate" name="exchangeRate" placeholder="ÖRN: 9.50">
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label for="offerPrice3">Fiyat:</label>
-                <input type="text" id="offerPrice3" name="offerPrice3" placeholder="ÖRN : 75 / 75.00 / 75,00">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerPrice">Fiyat:</label>
+                    <input type="text" id="offerPrice" name="offerPrice" placeholder="ÖRN : 75 / 75.00 / 75,00">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerTotalPrice">Toplam Fiyat (Türk Lirası):</label>
+                    <input type="text" id="offerTotalPrice" name="offerTotalPrice" readonly>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="offerTotalPrice3">Toplam Fiyat (Türk Lirası):</label>
-                <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" readonly>
+            <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
+                <span>TEKLİF 2</span>
+                <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
             </div>
-        </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerCompanyName2">Firma Adı:</label>
+                    <input type="text" id="offerCompanyName2" name="offerCompanyName2" placeholder="ÖRN : DEM MUSEUMS ">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
+                    <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" placeholder="ÖRN :5XX XXX XX XX ">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerCurrencyType2">Para Birimi:</label>
+                    <select id="offerCurrencyType2" name="offerCurrencyType2" style="width:130px">
+                        @foreach (var currencyType in ViewBag.CurrencyTypes)
+                        {
+                            if (Model.CurrencyTypeId == currencyType.Id)
+                            {
+                                <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
+                            }
+                            else
+                            {
+                                <option value="@currencyType.Id">@currencyType.CurrencyType</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="offerAmount2">Miktar:</label>
+                    <input type="text" id="offerAmount2" name="offerAmount2" value="@Model.Quantity" style="width:100px">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerMaterial2">Malzeme :</label>
+                    <input type="text" id="offerMaterial2" name="offerMaterial2" value="@Model.Material2" style="width:250px">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-row" id="exchangeRateTextbox2" style="display: none;">
+                    <div class="form-group">
+                        <label for="exchangeRate">Dolar/Euro Kuru:</label>
+                        <input type="text" id="exchangeRate2" name="exchangeRate2" placeholder="ÖRN: 9.50">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerPrice2">Fiyat:</label>
+                    <input type="text" id="offerPrice2" name="offerPrice2" placeholder="ÖRN : 75 / 75.00 / 75,00">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerTotalPrice2">Toplam Fiyat (Türk Lirası):</label>
+                    <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" readonly>
+                </div>
+            </div>
+
+
+
+
+            <div style="display: flex; align-items: center;margin-bottom:10px; color:  white;">
+                <span>TEKLİF 3 </span>
+                <hr style="flex-grow: 1; border: 1px solid white; margin-left: 10px; ">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerCompanyName3">Firma Adı:</label>
+                    <input type="text" id="offerCompanyName3" name="offerCompanyName3" placeholder="ÖRN : DEM MUSEUMS ">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerCompanyPhone3">Firma Telefon Numarası:</label>
+                    <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" placeholder="ÖRN :5XX XXX XX XX ">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerCurrencyType3">Para Birimi:</label>
+                    <select id="offerCurrencyType3" name="offerCurrencyType3" style="width:130px">
+                        @foreach (var currencyType in ViewBag.CurrencyTypes)
+                        {
+                            if (Model.CurrencyTypeId == currencyType.Id)
+                            {
+                                <option value="@currencyType.Id" selected>@currencyType.CurrencyType</option>
+                            }
+                            else
+                            {
+                                <option value="@currencyType.Id">@currencyType.CurrencyType</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="offerAmount3">Miktar:</label>
+                    <input type="text" id="offerAmount3" name="offerAmount3" value="@Model.Quantity" style="width:100px">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerMaterial3">Malzeme :</label>
+                    <input type="text" id="offerMaterial3" name="offerMaterial3" value="@Model.Material3" style="width:250px">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-row" id="exchangeRateTextbox3" style="display: none;">
+                    <div class="form-group">
+                        <label for="exchangeRate">Dolar/Euro Kuru:</label>
+                        <input type="text" id="exchangeRate3" name="exchangeRate3" placeholder="ÖRN: 9.50">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="offerPrice3">Fiyat:</label>
+                    <input type="text" id="offerPrice3" name="offerPrice3" placeholder="ÖRN : 75 / 75.00 / 75,00">
+                </div>
+
+                <div class="form-group">
+                    <label for="offerTotalPrice3">Toplam Fiyat (Türk Lirası):</label>
+                    <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" readonly>
+                </div>
+            </div>
+        }
         <div class="button-group">
             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
         </div>

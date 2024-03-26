@@ -40,7 +40,16 @@ namespace Demand.Business.Concrete.DemandOfferService
 
         public IDataResult<IList<DemandOfferEntity>> GetList(Expression<Func<DemandOfferEntity, bool>> filter)
         {
-            return new SuccessDataResult<IList<DemandOfferEntity>>(_demandOfferRepository.GetList(filter));
+            try
+            {
+                return new SuccessDataResult<IList<DemandOfferEntity>>(_demandOfferRepository.GetList(filter));
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

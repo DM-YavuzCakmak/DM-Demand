@@ -12,7 +12,9 @@ namespace Demand.Domain.Entities.RequestInfoEntity
     public class RequestInfoEntity:BaseEntity
     {
         public long DemandId { get; set; }
-        public string Metarial { get; set; }
+        public long? ProductCategoryId { get; set; }
+        public long? ProductSubCategoryId { get; set; }
+        public string ProductName { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
     }

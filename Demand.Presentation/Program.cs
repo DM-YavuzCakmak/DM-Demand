@@ -8,6 +8,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Business.Concrete.AuthorizationService;
 using Demand.Business.Concrete.CompanyLocation;
@@ -19,6 +20,7 @@ using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Business.Concrete.DepartmentService;
 using Demand.Business.Concrete.PersonnelService;
+using Demand.Business.Concrete.ProviderService;
 using Demand.Business.Concrete.RequestInfo;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Infrastructure.DataAccess.Abstract.CurrencyType;
@@ -30,6 +32,7 @@ using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
 using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
+using Demand.Infrastructure.DataAccess.Abstract.Provider;
 using Demand.Infrastructure.DataAccess.Abstract.RequestInfo;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
@@ -41,6 +44,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandOffer;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandProcess;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Provider;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.RequestInfo;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -108,6 +112,12 @@ builder.Services.AddScoped<ICurrencyTypeService, CurrencyTypeService>();
 #region DemandOffer
 builder.Services.AddScoped<IDemandOfferRepository, DemandOfferRepository>();
 builder.Services.AddScoped<IDemandOfferService, DemandOfferService>();
+#endregion
+
+
+#region Provider
+builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
+builder.Services.AddScoped<IProviderService, ProviderService>();
 #endregion
 
 #endregion

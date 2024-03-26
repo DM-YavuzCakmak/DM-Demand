@@ -63,6 +63,12 @@ namespace Demand.Domain.ViewModels
         public string?  File1Name{ get; set; }
         public string?  File2Name{ get; set; }
         public string?  File3Name{ get; set; }
+        #region ProviderTableFields
+        public long? ProviderId { get; set; }
+        public string? ProviderName { get; set; }
+        public string? ProviderPhone { get; set; }
+        public string? ProviderAddress { get; set; }
+        #endregion
     }
 
     public class DemandOfferViewModel

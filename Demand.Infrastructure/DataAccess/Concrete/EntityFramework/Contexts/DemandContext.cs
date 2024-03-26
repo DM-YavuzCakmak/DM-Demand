@@ -8,6 +8,7 @@ using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
+using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<RequestInfoEntity> RequestInfos { get; set; }
         public virtual DbSet<CurrencyTypeEntity> CurrencyTypes { get; set; }
         public virtual DbSet<DemandOfferEntity> DemandOffers { get; set; }
+        public virtual DbSet<ProviderEntity> Providers { get; set; }
 
     }
 }

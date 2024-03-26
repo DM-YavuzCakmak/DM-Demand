@@ -20,6 +20,7 @@ namespace Demand.Domain.Entities.DemandMediaEntity
         public string Path { get; set; }
 
         public string? FileName{ get; set; }
+        public long? DemandOfferId { get; set; }
 
         [ForeignKey("DemandId")]
         public virtual DemandEntity Demand { get; set; }

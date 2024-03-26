@@ -15,11 +15,9 @@ namespace Demand.Domain.Entities.DemandOfferEntity
         public long RequestInfoId { get; set; }
         public decimal? TotalPrice { get; set; }
         public int? Status { get; set; }
-        public string?  CompanyName{ get; set; }
-        public string?  CompanyPhone{ get; set; }
-        public string? Quantity { get; set; }
-        public decimal? Price { get; set; }
-
-
+        public string? SupplierName { get; set; }
+        public string? SupplierPhone { get; set; }
+        public string? SupplierContactName { get; set; }
+        public long? SupplierId { get; set; }
     }
 }

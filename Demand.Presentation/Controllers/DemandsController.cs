@@ -7,6 +7,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
@@ -18,12 +19,14 @@ using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.ViewModels;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 
@@ -45,8 +48,9 @@ namespace Demand.Presentation.Controllers
         private readonly IRequestInfoService _requestInfoService;
         private readonly ICurrencyTypeService _currencyTypeService;
         private readonly IDemandOfferService _demandOfferService;
+        private readonly IProviderService _providerService ;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService,IProviderService providerService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -60,6 +64,7 @@ namespace Demand.Presentation.Controllers
             _requestInfoService = requestInfoService;
             _currencyTypeService = currencyTypeService;
             _demandOfferService = demandOfferService;
+            _providerService = providerService;
         }
 
         public IActionResult Detail(long id)
@@ -101,7 +106,7 @@ namespace Demand.Presentation.Controllers
             {
                 requestInfoViewModels.Add(new RequestInfoViewModel
                 {
-                    Metarial = requestInfo.Metarial,
+                    Metarial = requestInfo.ProductName,
                     Quantity = requestInfo.Quantity,
                     Unit = requestInfo.Unit
                 });
@@ -117,10 +122,6 @@ namespace Demand.Presentation.Controllers
                     RequestInfoId = demandOffer.RequestInfoId,
                     TotalPrice = demandOffer.TotalPrice,
                     Status = demandOffer.Status,
-                    CompanyName = demandOffer.CompanyName,
-                    CompanyPhone = demandOffer.CompanyPhone,
-                    Quantity = demandOffer.Quantity,
-                    Price = demandOffer.Price
                 });
             }
             demandViewModel.DemandOffers = demandOfferViewModels;
@@ -183,18 +184,18 @@ namespace Demand.Presentation.Controllers
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
-                demandViewModel.Material = requestInfos[0].Metarial;
+                demandViewModel.Material = requestInfos[0].ProductName;
                 demandViewModel.Quantity = requestInfos[0].Quantity;
                 demandViewModel.Unit = requestInfos[0].Unit;
                 if (requestInfos.Count > 1)
                 {
-                    demandViewModel.Material2 = requestInfos[1].Metarial;
+                    demandViewModel.Material2 = requestInfos[1].ProductName;
                     demandViewModel.Quantity2 = requestInfos[1].Quantity;
                     demandViewModel.Unit2 = requestInfos[1].Unit;
                 }
                 if (requestInfos.Count > 2)
                 {
-                    demandViewModel.Material3 = requestInfos[2].Metarial;
+                    demandViewModel.Material3 = requestInfos[2].ProductName;
                     demandViewModel.Quantity3 = requestInfos[2].Quantity;
                     demandViewModel.Unit3 = requestInfos[2].Unit;
                 }
@@ -207,6 +208,8 @@ namespace Demand.Presentation.Controllers
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
             ViewBag.Departments = departments;
+            List<ProviderEntity> providers = _providerService.GetAll().Data.ToList();
+            ViewBag.Providers = providers;
             return View(demandViewModel);
 
         }
@@ -319,7 +322,7 @@ namespace Demand.Presentation.Controllers
                 requestInfoEntity.IsDeleted = false;
                 requestInfoEntity.UpdatedDate = null;
                 requestInfoEntity.UpdatedAt = null;
-                requestInfoEntity.Metarial = demandViewModel.Material;
+                requestInfoEntity.ProductName = demandViewModel.Material;
                 requestInfoEntity.Quantity = demandViewModel.Quantity;
                 requestInfoEntity.Unit = demandViewModel.Unit;
                 _requestInfoService.Add(requestInfoEntity);
@@ -334,7 +337,7 @@ namespace Demand.Presentation.Controllers
                 requestInfoEntity2.IsDeleted = false;
                 requestInfoEntity2.UpdatedDate = null;
                 requestInfoEntity2.UpdatedAt = null;
-                requestInfoEntity2.Metarial = demandViewModel.Material2;
+                requestInfoEntity2.ProductName = demandViewModel.Material2;
                 requestInfoEntity2.Quantity = demandViewModel.Quantity2;
                 requestInfoEntity2.Unit = demandViewModel.Unit2;
                 _requestInfoService.Add(requestInfoEntity2);
@@ -348,7 +351,7 @@ namespace Demand.Presentation.Controllers
                 requestInfoEntity3.IsDeleted = false;
                 requestInfoEntity3.UpdatedDate = null;
                 requestInfoEntity3.UpdatedAt = null;
-                requestInfoEntity3.Metarial = demandViewModel.Material3;
+                requestInfoEntity3.ProductName = demandViewModel.Material3;
                 requestInfoEntity3.Quantity = demandViewModel.Quantity3;
                 requestInfoEntity3.Unit = demandViewModel.Unit3;
                 _requestInfoService.Add(requestInfoEntity3);
@@ -569,15 +572,11 @@ namespace Demand.Presentation.Controllers
             if (updateDemandViewModel.Offer1CompanyName.IsNotNull())
             {
                 DemandOfferEntity demandOfferEntity = new DemandOfferEntity();
-                demandOfferEntity.CompanyName = updateDemandViewModel.Offer1CompanyName;
-                demandOfferEntity.CompanyPhone = updateDemandViewModel.Offer1CompanyPhone;
                 demandOfferEntity.CreatedAt = userId;
                 demandOfferEntity.CreatedDate = DateTime.Now;
                 demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.Offer1CurrencyType;
                 demandOfferEntity.DemandId = (long)updateDemandViewModel.DemandId;
                 demandOfferEntity.IsDeleted = false;
-                demandOfferEntity.Price = updateDemandViewModel.Offer1Price;
-                demandOfferEntity.Quantity = updateDemandViewModel.Offer1Amount.ToString(); ;
                 demandOfferEntity.RequestInfoId = requestInfo.Id;
                 demandOfferEntity.Status = 0;
                 demandOfferEntity.TotalPrice = updateDemandViewModel.Offer1TotalPrice;
@@ -588,15 +587,11 @@ namespace Demand.Presentation.Controllers
             if (updateDemandViewModel.Offer2CompanyName.IsNotNull())
             {
                 DemandOfferEntity demandOfferEntity2 = new DemandOfferEntity();
-                demandOfferEntity2.CompanyName = updateDemandViewModel.Offer2CompanyName;
-                demandOfferEntity2.CompanyPhone = updateDemandViewModel.Offer2CompanyPhone;
                 demandOfferEntity2.CreatedAt = userId;
                 demandOfferEntity2.CreatedDate = DateTime.Now;
                 demandOfferEntity2.CurrencyTypeId = (long)updateDemandViewModel.Offer2CurrencyType;
                 demandOfferEntity2.DemandId = (long)updateDemandViewModel.DemandId;
                 demandOfferEntity2.IsDeleted = false;
-                demandOfferEntity2.Price = updateDemandViewModel.Offer2Price;
-                demandOfferEntity2.Quantity = updateDemandViewModel.Offer2Amount.ToString(); ;
                 demandOfferEntity2.RequestInfoId = requestInfo.Id;
                 demandOfferEntity2.Status = 0;
                 demandOfferEntity2.TotalPrice = updateDemandViewModel.Offer2TotalPrice;
@@ -607,15 +602,11 @@ namespace Demand.Presentation.Controllers
             if (updateDemandViewModel.Offer3CompanyName.IsNotNull())
             {
                 DemandOfferEntity demandOfferEntity3 = new DemandOfferEntity();
-                demandOfferEntity3.CompanyName = updateDemandViewModel.Offer3CompanyName;
-                demandOfferEntity3.CompanyPhone = updateDemandViewModel.Offer3CompanyPhone;
                 demandOfferEntity3.CreatedAt = userId;
                 demandOfferEntity3.CreatedDate = DateTime.Now;
                 demandOfferEntity3.CurrencyTypeId = (long)updateDemandViewModel.Offer3CurrencyType;
                 demandOfferEntity3.DemandId = (long)updateDemandViewModel.DemandId;
                 demandOfferEntity3.IsDeleted = false;
-                demandOfferEntity3.Price = updateDemandViewModel.Offer3Price;
-                demandOfferEntity3.Quantity = updateDemandViewModel.Offer3Amount.ToString(); ;
                 demandOfferEntity3.RequestInfoId = requestInfo.Id;
                 demandOfferEntity3.Status = 0;
                 demandOfferEntity3.TotalPrice = updateDemandViewModel.Offer3TotalPrice;

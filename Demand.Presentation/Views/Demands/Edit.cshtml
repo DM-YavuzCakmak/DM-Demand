@@ -712,6 +712,55 @@
         $('#location').prop('disabled', true);
         $('#department').prop('disabled', true);
 
+        // var demandId = @Model.DemandId;
+        // $.ajax({
+        //     url: 'api/DemandOffers/GetDemandOfferData',
+        //     type: 'GET',
+        //     data: { demandId: demandId },
+        //     success: function (data) {
+        //         if (data != null) {
+        //             // Teklif 1 verilerini doldur
+        //             $('#offerCompanyName1').val(data.offer1CompanyName);
+        //             $('#offerCompanyPhone1').val(data.offer1CompanyPhone);
+        //             $('#offerCompanyAddress1').val(data.offer1CompanyAddress);
+        //             $('#offerCurrencyType1').val(data.offer1CurrencyType);
+        //             $('#offerAmount1').val(data.offer1Amount);
+        //             $('#offerMaterial1').val(data.offer1Material);
+        //             $('#offerPrice1').val(data.offer1Price);
+        //             $('#offerTotalPrice1').val(data.offer1TotalPrice);
+        //             $('#notRegisteredProvider1').prop('checked', !data.isProvider1Registered);
+        //             $('#provider1').val(data.offer1CompanyId);
+
+        //             // Teklif 2 verilerini doldur
+        //             $('#offerCompanyName2').val(data.offer2CompanyName);
+        //             $('#offerCompanyPhone2').val(data.offer2CompanyPhone);
+        //             $('#offerCompanyAddress2').val(data.offer2CompanyAddress);
+        //             $('#offerCurrencyType2').val(data.offer2CurrencyType);
+        //             $('#offerAmount2').val(data.offer2Amount);
+        //             $('#offerMaterial2').val(data.offer2Material);
+        //             $('#offerPrice2').val(data.offer2Price);
+        //             $('#offerTotalPrice2').val(data.offer2TotalPrice);
+        //             $('#notRegisteredProvider2').prop('checked', !data.isProvider2Registered);
+        //             $('#provider2').val(data.offer2CompanyId);
+
+        //             // Teklif 3 verilerini doldur
+        //             $('#offerCompanyName3').val(data.offer3CompanyName);
+        //             $('#offerCompanyPhone3').val(data.offer3CompanyPhone);
+        //             $('#offerCompanyAddress3').val(data.offer3CompanyAddress);
+        //             $('#offerCurrencyType3').val(data.offer3CurrencyType);
+        //             $('#offerAmount3').val(data.offer3Amount);
+        //             $('#offerMaterial3').val(data.offer3Material);
+        //             $('#offerPrice3').val(data.offer3Price);
+        //             $('#offerTotalPrice3').val(data.offer3TotalPrice);
+        //             $('#notRegisteredProvider3').prop('checked', !data.isProvider3Registered);
+        //             $('#provider3').val(data.offer3CompanyId);
+        //         }
+        //     },
+        //     error: function (error) {
+        //         console.error('Error getting demand offer data:', error);
+        //     }
+        // });
+
         $('#provider').change(function () {
             var selectedProviderId = $(this).val();
             if (selectedProviderId !== "") {
@@ -724,7 +773,6 @@
                 }
             }
         });
-
         $('#provider2').change(function () {
             var selectedProviderId = $(this).val();
             if (selectedProviderId !== "") {
@@ -737,7 +785,6 @@
                 }
             }
         });
-
         $('#provider3').change(function () {
             var selectedProviderId = $(this).val();
             if (selectedProviderId !== "") {
@@ -758,8 +805,6 @@
                 $('#exchangeRateTextbox1').hide();
             }
         });
-
-
         $('#offerCurrencyType2').change(function () {
             var currencyType = $(this).val();
             if (currencyType == 2 || currencyType == 3) {
@@ -768,7 +813,6 @@
                 $('#exchangeRateTextbox2').hide();
             }
         });
-
         $('#offerCurrencyType3').change(function () {
             var currencyType = $(this).val();
             if (currencyType == 2 || currencyType == 3) {
@@ -777,23 +821,18 @@
                 $('#exchangeRateTextbox3').hide();
             }
         });
-
-
         $('#exchangeRate1').on('input', function () {
             updateTotalPrice();
         });
-
         $('#offerAmount1, #offerPrice1').on('input', function () {
             updateTotalPrice();
         });
         $('#offerAmount2, #offerPrice2').on('input', function () {
             updateTotalPrice2(2);
         });
-
         $('#offerAmount3, #offerPrice3').on('input', function () {
             updateTotalPrice2(3);
         });
-
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();
             $.ajax({

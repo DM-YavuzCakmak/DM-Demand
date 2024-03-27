@@ -260,27 +260,30 @@
                                     }
                                 </select>
                             </div>
+                            <input type="checkbox" id="notRegisteredProvider1" name="notRegisteredProvider1">
+                            <label for="notRegisteredProvider1" style="color:white">Kayıtlı Sağlayıcı Değil</label>
+                            <br /><br />
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerCompanyName">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName" name="offerCompanyName">
+                                    <label for="offerCompanyName1">Firma Adı:</label>
+                                    <input type="text" id="offerCompanyName1" name="offerCompanyName1">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="offerCompanyPhone">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone" name="offerCompanyPhone">
+                                    <label for="offerCompanyPhone1">Firma Telefon Numarası:</label>
+                                    <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerCompanyAddress">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress" name="offerCompanyAddress">
+                                    <label for="offerCompanyAddress1">Firma Address:</label>
+                                    <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerCurrencyType">Para Birimi:</label>
-                                    <select id="offerCurrencyType" name="offerCurrencyType" style="width:130px">
+                                    <label for="offerCurrencyType1">Para Birimi:</label>
+                                    <select id="offerCurrencyType1" name="offerCurrencyType1" style="width:130px">
                                         @foreach (var currencyType in ViewBag.CurrencyTypes)
                                         {
                                             if (Model.CurrencyTypeId == currencyType.Id)
@@ -294,31 +297,31 @@
                                         }
                                     </select>
                                 </div>
-                                <div class="form-group" id="exchangeRateTextbox" style="display: none;">
-                                    <label for="exchangeRate">Dolar/Euro Kuru:</label>
-                                    <input type="text" id="exchangeRate" name="exchangeRate" style="width: 100px;">
+                                <div class="form-group" id="exchangeRateTextbox1" style="display: none;">
+                                    <label for="exchangeRate1">Dolar/Euro Kuru:</label>
+                                    <input type="text" id="exchangeRate1" name="exchangeRate1" style="width: 100px;">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="offerAmount">Miktar:</label>
-                                    <input type="text" id="offerAmount" name="offerAmount" value="@Model.Quantity" style="width:100px">
+                                    <label for="offerAmount1">Miktar:</label>
+                                    <input type="text" id="offerAmount1" name="offerAmount1" value="@Model.Quantity" style="width:100px">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="offerMaterial">Malzeme :</label>
-                                    <input type="text" id="offerMaterial" name="offerMaterial" value="@Model.Material" style="width:250px">
+                                    <label for="offerMaterial1">Malzeme :</label>
+                                    <input type="text" id="offerMaterial1" name="offerMaterial1" value="@Model.Material" style="width:250px">
                                 </div>
 
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerPrice">Fiyat:</label>
-                                    <input type="text" id="offerPrice" name="offerPrice">
+                                    <label for="offerPrice1">Fiyat:</label>
+                                    <input type="text" id="offerPrice1" name="offerPrice1">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="offerTotalPrice">Toplam Fiyat (Türk Lirası):</label>
-                                    <input type="text" id="offerTotalPrice" name="offerTotalPrice" readonly>
+                                    <label for="offerTotalPrice1">Toplam Fiyat (Türk Lirası):</label>
+                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly>
                                 </div>
                             </div>
                         </div>
@@ -348,6 +351,9 @@
                                     }
                                 </select>
                             </div>
+                            <input type="checkbox" id="notRegisteredProvider2" name="notRegisteredProvider2">
+                            <label for="notRegisteredProvider2" style="color:white">Kayıtlı Sağlayıcı Değil</label>
+                            <br /><br />
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName2">Firma Adı:</label>
@@ -434,6 +440,9 @@
                                     }
                                 </select>
                             </div>
+                            <input type="checkbox" id="notRegisteredProvider3" name="notRegisteredProvider3">
+                            <label for="notRegisteredProvider3" style="color:white">Kayıtlı Sağlayıcı Değil</label>
+                            <br /><br />
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName3">Firma Adı:</label>
@@ -499,7 +508,6 @@
                 </div>
             </div>
         }
-
         <div class="button-group">
             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
         </div>
@@ -508,7 +516,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="script.js"></script>
 </body>
-
 </html>
 <style>
 
@@ -670,10 +677,8 @@
     var jsonProviders = JsonConvert.SerializeObject(ViewBag.Providers);
 }
 <script>
-
     let offers = document.querySelectorAll(".offer");
     var providers = @Html.Raw(jsonProviders);
-
 
     offers.forEach((offers) => {
         let icon = offers.querySelector(".icon-shape");
@@ -700,7 +705,6 @@
             }
         });
     });
-
     $(document).ready(function () {
         $('#requestDate').prop('readonly', true);
         $('#description').prop('readonly', true);
@@ -713,9 +717,9 @@
             if (selectedProviderId !== "") {
                 var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
                 if (selectedProvider) {
-                    $('#offerCompanyName').val(selectedProvider.Name);
-                    $('#offerCompanyPhone').val(selectedProvider.PhoneNumber);
-                    $('#offerCompanyAddress').val(selectedProvider.Address);
+                    $('#offerCompanyName1').val(selectedProvider.Name);
+                    $('#offerCompanyPhone1').val(selectedProvider.PhoneNumber);
+                    $('#offerCompanyAddress1').val(selectedProvider.Address);
 
                 }
             }
@@ -746,12 +750,12 @@
                 }
             }
         });
-        $('#offerCurrencyType').change(function () {
+        $('#offerCurrencyType1').change(function () {
             var currencyType = $(this).val();
             if (currencyType == 2 || currencyType == 3) {
-                $('#exchangeRateTextbox').show();
+                $('#exchangeRateTextbox1').show();
             } else {
-                $('#exchangeRateTextbox').hide();
+                $('#exchangeRateTextbox1').hide();
             }
         });
 
@@ -775,11 +779,11 @@
         });
 
 
-        $('#exchangeRate').on('input', function () {
+        $('#exchangeRate1').on('input', function () {
             updateTotalPrice();
         });
 
-        $('#offerAmount, #offerPrice').on('input', function () {
+        $('#offerAmount1, #offerPrice1').on('input', function () {
             updateTotalPrice();
         });
         $('#offerAmount2, #offerPrice2').on('input', function () {
@@ -811,15 +815,15 @@
         });
     });
     function updateTotalPrice() {
-        var amount = parseFloat($('#offerAmount').val()) || 0;
-        var price = parseFloat($('#offerPrice').val()) || 0;
-        var exchangeRate = parseFloat($('#exchangeRate').val().replace(',', '.')) || 1;
+        var amount = parseFloat($('#offerAmount1').val()) || 0;
+        var price = parseFloat($('#offerPrice1').val()) || 0;
+        var exchangeRate = parseFloat($('#exchangeRate1').val().replace(',', '.')) || 1;
 
-        if ($('#offerCurrencyType').val() == 2 || $('#offerCurrencyType').val() == 3) {
+        if ($('#offerCurrencyType1').val() == 2 || $('#offerCurrencyType1').val() == 3) {
             price = price * exchangeRate;
         }
 
-        $('#offerTotalPrice').val((amount * price).toFixed(2));
+        $('#offerTotalPrice1').val((amount * price).toFixed(2));
     }
     function updateTotalPrice2(offerNumber) {
         var amount = parseFloat($('#offerAmount' + offerNumber).val()) || 0;
@@ -842,33 +846,39 @@
         var departmentId = $('#department').val();
         var description = $('#description').val();
 
-        // Teklif 1 verileri
-        var offer1CompanyName = $('#offerCompanyName').val();
-        var offer1CompanyPhone = $('#offerCompanyPhone').val();
-        var offer1CurrencyType = $('#offerCurrencyType').val();
-        var offer1Amount = $('#offerAmount').val();
-        var offer1Material = $('#offerMaterial').val();
-        var offer1Price = $('#offerPrice').val();
-        var offer1TotalPrice = $('#offerTotalPrice').val();
+        function getOfferData(offerNumber) {
+            var offerCompanyName = $(`#offerCompanyName${offerNumber}`).val();
+            var offerCompanyPhone = $(`#offerCompanyPhone${offerNumber}`).val();
+            var offerCompanyAddress = $(`#offerCompanyAddress${offerNumber}`).val();
+            var offerCurrencyType = $(`#offerCurrencyType${offerNumber}`).val();
+            var offerAmount = $(`#offerAmount${offerNumber}`).val();
+            var offerMaterial = $(`#offerMaterial${offerNumber}`).val();
+            var offerPrice = $(`#offerPrice${offerNumber}`).val();
+            var offerTotalPrice = $(`#offerTotalPrice${offerNumber}`).val();
+            var notRegisteredProvider = $(`#notRegisteredProvider${offerNumber}`).prop('checked');
+            var selectedProviderId = $(`#provider${offerNumber}`).val();
 
-        // Teklif 2 verileri
-        var offer2CompanyName = $('#offerCompanyName2').val();
-        var offer2CompanyPhone = $('#offerCompanyPhone2').val();
-        var offer2CurrencyType = $('#offerCurrencyType2').val();
-        var offer2Amount = $('#offerAmount2').val();
-        var offer2Material = $('#offerMaterial2').val();
-        var offer2Price = $('#offerPrice2').val();
-        var offer2TotalPrice = $('#offerTotalPrice2').val();
+            if (notRegisteredProvider) {
+                selectedProviderId = null;
+            }
 
-        // Teklif 3 verileri
-        var offer3CompanyName = $('#offerCompanyName3').val();
-        var offer3CompanyPhone = $('#offerCompanyPhone3').val();
-        var offer3CurrencyType = $('#offerCurrencyType3').val();
-        var offer3Amount = $('#offerAmount3').val();
-        var offer3Material = $('#offerMaterial3').val();
-        var offer3Price = $('#offerPrice3').val();
-        var offer3TotalPrice = $('#offerTotalPrice3').val();
+            return {
+                OfferCompanyName: offerCompanyName,
+                OfferCompanyPhone: offerCompanyPhone,
+                OfferCompanyAddress: offerCompanyAddress,
+                IsProviderRegistered: !notRegisteredProvider,
+                OfferCurrencyType: offerCurrencyType,
+                OfferAmount: offerAmount,
+                OfferMaterial: offerMaterial,
+                OfferPrice: offerPrice,
+                OfferTotalPrice: offerTotalPrice,
+                OfferCompanyId: selectedProviderId
+            };
+        }
 
+        var offer1Data = getOfferData(1);
+        var offer2Data = getOfferData(2);
+        var offer3Data = getOfferData(3);
         var updateDemandViewModel = {
             DemandId: demandId,
             CompanyId: companyId,
@@ -876,31 +886,40 @@
             DepartmentId: departmentId,
             Description: description,
 
-            Offer1CompanyName: offer1CompanyName,
-            Offer1CompanyPhone: offer1CompanyPhone,
-            Offer1CurrencyType: offer1CurrencyType,
-            Offer1Amount: offer1Amount,
-            Offer1Material: offer1Material,
-            Offer1Price: offer1Price,
-            Offer1TotalPrice: offer1TotalPrice,
+            Offer1CompanyName: offer1Data.OfferCompanyName,
+            Offer1CompanyPhone: offer1Data.OfferCompanyPhone,
+            Offer1CompanyAddress: offer1Data.OfferCompanyAddress,
+            IsProvider1Registered: offer1Data.IsProviderRegistered,
+            Offer1CurrencyType: offer1Data.OfferCurrencyType,
+            Offer1Amount: offer1Data.OfferAmount,
+            Offer1Material: offer1Data.OfferMaterial,
+            Offer1Price: offer1Data.OfferPrice,
+            Offer1TotalPrice: offer1Data.OfferTotalPrice,
+            Offer1CompanyId: offer1Data.OfferCompanyId,
 
-            Offer2CompanyName: offer2CompanyName,
-            Offer2CompanyPhone: offer2CompanyPhone,
-            Offer2CurrencyType: offer2CurrencyType,
-            Offer2Amount: offer2Amount,
-            Offer2Material: offer2Material,
-            Offer2Price: offer2Price,
-            Offer2TotalPrice: offer2TotalPrice,
+            Offer2CompanyName: offer2Data.OfferCompanyName,
+            Offer2CompanyPhone: offer2Data.OfferCompanyPhone,
+            Offer2CompanyAddress: offer2Data.OfferCompanyAddress,
+            IsProvider2Registered: offer2Data.IsProviderRegistered,
+            Offer2CurrencyType: offer2Data.OfferCurrencyType,
+            Offer2Amount: offer2Data.OfferAmount,
+            Offer2Material: offer2Data.OfferMaterial,
+            Offer2Price: offer2Data.OfferPrice,
+            Offer2TotalPrice: offer2Data.OfferTotalPrice,
+            Offer2CompanyId: offer2Data.OfferCompanyId,
 
-            Offer3CompanyName: offer3CompanyName,
-            Offer3CompanyPhone: offer3CompanyPhone,
-            Offer3CurrencyType: offer3CurrencyType,
-            Offer3Amount: offer3Amount,
-            Offer3Material: offer3Material,
-            Offer3Price: offer3Price,
-            Offer3TotalPrice: offer3TotalPrice
+            Offer3CompanyName: offer3Data.OfferCompanyName,
+            Offer3CompanyPhone: offer3Data.OfferCompanyPhone,
+            Offer3CompanyAddress: offer3Data.OfferCompanyAddress,
+            IsProvider3Registered: offer3Data.IsProviderRegistered,
+            Offer3CurrencyType: offer3Data.OfferCurrencyType,
+            Offer3Amount: offer3Data.OfferAmount,
+            Offer3Material: offer3Data.OfferMaterial,
+            Offer3Price: offer3Data.OfferPrice,
+            Offer3TotalPrice: offer3Data.OfferTotalPrice,
+            Offer3CompanyId: offer3Data.OfferCompanyId
         };
-
+        console.log(updateDemandViewModel);
         $.ajax({
             url: '/api/Demands/UpdateDemand',
             type: 'POST',

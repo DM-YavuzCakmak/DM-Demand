@@ -1,3 +1,4 @@
+using Demand.Business.Abstract.ApprovedSupplierService;
 using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyLocation;
 using Demand.Business.Abstract.CompanyService;
@@ -10,6 +11,7 @@ using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
+using Demand.Business.Concrete.ApprovedSupplierService;
 using Demand.Business.Concrete.AuthorizationService;
 using Demand.Business.Concrete.CompanyLocation;
 using Demand.Business.Concrete.CompanyService;
@@ -23,6 +25,7 @@ using Demand.Business.Concrete.PersonnelService;
 using Demand.Business.Concrete.ProviderService;
 using Demand.Business.Concrete.RequestInfo;
 using Demand.Domain.Entities.CompanyLocation;
+using Demand.Infrastructure.DataAccess.Abstract.ApprovedSuplier;
 using Demand.Infrastructure.DataAccess.Abstract.CurrencyType;
 using Demand.Infrastructure.DataAccess.Abstract.DemandMedia;
 using Demand.Infrastructure.DataAccess.Abstract.DemandOffer;
@@ -34,6 +37,7 @@ using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
 using Demand.Infrastructure.DataAccess.Abstract.Provider;
 using Demand.Infrastructure.DataAccess.Abstract.RequestInfo;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.ApprovedSupplier;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
@@ -118,6 +122,11 @@ builder.Services.AddScoped<IDemandOfferService, DemandOfferService>();
 #region Provider
 builder.Services.AddScoped<IProviderRepository, ProviderRepository>();
 builder.Services.AddScoped<IProviderService, ProviderService>();
+#endregion
+
+#region ApprovedSupplier
+builder.Services.AddScoped<IApprovedSupplierRepository, ApprovedSupplierRepository>();
+builder.Services.AddScoped<IApprovedSupplierService, ApprovedSupplierService>();
 #endregion
 
 #endregion

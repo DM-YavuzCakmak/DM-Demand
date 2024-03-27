@@ -48,9 +48,9 @@ namespace Demand.Presentation.Controllers
         private readonly IRequestInfoService _requestInfoService;
         private readonly ICurrencyTypeService _currencyTypeService;
         private readonly IDemandOfferService _demandOfferService;
-        private readonly IProviderService _providerService ;
+        private readonly IProviderService _providerService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService,IProviderService providerService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -504,7 +504,7 @@ namespace Demand.Presentation.Controllers
                             PersonnelEntity personnel = _personnelService.GetById(demandProcess.ManagerId).Data;
 
                             var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                                        demandEntity.Id + " numaralı satın alma talebi iptal edilmiştir. Bilginize sunarız.<br/><br/>"+
+                                        demandEntity.Id + " numaralı satın alma talebi iptal edilmiştir. Bilginize sunarız.<br/><br/>" +
                                         "Saygılarımızla.";
                             EmailHelper.SendEmail(new List<string> { personnel.Email }, "İptal Edilen Satın Alma Talebi", emailBody);
                         }
@@ -564,10 +564,51 @@ namespace Demand.Presentation.Controllers
         [HttpPost("UpdateDemand")]
         public IActionResult UpdateDemand([FromBody] UpdateDemandViewModel updateDemandViewModel)
         {
+            ProviderEntity providerEntity = new ProviderEntity();
+            ProviderEntity providerEntity2 = new ProviderEntity();
+            ProviderEntity providerEntity3 = new ProviderEntity();
             #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
             long userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            #endregion
+            #region AddProvider
+            if (!updateDemandViewModel.IsProvider1Registered)
+            {
+                providerEntity.Name = updateDemandViewModel.Offer1CompanyName;
+                providerEntity.PhoneNumber = updateDemandViewModel.Offer1CompanyPhone;
+                providerEntity.Address = updateDemandViewModel.Offer1CompanyAddress;
+                providerEntity.CreatedDate = DateTime.Now;
+                providerEntity.CreatedAt = userId;
+                providerEntity.UpdatedDate = null;
+                providerEntity.UpdatedAt = null;
+                _providerService.Add(providerEntity);
+            }
+            if (!updateDemandViewModel.IsProvider2Registered)
+            {
+                providerEntity2.Name = updateDemandViewModel.Offer2CompanyName;
+                providerEntity2.PhoneNumber = updateDemandViewModel.Offer2CompanyPhone;
+                providerEntity2.Address = updateDemandViewModel.Offer2CompanyAddress;
+                providerEntity2.CreatedDate = DateTime.Now;
+                providerEntity2.CreatedAt = userId;
+                providerEntity2.UpdatedDate = null;
+                providerEntity2.UpdatedAt = null;
+                _providerService.Add(providerEntity2);
+            }
+            if (!updateDemandViewModel.IsProvider3Registered)
+            {
+                providerEntity3.Name = updateDemandViewModel.Offer3CompanyName;
+                providerEntity3.PhoneNumber = updateDemandViewModel.Offer3CompanyPhone;
+                providerEntity3.Address = updateDemandViewModel.Offer3CompanyAddress;
+                providerEntity3.CreatedDate = DateTime.Now;
+                providerEntity3.CreatedAt = userId;
+                providerEntity3.UpdatedDate = null;
+                providerEntity3.UpdatedAt = null;
+                _providerService.Add(providerEntity3);
+
+            }
+            #endregion
+            #region RequestInfo
             RequestInfoEntity requestInfo = _requestInfoService.GetByDemandId((long)updateDemandViewModel.DemandId).Data;
             if (updateDemandViewModel.Offer1CompanyName.IsNotNull())
             {
@@ -576,6 +617,9 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.CreatedDate = DateTime.Now;
                 demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.Offer1CurrencyType;
                 demandOfferEntity.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity.SupplierName = updateDemandViewModel.Offer1CompanyName;
+                demandOfferEntity.SupplierPhone = updateDemandViewModel.Offer1CompanyPhone;
+                demandOfferEntity.SupplierId = updateDemandViewModel.Offer1CompanyId.IsNotNull() ? updateDemandViewModel.Offer1CompanyId.Value : providerEntity.Id;
                 demandOfferEntity.IsDeleted = false;
                 demandOfferEntity.RequestInfoId = requestInfo.Id;
                 demandOfferEntity.Status = 0;
@@ -591,6 +635,9 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity2.CreatedDate = DateTime.Now;
                 demandOfferEntity2.CurrencyTypeId = (long)updateDemandViewModel.Offer2CurrencyType;
                 demandOfferEntity2.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity2.SupplierName = updateDemandViewModel.Offer2CompanyName;
+                demandOfferEntity2.SupplierPhone = updateDemandViewModel.Offer2CompanyPhone;
+                demandOfferEntity2.SupplierId = updateDemandViewModel.Offer2CompanyId.IsNotNull() ? updateDemandViewModel.Offer2CompanyId.Value : providerEntity2.Id;
                 demandOfferEntity2.IsDeleted = false;
                 demandOfferEntity2.RequestInfoId = requestInfo.Id;
                 demandOfferEntity2.Status = 0;
@@ -606,6 +653,9 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity3.CreatedDate = DateTime.Now;
                 demandOfferEntity3.CurrencyTypeId = (long)updateDemandViewModel.Offer3CurrencyType;
                 demandOfferEntity3.DemandId = (long)updateDemandViewModel.DemandId;
+                demandOfferEntity3.SupplierName = updateDemandViewModel.Offer3CompanyName;
+                demandOfferEntity3.SupplierPhone = updateDemandViewModel.Offer3CompanyPhone;
+                demandOfferEntity3.SupplierId = updateDemandViewModel.Offer3CompanyId.IsNotNull() ? updateDemandViewModel.Offer3CompanyId.Value : providerEntity3.Id;
                 demandOfferEntity3.IsDeleted = false;
                 demandOfferEntity3.RequestInfoId = requestInfo.Id;
                 demandOfferEntity3.Status = 0;
@@ -614,8 +664,8 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity3.UpdatedDate = null;
                 _demandOfferService.Add(demandOfferEntity3);
             }
-
             #endregion
+            #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
             string title = demandEntity.DemandTitle;
             demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId.Value;
@@ -626,13 +676,9 @@ namespace Demand.Presentation.Controllers
             demandEntity.UpdatedDate = DateTime.Now;
             demandEntity.DemandTitle = title;
 
-
-
             _demandService.Update(demandEntity);
-
+            #endregion
             return Ok(demandEntity);
-
         }
-
     }
 }

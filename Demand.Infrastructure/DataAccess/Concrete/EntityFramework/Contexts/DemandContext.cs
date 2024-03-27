@@ -1,4 +1,5 @@
-﻿using Demand.Domain.Entities.Company;
+﻿using Demand.Domain.Entities.ApprovedSupplierEntity;
+using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.CurrencyTypeEntity;
 using Demand.Domain.Entities.Demand;
@@ -42,6 +43,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<CurrencyTypeEntity> CurrencyTypes { get; set; }
         public virtual DbSet<DemandOfferEntity> DemandOffers { get; set; }
         public virtual DbSet<ProviderEntity> Providers { get; set; }
+        public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
 
     }
 }

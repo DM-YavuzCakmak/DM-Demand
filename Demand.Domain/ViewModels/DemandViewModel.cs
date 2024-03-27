@@ -64,10 +64,6 @@ namespace Demand.Domain.ViewModels
         public string?  File2Name{ get; set; }
         public string?  File3Name{ get; set; }
         #region ProviderTableFields
-        public long? ProviderId { get; set; }
-        public string? ProviderName { get; set; }
-        public string? ProviderPhone { get; set; }
-        public string? ProviderAddress { get; set; }
         #endregion
     }
 
@@ -80,8 +76,11 @@ namespace Demand.Domain.ViewModels
         public int? Status { get; set; }
         public string? CompanyName { get; set; }
         public string? CompanyPhone { get; set; }
+        public string? CompanyAddress { get; set; }
         public string? Quantity { get; set; }
         public decimal? Price { get; set; }
+        public string SupplierName { get; set; }
+        public long SupplierId { get; set; }
     }
 
     public class RequestInfoViewModel

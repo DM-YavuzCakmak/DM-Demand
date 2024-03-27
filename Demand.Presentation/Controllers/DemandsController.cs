@@ -80,8 +80,6 @@ namespace Demand.Presentation.Controllers
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
 
-
-
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -162,6 +160,10 @@ namespace Demand.Presentation.Controllers
             PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
+            List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
+            List<long> supplierIds = new List<long>();
+            supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
+            List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -199,6 +201,28 @@ namespace Demand.Presentation.Controllers
                     demandViewModel.Quantity3 = requestInfos[2].Quantity;
                     demandViewModel.Unit3 = requestInfos[2].Unit;
                 }
+            }
+            demandViewModel.DemandOffers = new List<DemandOfferViewModel>();
+            foreach (var demandOfferEntity in demandOfferEntities.OrderBy(x => x.Id).ToList())
+            {
+                DemandOfferViewModel demandOfferViewModel = new DemandOfferViewModel();
+                if (demandOfferEntity.SupplierId.HasValue)
+                    demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
+                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
+                    demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
+
+                ProviderEntity providerEntity = new ProviderEntity();
+                if (providerEntities != null && providerEntities.Any())
+                    providerEntity = providerEntities.Find(x => x.Id == demandOfferEntity.SupplierId);
+
+                if (providerEntity != null)
+                {
+                    demandOfferViewModel.CompanyName = providerEntity.Name;
+                    demandOfferViewModel.CompanyPhone = providerEntity.PhoneNumber;
+                    demandOfferViewModel.CompanyAddress = providerEntity.Address;
+                }
+                demandOfferViewModel.RequestInfoId = demandOfferEntity.RequestInfoId;
+                demandViewModel.DemandOffers.Add(demandOfferViewModel);
             }
             List<CurrencyTypeEntity> currencyTypes = _currencyTypeService.GetAll().Data.ToList();
             ViewBag.CurrencyTypes = currencyTypes;

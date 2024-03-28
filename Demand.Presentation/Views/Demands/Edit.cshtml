@@ -252,20 +252,18 @@
                             <div class="form-group">
                                 <label for="provider">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider" name="provider" style="width:200px">
-                                    <option selected> Bir sağlayıcı seçiniz.</option>
-                                    @if (Model.ProviderId != null)
+                                    @if (Model != null && Model.DemandOffers.Any())
                                     {
-                                        <option value="@Model.ProviderId">@Model.ProviderName</option>
-
+                                        <option value="@Model.DemandOffers[0].SupplierId">@Model.DemandOffers[0].SupplierName</option>
                                     }
                                     else
                                     {
+                                        <option selected> Bir sağlayıcı seçiniz.</option>
                                         @foreach (var providers in ViewBag.Providers)
                                         {
                                             <option value="@providers.Id">@providers.Name</option>
                                         }
                                     }
-                                    
                                 </select>
                             </div>
                             <input type="checkbox" id="notRegisteredProvider1" name="notRegisteredProvider1">
@@ -274,18 +272,18 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName1">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName1" name="offerCompanyName1">
+                                    <input type="text" id="offerCompanyName1" name="offerCompanyName1" value="@Model?.DemandOffers?[0].CompanyName">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone1">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1">
+                                    <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1" value="@Model?.DemandOffers?[0].CompanyPhone">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress1">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1">
+                                    <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].CompanyAddress">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -332,6 +330,7 @@
                                     <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly>
                                 </div>
                             </div>
+                            <button onclick="requestInfo()" type="button" class="update-button">TIKLA</button>
                         </div>
                     </div>
                 </div>
@@ -352,10 +351,17 @@
                             <div class="form-group">
                                 <label for="provider2">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider2" name="provider2" style="width:200px">
-                                    <option selected> Bir sağlayıcı seçiniz.</option>
-                                    @foreach (var providers in ViewBag.Providers)
+                                    @if (Model != null && Model.DemandOffers.Any())
                                     {
-                                        <option value="@providers.Id">@providers.Name</option>
+                                        <option value="@Model.DemandOffers[1].SupplierId">@Model.DemandOffers[1].SupplierName</option>
+                                    }
+                                    else
+                                    {
+                                        <option selected> Bir sağlayıcı seçiniz.</option>
+                                        @foreach (var providers in ViewBag.Providers)
+                                        {
+                                            <option value="@providers.Id">@providers.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>
@@ -365,18 +371,18 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName2">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName2" name="offerCompanyName2">
+                                    <input type="text" id="offerCompanyName2" name="offerCompanyName2" value="@Model?.DemandOffers?[1].CompanyName">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2">
+                                    <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].CompanyPhone">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress2">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2">
+                                    <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2" value="@Model?.DemandOffers?[1].CompanyAddress">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -441,10 +447,17 @@
                             <div class="form-group">
                                 <label for="provider3">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider3" name="provider3" style="width:200px">
-                                    <option selected> Bir sağlayıcı seçiniz.</option>
-                                    @foreach (var providers in ViewBag.Providers)
+                                    @if (Model != null && Model.DemandOffers.Any())
                                     {
-                                        <option value="@providers.Id">@providers.Name</option>
+                                        <option value="@Model.DemandOffers[2].SupplierId">@Model.DemandOffers[2].SupplierName</option>
+                                    }
+                                    else
+                                    {
+                                        <option selected> Bir sağlayıcı seçiniz.</option>
+                                        @foreach (var providers in ViewBag.Providers)
+                                        {
+                                            <option value="@providers.Id">@providers.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>
@@ -454,18 +467,18 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName3">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName3" name="offerCompanyName3">
+                                    <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].CompanyName">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone3">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3">
+                                    <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" value="@Model?.DemandOffers?[2].CompanyPhone">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress3">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3">
+                                    <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3" value="@Model?.DemandOffers?[2].CompanyAddress">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -499,7 +512,7 @@
                                     <input type="text" id="offerMaterial3" name="offerMaterial3" value="@Model.Material3" style="width:250px">
                                 </div>
                             </div>
-                           
+
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerPrice3">Fiyat:</label>
@@ -564,7 +577,7 @@
     .offerAcordion {
         padding: 0 10px 20px;
         line-height: 1.5rem;
-        max-height: 500px; 
+        max-height: 500px;
         overflow-y: auto;
     }
 

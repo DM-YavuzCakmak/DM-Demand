@@ -38,41 +38,41 @@ namespace Demand.Presentation.Controllers
         }
 
 
-        //public IActionResult GetDemandOfferData(long demandId)
-        //{
-        //    List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == demandId).Data.ToList();
-        //    List<UpdateDemandViewModel> demandOfferData = new List<UpdateDemandViewModel>();
+        public IActionResult GetDemandOfferData(long demandId)
+        {
+            List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == demandId).Data.ToList();
+            List<UpdateDemandViewModel> demandOfferData = new List<UpdateDemandViewModel>();
 
-        //    foreach (var demandOfferEntity in demandOfferEntities)
-        //    {
-        //        for (int i = 1; i <= 3; i++)
-        //        {
-        //            // ViewModel for Offer i
-        //            UpdateDemandViewModel viewModel = new UpdateDemandViewModel
-        //            {
-        //                DemandId = demandOfferEntity.DemandId,
-        //            };
+            foreach (var demandOfferEntity in demandOfferEntities)
+            {
+                for (int i = 1; i <= 3; i++)
+                {
+                    // ViewModel for Offer i
+                    UpdateDemandViewModel viewModel = new UpdateDemandViewModel
+                    {
+                        DemandId = demandOfferEntity.DemandId,
+                    };
 
-        //            ProviderEntity provider = _providerService.GetById((long)demandOfferEntity.SupplierId).Data;
-        //            RequestInfoEntity requestInfo = _requestInfoService.GetById(demandOfferEntity.RequestInfoId).Data;
+                    ProviderEntity provider = _providerService.GetById((long)demandOfferEntity.SupplierId).Data;
+                    RequestInfoEntity requestInfo = _requestInfoService.GetById(demandOfferEntity.RequestInfoId).Data;
 
-        //            string offerPrefix = $"Offer{i}";
-        //            viewModel.GetType().GetProperty($"{offerPrefix}CompanyName").SetValue(viewModel, demandOfferEntity.SupplierName);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}CompanyId").SetValue(viewModel, demandOfferEntity.SupplierId);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}CompanyPhone").SetValue(viewModel, demandOfferEntity.SupplierPhone);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}CompanyAddress").SetValue(viewModel, provider.Address);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}CurrencyType").SetValue(viewModel, demandOfferEntity.CurrencyTypeId);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}Amount").SetValue(viewModel, requestInfo.Quantity);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}Material").SetValue(viewModel, requestInfo.ProductName);
-        //            //viewModel.GetType().GetProperty($"{offerPrefix}Price").SetValue(viewModel, requestInfo.Price);
-        //            viewModel.GetType().GetProperty($"{offerPrefix}TotalPrice").SetValue(viewModel, demandOfferEntity.TotalPrice);
+                    string offerPrefix = $"Offer{i}";
+                    viewModel.GetType().GetProperty($"{offerPrefix}CompanyName").SetValue(viewModel, demandOfferEntity.SupplierName);
+                    viewModel.GetType().GetProperty($"{offerPrefix}CompanyId").SetValue(viewModel, demandOfferEntity.SupplierId);
+                    viewModel.GetType().GetProperty($"{offerPrefix}CompanyPhone").SetValue(viewModel, demandOfferEntity.SupplierPhone);
+                    viewModel.GetType().GetProperty($"{offerPrefix}CompanyAddress").SetValue(viewModel, provider.Address);
+                    viewModel.GetType().GetProperty($"{offerPrefix}CurrencyType").SetValue(viewModel, demandOfferEntity.CurrencyTypeId);
+                    viewModel.GetType().GetProperty($"{offerPrefix}Amount").SetValue(viewModel, requestInfo.Quantity);
+                    viewModel.GetType().GetProperty($"{offerPrefix}Material").SetValue(viewModel, requestInfo.ProductName);
+                    //viewModel.GetType().GetProperty($"{offerPrefix}Price").SetValue(viewModel, requestInfo.Price);
+                    viewModel.GetType().GetProperty($"{offerPrefix}TotalPrice").SetValue(viewModel, demandOfferEntity.TotalPrice);
 
-        //            demandOfferData.Add(viewModel);
-        //        }
-        //    }
+                    demandOfferData.Add(viewModel);
+                }
+            }
 
-        //    return Json(demandOfferData);
-        //}
+            return Json(demandOfferData);
+        }
 
 
     }

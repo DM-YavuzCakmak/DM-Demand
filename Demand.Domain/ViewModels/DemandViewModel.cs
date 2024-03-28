@@ -41,14 +41,18 @@ namespace Demand.Domain.ViewModels
         #endregion
         #region RequestInfoTableFields
         public string? Material { get; set; }
-        public int? Quantity { get; set; }
-        public string? Unit { get; set; }
+       // public int? Quantity { get; set; }
+        //public string? Unit { get; set; }
         public string? Material2 { get; set; }
         public int? Quantity2 { get; set; }
         public string? Unit2 { get; set; }
         public string? Material3 { get; set; }
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
+        public List<string>? Category { get; set; }
+        public List<string>? Subcategory { get; set; }
+        public List<string>? Unit { get; set; }
+        public List<string>? Quantity { get; set; }
         #endregion
         #region CurrencyTypeTableFields
         public int? CurrencyTypeId { get; set; }

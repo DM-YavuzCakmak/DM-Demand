@@ -74,126 +74,108 @@
         <div class="popup-header">
             <h2>Talep Oluştur</h2>
         </div>
-        <form id="siteform" enctype="multipart/form-data">
-            <div class="popup-content">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="demandtitle">Başlık:</label>
-                        <input type="text" id="demandtitle" placeholder="Talep Başlığı" name="demandtitle" />
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="companyName">Şirket Adı:</label>
-                        <select id="companyName" name="companyName">
-                            <option value="Please Select Company">Lütfen şirket seçin...</option>
-                            @foreach (var company in ViewBag.Companies)
-                            {
-                                <option value="@company.Id">@company.Name</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="location">Lokasyon:</label>
-                        <select id="location" name="location" onchange="updateLocationId()">
-                        </select>
-                        <input type="hidden" id="locationId" name="locationId" />
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="requestDate">Talep Tarihi:</label>
-                        <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="department">Departman:</label>
-                        <select id="department" name="department">
-                            <option value="Please Select department">Lütfen departman seçin..</option>
-                            @foreach (var department in ViewBag.Department)
-                            {
-                                <option value="@department.Id">@department.Name</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="width: 400px; margin-right: 5px;">
-                        <label for="material">Malzeme:</label>
-                        <input type="text" id="material" placeholder="Malzeme" name="material" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="quantity">Miktar:</label>
-                        <input type="text" id="quantity" placeholder="Miktar" name="quantity" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="unit">Birim:</label>
-                        <input type="text" id="unit" placeholder="Birim" name="unit" />
-                    </div>
-                    <div class="form-group file-group" style="margin-top:20px">
-                        <label for="file1" id="file1Label">Dosya Eki:</label>
-                        <input type="file" id="file1" name="file1" onchange="updateFileName('file1')">
-                        <span class="file-name" id="file1Name"></span>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group" style="width: 400px; margin-right: 5px;">
-                        <label for="material2">Malzeme:</label>
-                        <input type="text" id="material2" placeholder="Malzeme" name="material2" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="quantity2">Miktar:</label>
-                        <input type="text" id="quantity2" placeholder="Miktar" name="quantity2" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="unit2">Birim:</label>
-                        <input type="text" id="unit2" placeholder="Birim" name="unit2" />
-                    </div>
-                    <div class="form-group file-group" style="margin-top:20px">
-                        <label for="file2" id="file2Label">Dosya Eki:</label>
-                        <input type="file" id="file2" name="file2" onchange="updateFileName('file2')">
-                        <span class="file-name" id="file2Name"></span>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group" style="width: 400px; margin-right: 5px;">
-                        <label for="material3">Malzeme:</label>
-                        <input type="text" id="material3" placeholder="Malzeme" name="material3" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="quantity3">Miktar:</label>
-                        <input type="text" id="quantity3" placeholder="Miktar" name="quantity3" />
-                    </div>
-                    <div class="form-group" style="width: 150px; margin-right: 5px;">
-                        <label for="unit3">Birim:</label>
-                        <input type="text" id="unit3" placeholder="Birim" name="unit3" />
-                    </div>
-                    <div class="form-group file-group" style="margin-top:20px">
-                        <label for="file3" id="file3Label">Dosya Eki:</label>
-                        <input type="file" id="file3" name="file3" onchange="updateFileName('file3')">
-                        <span class="file-name" id="file3Name"></span>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="description">Açıklama:</label>
-                        <textarea id="description" name="description"></textarea>
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+        <div class="popup-content" style="overflow-y: auto !important;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="demandtitle">Başlık:</label>
+                    <input type="text" id="demandtitle" placeholder="Talep Başlığı" name="demandtitle" />
                 </div>
             </div>
-        </form>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="companyName">Şirket Adı:</label>
+                    <select id="companyName" name="companyName">
+                        <option value="Please Select Company">Lütfen şirket seçin...</option>
+                        @foreach (var company in ViewBag.Companies)
+                        {
+                            <option value="@company.Id">@company.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Lokasyon:</label>
+                    <select id="location" name="location" onchange="updateLocationId()">
+                    </select>
+                    <input type="hidden" id="locationId" name="locationId" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="requestDate">Talep Tarihi:</label>
+                    <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Departman:</label>
+                    <select id="department" name="department">
+                        <option value="Please Select department">Lütfen departman seçin..</option>
+                        @foreach (var department in ViewBag.Department)
+                        {
+                            <option value="@department.Id">@department.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="description">Açıklama:</label>
+                    <textarea id="description" name="description"></textarea>
+                </div>
+            </div>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Kategori</th>
+                        <th>Alt Kategori</th>
+                        <th>Birim</th>
+                        <th>Adet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="select-wrapper">
+                                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode)">
+                                    <option value="kategori1">Kategori 1</option>
+                                    <option value="kategori2">Kategori 2</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="select-wrapper">
+                                <select name="subcategory[]" class="subcategory">
+                                    <option value="altkategori1">Alt Kategori 1</option>
+                                    <option value="altkategori2">Alt Kategori 2</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="select-wrapper">
+                                <select name="unit[]" class="unit">
+                                    <option value="unit1">Adet</option>
+                                    <option value="unit2">Metre</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="form-group">
+                            <input type="text" name="quantity" class="quantity" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
+            <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+
+            <div class="button-group">
+                <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+            </div>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="script.js"></script>
+    <script src="~/js/script.js"></script>
 </body>
 
 </html>
@@ -258,6 +240,84 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+    .select-wrapper {
+        position: relative;
+        width: 150px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+        .select-wrapper select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .select-wrapper::after {
+            content: "\25BC";
+            font-size: 12px;
+            color: #555;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .select-wrapper ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1;
+            top: 100%;
+            left: 0;
+            right: 0;
+            display: none;
+        }
+
+        .select-wrapper.active ul {
+            display: block;
+        }
+
+        .select-wrapper ul li {
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .select-wrapper ul li:hover {
+                background-color: #f4f4f4;
+            }
+
+    #addButton, #removeButton {
+        background-color: #4CAF50; /* Yeşil */
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        #addButton:hover, #removeButton:hover {
+            background-color: #45a049; /* Koyu yeşil */
+        }
+
     .popup {
         display: none;
         position: fixed;
@@ -267,7 +327,7 @@
         background-color: #fff;
         padding: 20px;
         width: 80%;
-        height: 90%;
+        height: 98%;
         border-radius: 15px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 1001;
@@ -368,11 +428,11 @@
 
     .form-row2 {
         height: 100px;
-        margin-top:-10px;
+        margin-top: -10px;
         display: flex;
         justify-content: space-between;
         margin-bottom: 5px;
-        margin-top:-10px;
+        margin-top: -10px;
     }
 
 
@@ -504,7 +564,104 @@
             });
         }
     }
+    function addRow() {
+        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow(table.rows.length);
+        var cells = ['category', 'subcategory', 'unit', 'quantity'];
 
+        cells.forEach(function (cell) {
+            var newCell = newRow.insertCell(-1);
+            if (cell === 'category' || cell === 'subcategory' || cell === 'unit') {
+                var div = document.createElement("div");
+                div.className = "select-wrapper";
+                var select = document.createElement("select");
+                select.name = cell + "[]";
+                select.className = cell;
+
+                var defaultOption = document.createElement("option");
+                defaultOption.text = "Lütfen seçin...";
+                defaultOption.value = "";
+                select.appendChild(defaultOption);
+
+                if (cell === 'unit') {
+                    var option1 = document.createElement("option");
+                    option1.text = "Adet";
+                    option1.value = "adet";
+                    select.appendChild(option1);
+
+                    var option2 = document.createElement("option");
+                    option2.text = "Metre";
+                    option2.value = "metre";
+                    select.appendChild(option2);
+                } else if (cell === 'category') {
+                    var option1 = document.createElement("option");
+                    option1.text = "Kategori 1";
+                    option1.value = "kategori1";
+                    select.appendChild(option1);
+
+                    var option2 = document.createElement("option");
+                    option2.text = "Kategori 2";
+                    option2.value = "kategori2";
+                    select.appendChild(option2);
+                } else if (cell === 'subcategory') {
+                    var option1 = document.createElement("option");
+                    option1.text = "Alt Kategori 1";
+                    option1.value = "altkategori1";
+                    select.appendChild(option1);
+
+                    var option2 = document.createElement("option");
+                    option2.text = "Alt Kategori 2";
+                    option2.value = "altkategori2";
+                    select.appendChild(option2);
+                }
+                div.appendChild(select);
+                newCell.appendChild(div);
+            } else {
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = cell;
+                input.className = cell;
+                input.oninput = function () { calculateTotal(newRow); };
+                newCell.appendChild(input);
+            }
+        });
+    }
+
+    function removeRow() {
+        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        if (table.rows.length > 1) {
+            table.deleteRow(-1);
+        }
+    }
+
+    function updateSubcategories(row) {
+        var categorySelect = row.querySelector('.category');
+        var subcategorySelect = row.querySelector('.subcategory');
+
+        if (categorySelect.value === "kategori1") {
+            subcategorySelect.innerHTML = '';
+            var option1 = document.createElement("option");
+            option1.text = "Alt Kategori 1";
+            option1.value = "altkategori1";
+            subcategorySelect.appendChild(option1);
+
+            var option2 = document.createElement("option");
+            option2.text = "Alt Kategori 2";
+            option2.value = "altkategori2";
+            subcategorySelect.appendChild(option2);
+        } else if (categorySelect.value === "kategori2") {
+            subcategorySelect.innerHTML = '';
+            var option1 = document.createElement("option");
+            option1.text = "Alt Kategori 3";
+            option1.value = "altkategori3";
+            subcategorySelect.appendChild(option1);
+
+            var option2 = document.createElement("option");
+            option2.text = "Alt Kategori 4";
+            option2.value = "altkategori4";
+            subcategorySelect.appendChild(option2);
+        }
+    }
     function sendDemand() {
         var formData = new FormData();
 
@@ -512,25 +669,27 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
-        formData.append('Material', document.getElementById('material').value);
-        console.log(('Material', document.getElementById('material').value));
-        formData.append('Quantity', document.getElementById('quantity').value);
-        formData.append('Unit', document.getElementById('unit').value);
-        formData.append('Material2', document.getElementById('material2').value);
-        formData.append('Quantity2', document.getElementById('quantity2').value);
-        formData.append('Unit2', document.getElementById('unit2').value);
-        formData.append('Material3', document.getElementById('material3').value);
-        formData.append('Quantity3', document.getElementById('quantity3').value);
-        formData.append('Unit3', document.getElementById('unit3').value);
-        var fileInput = document.getElementById('file1');
-        formData.append('File1', fileInput.files[0]);
 
-        var fileInput2 = document.getElementById('file2');
-        formData.append('File2', fileInput2.files[0]);
+        var table = document.getElementById("dataTable");
+        var rows = table.getElementsByTagName("tr");
 
-        var fileInput3 = document.getElementById('file3');
-        formData.append('File3', fileInput3.files[0]);
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName("td");
 
+            var aa = cells[0].querySelector("select[name='category[]']").value;
+            var bb = cells[1].querySelector("select[name='subcategory[]']").value;
+            var cc = cells[2].querySelector("select[name='unit[]']").value;
+            var dd = cells[3].querySelector("input[name='quantity']").value;
+
+            console.log(aa, bb, cc, dd);
+
+            formData.append('Category[]', cells[0].querySelector("select[name='category[]']").value);
+            formData.append('Subcategory[]', cells[1].querySelector("select[name='subcategory[]']").value);
+            formData.append('Unit[]', cells[2].querySelector("select[name='unit[]']").value);
+            formData.append('Quantity[]', cells[3].querySelector("input[name='quantity']").value);
+        }
+
+        console.log("formdata", formData);
         $.ajax({
             url: '@Url.Action("AddDemand", "Demands")',
             type: 'POST',

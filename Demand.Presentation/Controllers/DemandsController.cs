@@ -185,8 +185,8 @@ namespace Demand.Presentation.Controllers
             if (requestInfos.IsNotNullOrEmpty())
             {
                 demandViewModel.Material = requestInfos[0].ProductName;
-                demandViewModel.Quantity = requestInfos[0].Quantity;
-                demandViewModel.Unit = requestInfos[0].Unit;
+                //demandViewModel.Quantity = requestInfos[0].Quantity;
+                //demandViewModel.Unit = requestInfos[0].Unit;
                 if (requestInfos.Count > 1)
                 {
                     demandViewModel.Material2 = requestInfos[1].ProductName;
@@ -323,8 +323,8 @@ namespace Demand.Presentation.Controllers
                 requestInfoEntity.UpdatedDate = null;
                 requestInfoEntity.UpdatedAt = null;
                 requestInfoEntity.ProductName = demandViewModel.Material;
-                requestInfoEntity.Quantity = demandViewModel.Quantity;
-                requestInfoEntity.Unit = demandViewModel.Unit;
+                //requestInfoEntity.Quantity = demandViewModel.Quantity;
+                //requestInfoEntity.Unit = demandViewModel.Unit;
                 _requestInfoService.Add(requestInfoEntity);
 
             }

@@ -275,6 +275,31 @@ namespace Demand.Presentation.Controllers
             };
             var addedDemand = _demandService.AddDemand(demandEntity);
 
+            for (int i = 0; i < demandViewModel.Category.Count(); i++)
+            {
+                var category = demandViewModel.Category[i];
+                var subcategory = demandViewModel.Subcategory[i];
+                var unit = demandViewModel.Unit[i];
+                var quantity = demandViewModel.Quantity[i];
+
+                var requestInfo = new RequestInfoEntity
+                {
+                    DemandId = addedDemand.Id,
+                    ProductCategoryId = Convert.ToInt64(category),
+                    ProductSubCategoryId = Convert.ToInt64(subcategory),
+                    Quantity = Convert.ToInt32(quantity),
+                    ProductName = category,
+                    Unit = unit,
+                    IsDeleted = false,
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = null,
+                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                    UpdatedAt = null,
+                };
+
+                var requestInfoAdd = _requestInfoService.Add(requestInfo);
+            }
+            #region demandmedia
             byte[]? file1 = null;
             byte[]? file2 = null;
             byte[]? file3 = null;
@@ -337,49 +362,8 @@ namespace Demand.Presentation.Controllers
                 demandMediaEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 _demandMediaService.AddDemandMedia(demandMediaEntity3);
             }
-            if (demandViewModel.Material.IsNotNull() && demandViewModel.Quantity.IsNotNull() && demandViewModel.Unit.IsNotNull())
-            {
-                RequestInfoEntity requestInfoEntity = new RequestInfoEntity();
-                requestInfoEntity.DemandId = addedDemand.Id;
-                requestInfoEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                requestInfoEntity.CreatedDate = DateTime.Now;
-                requestInfoEntity.IsDeleted = false;
-                requestInfoEntity.UpdatedDate = null;
-                requestInfoEntity.UpdatedAt = null;
-                requestInfoEntity.ProductName = demandViewModel.Material;
-                //requestInfoEntity.Quantity = demandViewModel.Quantity;
-                //requestInfoEntity.Unit = demandViewModel.Unit;
-                _requestInfoService.Add(requestInfoEntity);
 
-            }
-            if (demandViewModel.Material2.IsNotNull() && demandViewModel.Quantity2.IsNotNull() && demandViewModel.Unit2.IsNotNull())
-            {
-                RequestInfoEntity requestInfoEntity2 = new RequestInfoEntity();
-                requestInfoEntity2.DemandId = addedDemand.Id;
-                requestInfoEntity2.CreatedDate = DateTime.Now;
-                requestInfoEntity2.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                requestInfoEntity2.IsDeleted = false;
-                requestInfoEntity2.UpdatedDate = null;
-                requestInfoEntity2.UpdatedAt = null;
-                requestInfoEntity2.ProductName = demandViewModel.Material2;
-                requestInfoEntity2.Quantity = demandViewModel.Quantity2;
-                requestInfoEntity2.Unit = demandViewModel.Unit2;
-                _requestInfoService.Add(requestInfoEntity2);
-            }
-            if (demandViewModel.Material3.IsNotNull() && demandViewModel.Quantity3.IsNotNull() && demandViewModel.Unit3.IsNotNull())
-            {
-                RequestInfoEntity requestInfoEntity3 = new RequestInfoEntity();
-                requestInfoEntity3.DemandId = addedDemand.Id;
-                requestInfoEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                requestInfoEntity3.CreatedDate = DateTime.Now;
-                requestInfoEntity3.IsDeleted = false;
-                requestInfoEntity3.UpdatedDate = null;
-                requestInfoEntity3.UpdatedAt = null;
-                requestInfoEntity3.ProductName = demandViewModel.Material3;
-                requestInfoEntity3.Quantity = demandViewModel.Quantity3;
-                requestInfoEntity3.Unit = demandViewModel.Unit3;
-                _requestInfoService.Add(requestInfoEntity3);
-            }
+            #endregion
 
             PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 

@@ -138,24 +138,24 @@
                         <td>
                             <div class="select-wrapper">
                                 <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode)">
-                                    <option value="kategori1">Kategori 1</option>
-                                    <option value="kategori2">Kategori 2</option>
+                                    <option value="1">Kategori 1</option>
+                                    <option value="2">Kategori 2</option>
                                 </select>
                             </div>
                         </td>
                         <td>
                             <div class="select-wrapper">
                                 <select name="subcategory[]" class="subcategory">
-                                    <option value="altkategori1">Alt Kategori 1</option>
-                                    <option value="altkategori2">Alt Kategori 2</option>
+                                    <option value="1">Alt Kategori 1</option>
+                                    <option value="2">Alt Kategori 2</option>
                                 </select>
                             </div>
                         </td>
                         <td>
                             <div class="select-wrapper">
                                 <select name="unit[]" class="unit">
-                                    <option value="unit1">Adet</option>
-                                    <option value="unit2">Metre</option>
+                                    <option value="1">Adet</option>
+                                    <option value="2">Metre</option>
                                 </select>
                             </div>
                         </td>
@@ -586,32 +586,32 @@
                 if (cell === 'unit') {
                     var option1 = document.createElement("option");
                     option1.text = "Adet";
-                    option1.value = "adet";
+                    option1.value = "1";
                     select.appendChild(option1);
 
                     var option2 = document.createElement("option");
                     option2.text = "Metre";
-                    option2.value = "metre";
+                    option2.value = "2";
                     select.appendChild(option2);
                 } else if (cell === 'category') {
                     var option1 = document.createElement("option");
                     option1.text = "Kategori 1";
-                    option1.value = "kategori1";
+                    option1.value = "1";
                     select.appendChild(option1);
 
                     var option2 = document.createElement("option");
                     option2.text = "Kategori 2";
-                    option2.value = "kategori2";
+                    option2.value = "2";
                     select.appendChild(option2);
                 } else if (cell === 'subcategory') {
                     var option1 = document.createElement("option");
                     option1.text = "Alt Kategori 1";
-                    option1.value = "altkategori1";
+                    option1.value = "1";
                     select.appendChild(option1);
 
                     var option2 = document.createElement("option");
                     option2.text = "Alt Kategori 2";
-                    option2.value = "altkategori2";
+                    option2.value = "2";
                     select.appendChild(option2);
                 }
                 div.appendChild(select);
@@ -642,23 +642,23 @@
             subcategorySelect.innerHTML = '';
             var option1 = document.createElement("option");
             option1.text = "Alt Kategori 1";
-            option1.value = "altkategori1";
+            option1.value = "1";
             subcategorySelect.appendChild(option1);
 
             var option2 = document.createElement("option");
             option2.text = "Alt Kategori 2";
-            option2.value = "altkategori2";
+            option2.value = "2";
             subcategorySelect.appendChild(option2);
         } else if (categorySelect.value === "kategori2") {
             subcategorySelect.innerHTML = '';
             var option1 = document.createElement("option");
             option1.text = "Alt Kategori 3";
-            option1.value = "altkategori3";
+            option1.value = "3";
             subcategorySelect.appendChild(option1);
 
             var option2 = document.createElement("option");
             option2.text = "Alt Kategori 4";
-            option2.value = "altkategori4";
+            option2.value = "4";
             subcategorySelect.appendChild(option2);
         }
     }
@@ -683,12 +683,15 @@
         for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].getElementsByTagName("td");
 
-            var aa = cells[0].querySelector("select[name='category[]']").value;
-            var bb = cells[1].querySelector("select[name='subcategory[]']").value;
-            var cc = cells[2].querySelector("select[name='unit[]']").value;
-            var dd = cells[3].querySelector("input[name='quantity']").value;
+            var category = cells[0].querySelector("select[name='category[]']").value;
+            var subcategory = cells[1].querySelector("select[name='subcategory[]']").value;
+            var unit = cells[2].querySelector("select[name='unit[]']").value;
+            var quantity = cells[3].querySelector("input[name='quantity']").value;
 
-            console.log(aa, bb, cc, dd);
+            console.log(category, subcategory, unit, quantity);
+
+            var categoryId = category.value;
+            var subcategoryId = subcategory.value;
 
             formData.append('Category[]', cells[0].querySelector("select[name='category[]']").value);
             formData.append('Subcategory[]', cells[1].querySelector("select[name='subcategory[]']").value);

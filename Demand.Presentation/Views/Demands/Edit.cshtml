@@ -252,7 +252,7 @@
                             <div class="form-group">
                                 <label for="provider">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider" name="provider" style="width:200px">
-                                    @if (Model != null && Model.DemandOffers.Any())
+                                    @if (Model.DemandOffers.Count != 0 && Model.DemandOffers.Any())
                                     {
                                         <option value="@Model.DemandOffers[0].SupplierId">@Model.DemandOffers[0].SupplierName</option>
                                     }
@@ -272,18 +272,41 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName1">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName1" name="offerCompanyName1" value="@Model?.DemandOffers?[0].CompanyName">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].CompanyName != null)
+                                    {
+                                        <input type="text" id="offerCompanyName1" name="offerCompanyName1" value="@Model?.DemandOffers?[0].CompanyName" />
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyName1" name="offerCompanyName1">
+
+                                    }
+
                                 </div>
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone1">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1" value="@Model?.DemandOffers?[0].CompanyPhone">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].CompanyPhone != null)
+                                    {
+                                        <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1" value="@Model?.DemandOffers?[0].CompanyPhone">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1">
+                                    }
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress1">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].CompanyAddress">
+                                    @if (Model.DemandOffers.Count != 0 && @Model?.DemandOffers?[0].CompanyAddress != null)
+                                    {
+                                        <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].CompanyAddress">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1">
+                                    }
                                 </div>
                             </div>
                             <div class="form-row">
@@ -330,7 +353,7 @@
                                     <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly>
                                 </div>
                             </div>
-                            <button onclick="requestInfo()" type="button" class="update-button">TIKLA</button>
+                            <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
                         </div>
                     </div>
                 </div>
@@ -351,7 +374,7 @@
                             <div class="form-group">
                                 <label for="provider2">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider2" name="provider2" style="width:200px">
-                                    @if (Model != null && Model.DemandOffers.Any())
+                                    @if (Model.DemandOffers.Count != 0 && Model.DemandOffers.Any())
                                     {
                                         <option value="@Model.DemandOffers[1].SupplierId">@Model.DemandOffers[1].SupplierName</option>
                                     }
@@ -371,18 +394,39 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName2">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName2" name="offerCompanyName2" value="@Model?.DemandOffers?[1].CompanyName">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[1].CompanyName != null)
+                                    {
+                                        <input type="text" id="offerCompanyName2" name="offerCompanyName2" value="@Model?.DemandOffers?[1].CompanyName">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyName2" name="offerCompanyName2">
+                                    }
                                 </div>
-
                                 <div class="form-group">
                                     <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].CompanyPhone">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[1].CompanyPhone != null)
+                                    {
+                                        <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].CompanyPhone">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2">
+                                    }
+
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress2">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2" value="@Model?.DemandOffers?[1].CompanyAddress">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[1].CompanyAddress != null)
+                                    {
+                                        <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2" value="@Model?.DemandOffers?[1].CompanyAddress">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2">
+                                    }
                                 </div>
                             </div>
                             <div class="form-row">
@@ -428,6 +472,8 @@
                                     <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" readonly>
                                 </div>
                             </div>
+                            <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
+
                         </div>
                     </div>
                 </div>
@@ -447,7 +493,7 @@
                             <div class="form-group">
                                 <label for="provider3">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider3" name="provider3" style="width:200px">
-                                    @if (Model != null && Model.DemandOffers.Any())
+                                    @if (Model.DemandOffers.Count != 0 && Model.DemandOffers.Any())
                                     {
                                         <option value="@Model.DemandOffers[2].SupplierId">@Model.DemandOffers[2].SupplierName</option>
                                     }
@@ -467,18 +513,40 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName3">Firma Adı:</label>
-                                    <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].CompanyName">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[2].CompanyName != null)
+                                    {
+                                        <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].CompanyName">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyName3" name="offerCompanyName3">
+                                    }
                                 </div>
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone3">Firma Telefon Numarası:</label>
-                                    <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" value="@Model?.DemandOffers?[2].CompanyPhone">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[2].CompanyPhone != null)
+                                    {
+                                        <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" value="@Model?.DemandOffers?[2].CompanyPhone">
+
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3">
+                                    }
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress3">Firma Address:</label>
-                                    <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3" value="@Model?.DemandOffers?[2].CompanyAddress">
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[2].CompanyAddress != null)
+                                    {
+                                        <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3" value="@Model?.DemandOffers?[2].CompanyAddress">
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3">
+                                    }
                                 </div>
                             </div>
                             <div class="form-row">
@@ -524,14 +592,15 @@
                                     <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" readonly>
                                 </div>
                             </div>
+                            <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
                         </div>
                     </div>
                 </div>
             </div>
         }
         <div class="button-group">
-            <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
-        </div>
+@*             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
+ *@        </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
@@ -899,46 +968,45 @@
 
         $('#offerTotalPrice' + offerNumber).val((amount * price).toFixed(2));
     }
-    function updateDemand() {
+
+    function getOfferData(offerNumber) {
+        var offerCompanyName = $(`#offerCompanyName${offerNumber}`).val();
+        var offerCompanyPhone = $(`#offerCompanyPhone${offerNumber}`).val();
+        var offerCompanyAddress = $(`#offerCompanyAddress${offerNumber}`).val();
+        var offerCurrencyType = $(`#offerCurrencyType${offerNumber}`).val();
+        var offerAmount = $(`#offerAmount${offerNumber}`).val();
+        var offerMaterial = $(`#offerMaterial${offerNumber}`).val();
+        var offerPrice = $(`#offerPrice${offerNumber}`).val();
+        var offerTotalPrice = $(`#offerTotalPrice${offerNumber}`).val();
+        var notRegisteredProvider = $(`#notRegisteredProvider${offerNumber}`).prop('checked');
+        var selectedProviderId = $(`#provider${offerNumber}`).val();
+
+        if (notRegisteredProvider) {
+            selectedProviderId = null;
+        }
+
+        return {
+            OfferCompanyName: offerCompanyName,
+            OfferCompanyPhone: offerCompanyPhone,
+            OfferCompanyAddress: offerCompanyAddress,
+            IsProviderRegistered: !notRegisteredProvider,
+            OfferCurrencyType: offerCurrencyType,
+            OfferAmount: offerAmount,
+            OfferMaterial: offerMaterial,
+            OfferPrice: offerPrice,
+            OfferTotalPrice: offerTotalPrice,
+            OfferCompanyId: selectedProviderId
+        };
+    }
+
+    function updateDemand(offerNumber) {
         var demandId = @Model.DemandId;
         var companyId = $('#companyName').val();
         var locationId = $('#location').val();
         var departmentId = $('#department').val();
         var description = $('#description').val();
 
-        function getOfferData(offerNumber) {
-            var offerCompanyName = $(`#offerCompanyName${offerNumber}`).val();
-            var offerCompanyPhone = $(`#offerCompanyPhone${offerNumber}`).val();
-            var offerCompanyAddress = $(`#offerCompanyAddress${offerNumber}`).val();
-            var offerCurrencyType = $(`#offerCurrencyType${offerNumber}`).val();
-            var offerAmount = $(`#offerAmount${offerNumber}`).val();
-            var offerMaterial = $(`#offerMaterial${offerNumber}`).val();
-            var offerPrice = $(`#offerPrice${offerNumber}`).val();
-            var offerTotalPrice = $(`#offerTotalPrice${offerNumber}`).val();
-            var notRegisteredProvider = $(`#notRegisteredProvider${offerNumber}`).prop('checked');
-            var selectedProviderId = $(`#provider${offerNumber}`).val();
-
-            if (notRegisteredProvider) {
-                selectedProviderId = null;
-            }
-
-            return {
-                OfferCompanyName: offerCompanyName,
-                OfferCompanyPhone: offerCompanyPhone,
-                OfferCompanyAddress: offerCompanyAddress,
-                IsProviderRegistered: !notRegisteredProvider,
-                OfferCurrencyType: offerCurrencyType,
-                OfferAmount: offerAmount,
-                OfferMaterial: offerMaterial,
-                OfferPrice: offerPrice,
-                OfferTotalPrice: offerTotalPrice,
-                OfferCompanyId: selectedProviderId
-            };
-        }
-
-        var offer1Data = getOfferData(1);
-        var offer2Data = getOfferData(2);
-        var offer3Data = getOfferData(3);
+        var offer1Data = getOfferData(offerNumber);
         var updateDemandViewModel = {
             DemandId: demandId,
             CompanyId: companyId,
@@ -946,38 +1014,16 @@
             DepartmentId: departmentId,
             Description: description,
 
-            Offer1CompanyName: offer1Data.OfferCompanyName,
-            Offer1CompanyPhone: offer1Data.OfferCompanyPhone,
-            Offer1CompanyAddress: offer1Data.OfferCompanyAddress,
+            OfferCompanyName: offer1Data.OfferCompanyName,
+            OfferCompanyPhone: offer1Data.OfferCompanyPhone,
+            OfferCompanyAddress: offer1Data.OfferCompanyAddress,
             IsProvider1Registered: offer1Data.IsProviderRegistered,
-            Offer1CurrencyType: offer1Data.OfferCurrencyType,
-            Offer1Amount: offer1Data.OfferAmount,
-            Offer1Material: offer1Data.OfferMaterial,
-            Offer1Price: offer1Data.OfferPrice,
-            Offer1TotalPrice: offer1Data.OfferTotalPrice,
-            Offer1CompanyId: offer1Data.OfferCompanyId,
-
-            Offer2CompanyName: offer2Data.OfferCompanyName,
-            Offer2CompanyPhone: offer2Data.OfferCompanyPhone,
-            Offer2CompanyAddress: offer2Data.OfferCompanyAddress,
-            IsProvider2Registered: offer2Data.IsProviderRegistered,
-            Offer2CurrencyType: offer2Data.OfferCurrencyType,
-            Offer2Amount: offer2Data.OfferAmount,
-            Offer2Material: offer2Data.OfferMaterial,
-            Offer2Price: offer2Data.OfferPrice,
-            Offer2TotalPrice: offer2Data.OfferTotalPrice,
-            Offer2CompanyId: offer2Data.OfferCompanyId,
-
-            Offer3CompanyName: offer3Data.OfferCompanyName,
-            Offer3CompanyPhone: offer3Data.OfferCompanyPhone,
-            Offer3CompanyAddress: offer3Data.OfferCompanyAddress,
-            IsProvider3Registered: offer3Data.IsProviderRegistered,
-            Offer3CurrencyType: offer3Data.OfferCurrencyType,
-            Offer3Amount: offer3Data.OfferAmount,
-            Offer3Material: offer3Data.OfferMaterial,
-            Offer3Price: offer3Data.OfferPrice,
-            Offer3TotalPrice: offer3Data.OfferTotalPrice,
-            Offer3CompanyId: offer3Data.OfferCompanyId
+            OfferCurrencyType: offer1Data.OfferCurrencyType,
+            OfferAmount: offer1Data.OfferAmount,
+            OfferMaterial: offer1Data.OfferMaterial,
+            OfferPrice: offer1Data.OfferPrice,
+            OfferTotalPrice: offer1Data.OfferTotalPrice,
+            OfferCompanyId: offer1Data.OfferCompanyId
         };
         console.log(updateDemandViewModel);
         $.ajax({

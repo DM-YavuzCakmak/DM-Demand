@@ -7,6 +7,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
 using Demand.Domain.Entities.ProviderEntity;
@@ -44,6 +45,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<DemandOfferEntity> DemandOffers { get; set; }
         public virtual DbSet<ProviderEntity> Providers { get; set; }
         public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
+        public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
 
     }
 }

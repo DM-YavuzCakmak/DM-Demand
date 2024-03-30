@@ -591,104 +591,49 @@ namespace Demand.Presentation.Controllers
             ProviderEntity providerEntity = new ProviderEntity();
             ProviderEntity providerEntity2 = new ProviderEntity();
             ProviderEntity providerEntity3 = new ProviderEntity();
+
             #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
             long userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             #endregion
+
             #region AddProvider
             if (!updateDemandViewModel.IsProvider1Registered)
             {
-                providerEntity.Name = updateDemandViewModel.Offer1CompanyName;
-                providerEntity.PhoneNumber = updateDemandViewModel.Offer1CompanyPhone;
-                providerEntity.Address = updateDemandViewModel.Offer1CompanyAddress;
+                providerEntity.Name = updateDemandViewModel.OfferCompanyName;
+                providerEntity.PhoneNumber = updateDemandViewModel.OfferCompanyPhone;
+                providerEntity.Address = updateDemandViewModel.OfferCompanyAddress;
                 providerEntity.CreatedDate = DateTime.Now;
                 providerEntity.CreatedAt = userId;
                 providerEntity.UpdatedDate = null;
                 providerEntity.UpdatedAt = null;
                 _providerService.Add(providerEntity);
             }
-            if (!updateDemandViewModel.IsProvider2Registered)
-            {
-                providerEntity2.Name = updateDemandViewModel.Offer2CompanyName;
-                providerEntity2.PhoneNumber = updateDemandViewModel.Offer2CompanyPhone;
-                providerEntity2.Address = updateDemandViewModel.Offer2CompanyAddress;
-                providerEntity2.CreatedDate = DateTime.Now;
-                providerEntity2.CreatedAt = userId;
-                providerEntity2.UpdatedDate = null;
-                providerEntity2.UpdatedAt = null;
-                _providerService.Add(providerEntity2);
-            }
-            if (!updateDemandViewModel.IsProvider3Registered)
-            {
-                providerEntity3.Name = updateDemandViewModel.Offer3CompanyName;
-                providerEntity3.PhoneNumber = updateDemandViewModel.Offer3CompanyPhone;
-                providerEntity3.Address = updateDemandViewModel.Offer3CompanyAddress;
-                providerEntity3.CreatedDate = DateTime.Now;
-                providerEntity3.CreatedAt = userId;
-                providerEntity3.UpdatedDate = null;
-                providerEntity3.UpdatedAt = null;
-                _providerService.Add(providerEntity3);
-
-            }
             #endregion
+
             #region RequestInfo
             RequestInfoEntity requestInfo = _requestInfoService.GetByDemandId((long)updateDemandViewModel.DemandId).Data;
-            if (updateDemandViewModel.Offer1CompanyName.IsNotNull())
+            if (updateDemandViewModel.OfferCompanyName.IsNotNull())
             {
                 DemandOfferEntity demandOfferEntity = new DemandOfferEntity();
                 demandOfferEntity.CreatedAt = userId;
                 demandOfferEntity.CreatedDate = DateTime.Now;
-                demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.Offer1CurrencyType;
+                demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.OfferCurrencyType;
                 demandOfferEntity.DemandId = (long)updateDemandViewModel.DemandId;
-                demandOfferEntity.SupplierName = updateDemandViewModel.Offer1CompanyName;
-                demandOfferEntity.SupplierPhone = updateDemandViewModel.Offer1CompanyPhone;
-                demandOfferEntity.SupplierId = updateDemandViewModel.Offer1CompanyId.IsNotNull() ? updateDemandViewModel.Offer1CompanyId.Value : providerEntity.Id;
+                demandOfferEntity.SupplierName = updateDemandViewModel.OfferCompanyName;
+                demandOfferEntity.SupplierPhone = updateDemandViewModel.OfferCompanyPhone;
+                demandOfferEntity.SupplierId = updateDemandViewModel.OfferCompanyId.IsNotNull() ? updateDemandViewModel.OfferCompanyId.Value : providerEntity.Id;
                 demandOfferEntity.IsDeleted = false;
-                demandOfferEntity.RequestInfoId = requestInfo.Id;
+                //demandOfferEntity.RequestInfoId = requestInfo.Id;
                 demandOfferEntity.Status = 0;
-                demandOfferEntity.TotalPrice = updateDemandViewModel.Offer1TotalPrice;
+                demandOfferEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
                 demandOfferEntity.UpdatedAt = null;
                 demandOfferEntity.UpdatedDate = null;
                 _demandOfferService.Add(demandOfferEntity);
             }
-            if (updateDemandViewModel.Offer2CompanyName.IsNotNull())
-            {
-                DemandOfferEntity demandOfferEntity2 = new DemandOfferEntity();
-                demandOfferEntity2.CreatedAt = userId;
-                demandOfferEntity2.CreatedDate = DateTime.Now;
-                demandOfferEntity2.CurrencyTypeId = (long)updateDemandViewModel.Offer2CurrencyType;
-                demandOfferEntity2.DemandId = (long)updateDemandViewModel.DemandId;
-                demandOfferEntity2.SupplierName = updateDemandViewModel.Offer2CompanyName;
-                demandOfferEntity2.SupplierPhone = updateDemandViewModel.Offer2CompanyPhone;
-                demandOfferEntity2.SupplierId = updateDemandViewModel.Offer2CompanyId.IsNotNull() ? updateDemandViewModel.Offer2CompanyId.Value : providerEntity2.Id;
-                demandOfferEntity2.IsDeleted = false;
-                demandOfferEntity2.RequestInfoId = requestInfo.Id;
-                demandOfferEntity2.Status = 0;
-                demandOfferEntity2.TotalPrice = updateDemandViewModel.Offer2TotalPrice;
-                demandOfferEntity2.UpdatedAt = null;
-                demandOfferEntity2.UpdatedDate = null;
-                _demandOfferService.Add(demandOfferEntity2);
-            }
-            if (updateDemandViewModel.Offer3CompanyName.IsNotNull())
-            {
-                DemandOfferEntity demandOfferEntity3 = new DemandOfferEntity();
-                demandOfferEntity3.CreatedAt = userId;
-                demandOfferEntity3.CreatedDate = DateTime.Now;
-                demandOfferEntity3.CurrencyTypeId = (long)updateDemandViewModel.Offer3CurrencyType;
-                demandOfferEntity3.DemandId = (long)updateDemandViewModel.DemandId;
-                demandOfferEntity3.SupplierName = updateDemandViewModel.Offer3CompanyName;
-                demandOfferEntity3.SupplierPhone = updateDemandViewModel.Offer3CompanyPhone;
-                demandOfferEntity3.SupplierId = updateDemandViewModel.Offer3CompanyId.IsNotNull() ? updateDemandViewModel.Offer3CompanyId.Value : providerEntity3.Id;
-                demandOfferEntity3.IsDeleted = false;
-                demandOfferEntity3.RequestInfoId = requestInfo.Id;
-                demandOfferEntity3.Status = 0;
-                demandOfferEntity3.TotalPrice = updateDemandViewModel.Offer3TotalPrice;
-                demandOfferEntity3.UpdatedAt = null;
-                demandOfferEntity3.UpdatedDate = null;
-                _demandOfferService.Add(demandOfferEntity3);
-            }
             #endregion
+
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
             string title = demandEntity.DemandTitle;
@@ -699,7 +644,6 @@ namespace Demand.Presentation.Controllers
             demandEntity.UpdatedAt = userId;
             demandEntity.UpdatedDate = DateTime.Now;
             demandEntity.DemandTitle = title;
-
             _demandService.Update(demandEntity);
             #endregion
             return Ok(demandEntity);

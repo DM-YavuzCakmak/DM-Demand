@@ -8,6 +8,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
@@ -21,6 +22,7 @@ using Demand.Business.Concrete.DemandOfferService;
 using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Business.Concrete.DepartmentService;
+using Demand.Business.Concrete.OfferRequestService;
 using Demand.Business.Concrete.PersonnelService;
 using Demand.Business.Concrete.ProviderService;
 using Demand.Business.Concrete.RequestInfo;
@@ -34,6 +36,7 @@ using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
 using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
+using Demand.Infrastructure.DataAccess.Abstract.OfferRequest;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
 using Demand.Infrastructure.DataAccess.Abstract.Provider;
 using Demand.Infrastructure.DataAccess.Abstract.RequestInfo;
@@ -47,6 +50,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandOffer;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandProcess;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferRequest;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Provider;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.RequestInfo;
@@ -127,6 +131,12 @@ builder.Services.AddScoped<IProviderService, ProviderService>();
 #region ApprovedSupplier
 builder.Services.AddScoped<IApprovedSupplierRepository, ApprovedSupplierRepository>();
 builder.Services.AddScoped<IApprovedSupplierService, ApprovedSupplierService>();
+#endregion
+
+
+#region OfferRequest
+builder.Services.AddScoped<IOfferRequestRepository, OfferRequestRepository>();
+builder.Services.AddScoped<IOfferRequestService, OfferRequestService>();
 #endregion
 
 #endregion

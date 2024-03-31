@@ -122,6 +122,10 @@
                 <div class="form-group">
                     <label for="description">Açıklama:</label>
                     <textarea id="description" name="description"></textarea>
+                </div>   
+                <div class="form-group">
+                    <label for="description">Dosya Seç:</label>
+                    <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
                 </div>
             </div>
             <table id="dataTable">
@@ -698,7 +702,16 @@
             formData.append('Unit[]', cells[2].querySelector("select[name='unit[]']").value);
             formData.append('Quantity[]', cells[3].querySelector("input[name='quantity']").value);
         }
-
+        var fileInputs = document.querySelectorAll('input[type="file"]');
+        for (var i = 0; i < fileInputs.length; i++) {
+            var fileInput = fileInputs[i];
+            if (fileInput.files.length > 0) {
+                for (var j = 0; j < fileInput.files.length; j++) {
+                    formData.append('Files', fileInput.files[j]);
+                    formData.append('FileNames', fileInput.files[j].name); // Dosya adlarını ekle
+                }
+            }
+        }
         console.log("formdata", formData);
         $.ajax({
             url: '@Url.Action("AddDemand", "Demands")',

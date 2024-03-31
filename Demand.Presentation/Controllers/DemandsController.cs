@@ -6,6 +6,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
@@ -18,6 +19,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
@@ -49,8 +51,9 @@ namespace Demand.Presentation.Controllers
         private readonly ICurrencyTypeService _currencyTypeService;
         private readonly IDemandOfferService _demandOfferService;
         private readonly IProviderService _providerService;
+        private readonly IOfferRequestService _offerRequestService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -65,6 +68,7 @@ namespace Demand.Presentation.Controllers
             _currencyTypeService = currencyTypeService;
             _demandOfferService = demandOfferService;
             _providerService = providerService;
+            _offerRequestService = offerRequestService;
         }
 
         public IActionResult Detail(long id)
@@ -117,7 +121,6 @@ namespace Demand.Presentation.Controllers
                 {
                     DemandId = demandOffer.DemandId,
                     CurrencyTypeId = demandOffer.CurrencyTypeId,
-                    RequestInfoId = demandOffer.RequestInfoId,
                     TotalPrice = demandOffer.TotalPrice,
                     Status = demandOffer.Status,
                 });
@@ -221,7 +224,6 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.CompanyPhone = providerEntity.PhoneNumber;
                     demandOfferViewModel.CompanyAddress = providerEntity.Address;
                 }
-                demandOfferViewModel.RequestInfoId = demandOfferEntity.RequestInfoId;
                 demandViewModel.DemandOffers.Add(demandOfferViewModel);
             }
             List<CurrencyTypeEntity> currencyTypes = _currencyTypeService.GetAll().Data.ToList();
@@ -285,8 +287,8 @@ namespace Demand.Presentation.Controllers
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
-                    ProductCategoryId = Convert.ToInt64(category),
-                    ProductSubCategoryId = Convert.ToInt64(subcategory),
+                    ProductCategoryId = Convert.ToInt32(category),
+                    ProductSubCategoryId = Convert.ToInt32(subcategory),
                     Quantity = Convert.ToInt32(quantity),
                     ProductName = category,
                     Unit = unit,
@@ -299,71 +301,28 @@ namespace Demand.Presentation.Controllers
 
                 var requestInfoAdd = _requestInfoService.Add(requestInfo);
             }
-            #region demandmedia
-            byte[]? file1 = null;
-            byte[]? file2 = null;
-            byte[]? file3 = null;
-            string? file1FileName = demandViewModel.File1?.FileName;
-            string? file2FileName = demandViewModel.File2?.FileName;
-            string? file3FileName = demandViewModel.File3?.FileName;
 
+            if (demandViewModel.Files != null && demandViewModel.Files.Count > 0)
+            {
 
-            if (demandViewModel.File1 != null)
-            {
-                file1FileName = addedDemand.Id + "_" + demandViewModel.File1.FileName;
-                file1 = GetFile(demandViewModel.File1);
-            }
-            if (demandViewModel.File2 != null)
-            {
-                file2FileName = addedDemand.Id + "_" + demandViewModel.File2.FileName;
-                file2 = GetFile(demandViewModel.File2);
-            }
-            if (demandViewModel.File3 != null)
-            {
-                file3FileName = addedDemand.Id + "_" + demandViewModel.File3.FileName;
-                file3 = GetFile(demandViewModel.File3);
+                foreach (var file in demandViewModel.Files)
+                {
+                    string fileName = addedDemand.Id + "_" + file.FileName;
+
+                    DemandMediaEntity demandMediaEntity = SaveFileAndCreateEntity(file, addedDemand.Id);
+                    demandMediaEntity.DemandId = addedDemand.Id;
+                    demandMediaEntity.Path = demandMediaEntity.Path;
+                    demandMediaEntity.FileName = file.FileName;
+                    demandMediaEntity.IsDeleted = false;
+                    demandMediaEntity.CreatedDate = DateTime.Now;
+                    demandMediaEntity.UpdatedDate = null;
+                    demandMediaEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                    demandMediaEntity.UpdatedAt = null;
+                    _demandMediaService.AddDemandMedia(demandMediaEntity);
+
+                }
             }
 
-            if (demandViewModel.File1 != null)
-            {
-                DemandMediaEntity demandMediaEntity1 = SaveFileAndCreateEntity(demandViewModel.File1, addedDemand.Id);
-                demandMediaEntity1.DemandId = addedDemand.Id;
-                demandMediaEntity1.Path = demandMediaEntity1.Path;
-                demandMediaEntity1.FileName = file1FileName;
-                demandMediaEntity1.IsDeleted = false;
-                demandMediaEntity1.CreatedDate = DateTime.Now;
-                demandMediaEntity1.UpdatedDate = null;
-                demandMediaEntity1.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                _demandMediaService.AddDemandMedia(demandMediaEntity1);
-            }
-
-            if (demandViewModel.File2 != null)
-            {
-                DemandMediaEntity demandMediaEntity2 = SaveFileAndCreateEntity(demandViewModel.File2, addedDemand.Id);
-                demandMediaEntity2.DemandId = addedDemand.Id;
-                demandMediaEntity2.Path = demandMediaEntity2.Path;
-                demandMediaEntity2.FileName = file2FileName;
-                demandMediaEntity2.IsDeleted = false;
-                demandMediaEntity2.CreatedDate = DateTime.Now;
-                demandMediaEntity2.UpdatedDate = null;
-                demandMediaEntity2.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                _demandMediaService.AddDemandMedia(demandMediaEntity2);
-            }
-
-            if (demandViewModel.File3 != null)
-            {
-                DemandMediaEntity demandMediaEntity3 = SaveFileAndCreateEntity(demandViewModel.File3, addedDemand.Id);
-                demandMediaEntity3.DemandId = addedDemand.Id;
-                demandMediaEntity3.Path = demandMediaEntity3.Path;
-                demandMediaEntity3.FileName = file3FileName;
-                demandMediaEntity3.IsDeleted = false;
-                demandMediaEntity3.CreatedDate = DateTime.Now;
-                demandMediaEntity3.UpdatedDate = null;
-                demandMediaEntity3.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                _demandMediaService.AddDemandMedia(demandMediaEntity3);
-            }
-
-            #endregion
 
             PersonnelEntity personnelEntity = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
@@ -614,9 +573,28 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
                 demandOfferEntity.UpdatedAt = null;
                 demandOfferEntity.UpdatedDate = null;
-                _demandOfferService.Add(demandOfferEntity);
+                var demandOfferAdd = _demandOfferService.Add(demandOfferEntity);
+                #region
+                //if (demandOfferAdd.Id.IsNotNull())
+                //{
+                //    OfferRequestEntity offerRequestEntity = new OfferRequestEntity();
+                //    offerRequestEntity.Status = 0;
+                //    offerRequestEntity.DemandOfferId = demandOfferEntity.Id;
+                //    offerRequestEntity.UpdatedDate = null;
+                //    offerRequestEntity.CreatedDate= DateTime.Now;
+                //    offerRequestEntity.UpdatedAt = null;
+                //    offerRequestEntity.CreatedAt = userId;
+                //    offerRequestEntity.IsDeleted = false;
+                //    offerRequestEntity.RequestInfoId = requestInfo.Id;
+                //    offerRequestEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
+                //    offerRequestEntity.UnitPrice = updateDemandViewModel.OfferPrice;
+                //    _offerRequestService.Add(offerRequestEntity);
+                //}
+                #endregion
             }
             #endregion
+
+
 
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;

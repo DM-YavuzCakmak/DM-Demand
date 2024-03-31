@@ -49,9 +49,19 @@ where TContext : DbContext, new()
     {
         using (var context = new TContext())
         {
-            return filter == null
+            try
+            {
+                return filter == null
                 ? context.Set<TEntity>().ToList()
                 : context.Set<TEntity>().Where(filter).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+  
         }
     }
 

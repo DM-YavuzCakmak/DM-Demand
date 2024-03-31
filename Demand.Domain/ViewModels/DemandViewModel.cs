@@ -63,7 +63,8 @@ namespace Demand.Domain.ViewModels
 
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
-
+        public List<IFormFile>? Files { get; set; }
+        public string[]? FileNames { get; set; }
         public string?  File1Name{ get; set; }
         public string?  File2Name{ get; set; }
         public string?  File3Name{ get; set; }

@@ -20,21 +20,22 @@ namespace Demand.Presentation.Controllers
         }
 
         [HttpPost("RequestInfo")]
-        public IActionResult RequestInfo([FromBody] RQ rQ)
+        public IActionResult RequestInfo([FromBody] OfferDetailViewModel offerDetailViewModel)
         {
-            RequestInfoOfferViewModel requestInfoOfferViewModel = new RequestInfoOfferViewModel();
-            RequestInfoEntity requestInfoEntity = _requestInfoService.GetById(rQ.RequestInfoId).Data;
-            if (requestInfoEntity != null)
+            var offerRequestViewModel = new OfferRequestViewModel
             {
-                requestInfoOfferViewModel.Unit = requestInfoEntity.Unit;
-                requestInfoOfferViewModel.Quantity = requestInfoEntity.Quantity;
-            }
-            return View(requestInfoOfferViewModel);
+                DemandId = (long)offerDetailViewModel.DemandId,
+                ProductCategoryId = 1, // Örnek olarak sabit bir değer atandı
+                ProductSubCategoryId = 1, // Örnek olarak sabit bir değer atandı
+                ProductName = "Örnek Ürün", // Örnek olarak sabit bir değer atandı
+                Quantity = 10, // Örnek olarak sabit bir değer atandı
+                Unit = "Adet", // Örnek olarak sabit bir değer atandı
+                Price = 0, // Varsayılan değer olarak 0 atandı
+                TotalPrice = 0 // Varsayılan değer olarak 0 atandı
+            };
+
+            return View(offerRequestViewModel);
         }
     }
 
-    public class RQ
-    {
-        public long RequestInfoId { get; set; }
-    }
 }

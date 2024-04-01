@@ -610,5 +610,29 @@ namespace Demand.Presentation.Controllers
             #endregion
             return Ok(demandEntity);
         }
+
+        [HttpGet("OfferPage")] 
+        public IActionResult OfferPage(long? DemandId, int? OfferNumber)
+        {
+            List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == DemandId).Data.ToList();
+            List<OfferRequestViewModel> offerRequestViewModels = new List<OfferRequestViewModel>();
+
+            foreach (var requestInfo in requestInfos)
+            {
+                OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
+                {
+                    DemandId = requestInfo.DemandId,
+                    ProductCategoryId = requestInfo.ProductCategoryId,
+                    ProductSubCategoryId = requestInfo.ProductSubCategoryId,
+                    ProductName = requestInfo.ProductName,
+                    Quantity = requestInfo.Quantity,
+                    Unit = requestInfo.Unit
+                };
+
+                offerRequestViewModels.Add(offerRequestViewModel);
+            }
+            return View(offerRequestViewModels);
+
+        }
     }
 }

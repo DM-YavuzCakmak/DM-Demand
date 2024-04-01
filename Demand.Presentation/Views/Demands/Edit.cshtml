@@ -354,7 +354,9 @@
                                 </div>
                             </div>
                             <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
-                            <button onclick="offerAdd(1)" type="button" class="update-button" style="background-color:orange">Teklif Giriş</button>
+
+                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 1 })" class="edit-button">Teklif Detay Giriş</a>
+
 
                         </div>
                     </div>
@@ -396,7 +398,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName2">Firma Adı:</label>
-                                    @if (Model.DemandOffers.Count >1 && Model?.DemandOffers?[1].CompanyName != null)
+                                    @if (Model.DemandOffers.Count > 1 && Model?.DemandOffers?[1].CompanyName != null)
                                     {
                                         <input type="text" id="offerCompanyName2" name="offerCompanyName2" value="@Model?.DemandOffers?[1].CompanyName">
                                     }
@@ -407,7 +409,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
-                                    @if (Model.DemandOffers.Count >1 && Model?.DemandOffers?[1].CompanyPhone != null)
+                                    @if (Model.DemandOffers.Count > 1 && Model?.DemandOffers?[1].CompanyPhone != null)
                                     {
                                         <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].CompanyPhone">
                                     }
@@ -421,7 +423,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress2">Firma Address:</label>
-                                    @if (Model.DemandOffers.Count >1 && Model?.DemandOffers?[1].CompanyAddress != null)
+                                    @if (Model.DemandOffers.Count > 1 && Model?.DemandOffers?[1].CompanyAddress != null)
                                     {
                                         <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2" value="@Model?.DemandOffers?[1].CompanyAddress">
                                     }
@@ -475,7 +477,8 @@
                                 </div>
                             </div>
                             <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
-                            <button onclick="offerAdd(2)" type="button" class="update-button" style="background-color:orange">Teklif Giriş</button>
+                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 2 })" class="edit-button">Teklif Detay Giriş</a>
+
 
                         </div>
                     </div>
@@ -496,7 +499,7 @@
                             <div class="form-group">
                                 <label for="provider3">Kayıtlı Sağlayıcı:</label>
                                 <select id="provider3" name="provider3" style="width:200px">
-                                    @if (Model.DemandOffers.Count >2 && Model.DemandOffers.Any())
+                                    @if (Model.DemandOffers.Count > 2 && Model.DemandOffers.Any())
                                     {
                                         <option value="@Model.DemandOffers[2].SupplierId">@Model.DemandOffers[2].SupplierName</option>
                                     }
@@ -516,7 +519,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName3">Firma Adı:</label>
-                                    @if (Model.DemandOffers.Count >2 && Model?.DemandOffers?[2].CompanyName != null)
+                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].CompanyName != null)
                                     {
                                         <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].CompanyName">
                                     }
@@ -542,7 +545,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress3">Firma Address:</label>
-                                    @if (Model.DemandOffers.Count > 2  && Model?.DemandOffers?[2].CompanyAddress != null)
+                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].CompanyAddress != null)
                                     {
                                         <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3" value="@Model?.DemandOffers?[2].CompanyAddress">
                                     }
@@ -596,15 +599,16 @@
                                 </div>
                             </div>
                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
-                            <button onclick="offerAdd(3)" type="button" class="update-button" style="background-color:orange">Teklif Giriş</button>
+                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 3 })" class="edit-button">Teklif Detay Giriş</a>
                         </div>
                     </div>
                 </div>
             </div>
         }
         <div class="button-group">
-@*             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
- *@        </div>
+            @*             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
+            *@
+        </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
@@ -713,7 +717,21 @@
         transition: all 0.5s ease;
     }
 
+    .edit-button {
+        background-color: #ff9933;
+        color: #fff;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
 
+        .edit-button:hover {
+            background-color: orange;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
     .form-row {
         display: flex;
@@ -807,53 +825,34 @@
         $('#department').prop('disabled', true);
 
         var demandId = @Model.DemandId;
-        $.ajax({
-            url: 'api/DemandOffers/GetDemandOfferData',
-            type: 'GET',
-            data: { demandId: demandId },
-            success: function (data) {
-                if (data != null) {
-                    // Teklif 1 verilerini doldur
-                    $('#offerCompanyName1').val(data.offer1CompanyName);
-                    $('#offerCompanyPhone1').val(data.offer1CompanyPhone);
-                    $('#offerCompanyAddress1').val(data.offer1CompanyAddress);
-                    $('#offerCurrencyType1').val(data.offer1CurrencyType);
-                    $('#offerAmount1').val(data.offer1Amount);
-                    $('#offerMaterial1').val(data.offer1Material);
-                    $('#offerPrice1').val(data.offer1Price);
-                    $('#offerTotalPrice1').val(data.offer1TotalPrice);
-                    $('#notRegisteredProvider1').prop('checked', !data.isProvider1Registered);
-                    $('#provider1').val(data.offer1CompanyId);
+        var companyNameFields = [
+            $('#offerCompanyName1'),
+            $('#offerCompanyName2'),
+            $('#offerCompanyName3')
+        ];
 
-                    // Teklif 2 verilerini doldur
-                    $('#offerCompanyName2').val(data.offer2CompanyName);
-                    $('#offerCompanyPhone2').val(data.offer2CompanyPhone);
-                    $('#offerCompanyAddress2').val(data.offer2CompanyAddress);
-                    $('#offerCurrencyType2').val(data.offer2CurrencyType);
-                    $('#offerAmount2').val(data.offer2Amount);
-                    $('#offerMaterial2').val(data.offer2Material);
-                    $('#offerPrice2').val(data.offer2Price);
-                    $('#offerTotalPrice2').val(data.offer2TotalPrice);
-                    $('#notRegisteredProvider2').prop('checked', !data.isProvider2Registered);
-                    $('#provider2').val(data.offer2CompanyId);
+        var offerEntryButtons = [
+            $('#offerEntryButton1'),
+            $('#offerEntryButton2'),
+            $('#offerEntryButton3')
+        ];
 
-                    // Teklif 3 verilerini doldur
-                    $('#offerCompanyName3').val(data.offer3CompanyName);
-                    $('#offerCompanyPhone3').val(data.offer3CompanyPhone);
-                    $('#offerCompanyAddress3').val(data.offer3CompanyAddress);
-                    $('#offerCurrencyType3').val(data.offer3CurrencyType);
-                    $('#offerAmount3').val(data.offer3Amount);
-                    $('#offerMaterial3').val(data.offer3Material);
-                    $('#offerPrice3').val(data.offer3Price);
-                    $('#offerTotalPrice3').val(data.offer3TotalPrice);
-                    $('#notRegisteredProvider3').prop('checked', !data.isProvider3Registered);
-                    $('#provider3').val(data.offer3CompanyId);
-                }
-            },
-            error: function (error) {
-                console.error('Error getting demand offer data:', error);
+        companyNameFields.forEach(function (companyNameField, index) {
+            if (companyNameField.val() !== "") {
+                offerEntryButtons[index].show();
+            } else {
+                offerEntryButtons[index].hide();
             }
         });
+
+
+
+        offerEntryButtons.forEach(function (button, index) {
+            button.click(function () {
+                openOfferPage(index + 1);
+            });
+        });
+
 
         $('#provider').change(function () {
             var selectedProviderId = $(this).val();
@@ -947,6 +946,11 @@
             });
         });
     });
+
+
+    function openOfferPage(demandId, offerNumber) {
+        window.location.href = '/api/Demands/OfferPage?demandId=' + demandId + '&offerNumber=' + offerNumber;
+    }
     function updateTotalPrice() {
         var amount = parseFloat($('#offerAmount1').val()) || 0;
         var price = parseFloat($('#offerPrice1').val()) || 0;

@@ -10,6 +10,7 @@ using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
+using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
@@ -156,6 +157,10 @@ namespace Demand.Presentation.Controllers
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(long id)
         {
+
+            NebimConnection nebimConnection = new NebimConnection();
+            nebimConnection.RunSqlQuery();
+
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
@@ -279,18 +284,18 @@ namespace Demand.Presentation.Controllers
 
             for (int i = 0; i < demandViewModel.Category.Count(); i++)
             {
-                var category = demandViewModel.Category[i];
+                var category = demandViewModel.ProductCode[i];
                 var subcategory = demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
                 var quantity = demandViewModel.Quantity[i];
-
+                var productname = demandViewModel.ProductDescription[i];
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
                     ProductCategoryId = Convert.ToInt32(category),
-                    ProductSubCategoryId = Convert.ToInt32(subcategory),
+                    ProductSubCategoryId = Convert.ToInt32(category),
                     Quantity = Convert.ToInt32(quantity),
-                    ProductName = category,
+                    ProductName = productname,
                     Unit = unit,
                     IsDeleted = false,
                     CreatedDate = DateTime.Now,

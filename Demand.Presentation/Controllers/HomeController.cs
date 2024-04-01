@@ -6,6 +6,7 @@ using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Concrete.DemandService;
+using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Entities;
 using Demand.Core.Utilities.Results.Abstract;
 using Demand.Domain.Entities.Company;
@@ -59,7 +60,7 @@ namespace Demand.Presentation.Controllers
             ViewBag.Department = departments;
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
             List<DemandProcessEntity> creatorDemandProcesses = _demandProcessService.GetList(x => x.CreatedAt == userId).Data.ToList();
-            if (demandProcesses.Count>0 || userId==7 || creatorDemandProcesses.Count>0)
+            if (demandProcesses.Count > 0 || userId == 7 || creatorDemandProcesses.Count > 0)
             {
                 List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 7 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.ToList();
                 foreach (var demand in DemandList)
@@ -83,14 +84,37 @@ namespace Demand.Presentation.Controllers
                         viewModel.LocationName = companyLocation.Data.Name;
                     }
                     demandViewModels.Add(viewModel);
-
-                   
                 }
-                return View(demandViewModels);
+                NebimConnection nebimConnection = new NebimConnection();
+                var nebimProductsInfo = nebimConnection.RunSqlQuery();
+
+                List<Product> products = new List<Product>();
+                var topCategories = nebimProductsInfo.DistinctBy(x => x.productHierarchyLevel01).Where(x => x.productHierarchyLevel01 != "").ToList();
+                foreach (var topCategorie in topCategories)
+                {
+                    Product product = new Product();
+                    product.Name = topCategorie.productHierarchyLevel01;
+                    var findCurrentCategoriesSubProducts = nebimProductsInfo.FindAll(x => x.productHierarchyLevel01 == topCategorie.productHierarchyLevel01);
+                    if (findCurrentCategoriesSubProducts.Any())
+                    {
+                        product.SubProducts = new List<Product>();
+                        foreach (var currentSubCategorie in findCurrentCategoriesSubProducts)
+                        {
+                            product.SubProducts.Add(new Product
+                            {
+                                Name = currentSubCategorie.productHierarchyLevel02,
+                                Description = currentSubCategorie.productDescription,
+                                ProductCode = currentSubCategorie.ProductCode
+                            }); 
+                        }
+                        products.Add(product);
+                    }
+                }
+                demandViewModels[0].Products = products;
             }
             return View(demandViewModels);
-        }
 
+        }
         public IActionResult GetFilterData(int? status = null, long? locationId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             List<DemandViewModel> demandViewModels = new List<DemandViewModel>();

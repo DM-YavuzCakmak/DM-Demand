@@ -1,13 +1,18 @@
 ﻿@using Demand.Domain.ViewModels
 @using System.Security.Claims
+@using System.Text.Json
 @model List<DemandViewModel>
 
 @{
     var claimsIdentity = (ClaimsIdentity)User.Identity;
     var claims = claimsIdentity.Claims;
     var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-}
+    var productsJson = JsonSerializer.Serialize(Model[0].Products);
 
+}
+<script>
+    var products = @Html.Raw(productsJson);
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +127,7 @@
                 <div class="form-group">
                     <label for="description">Açıklama:</label>
                     <textarea id="description" name="description"></textarea>
-                </div>   
+                </div>
                 <div class="form-group">
                     <label for="description">Dosya Seç:</label>
                     <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
@@ -133,6 +138,8 @@
                     <tr>
                         <th>Kategori</th>
                         <th>Alt Kategori</th>
+                        <th>Ürün Açıklaması</th>
+                        <th>Ürün Kodu</th>
                         <th>Birim</th>
                         <th>Adet</th>
                     </tr>
@@ -142,18 +149,35 @@
                         <td>
                             <div class="select-wrapper">
                                 <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode)">
-                                    <option value="1">Kategori 1</option>
-                                    <option value="2">Kategori 2</option>
+                                    @if (Model[0].Products != null)
+                                    {
+                                        foreach (var product in Model[0].Products)
+                                        {
+                                            <option value="@product.Name">@product.Name</option>
+                                        }
+                                    }
                                 </select>
                             </div>
                         </td>
                         <td>
                             <div class="select-wrapper">
                                 <select name="subcategory[]" class="subcategory">
-                                    <option value="1">Alt Kategori 1</option>
-                                    <option value="2">Alt Kategori 2</option>
+                                    @if (Model[0].Products != null)
+                                    {
+                                        foreach (var product in Model[0].Products[0].SubProducts)
+                                        {
+                                            <option value="@product.Name">@product.Name</option>
+                                        }
+                                    }
                                 </select>
+
                             </div>
+                        </td>
+                          <td class="form-group">
+                            <input type="text" name="productDescription" class="productDescription" value="@Model[0].Products[0].SubProducts[0].Description" />
+                        </td>
+                        <td class="form-group">
+                            <input type="text" name="productCode" class="productCode" value="@Model[0].Products[0].SubProducts[0].ProductCode" />
                         </td>
                         <td>
                             <div class="select-wrapper">
@@ -581,22 +605,16 @@
                 var select = document.createElement("select");
                 select.name = cell + "[]";
                 select.className = cell;
-
-                var defaultOption = document.createElement("option");
-                defaultOption.text = "Lütfen seçin...";
-                defaultOption.value = "";
-                select.appendChild(defaultOption);
-
                 if (cell === 'unit') {
                     var option1 = document.createElement("option");
                     option1.text = "Adet";
                     option1.value = "1";
                     select.appendChild(option1);
-
                     var option2 = document.createElement("option");
                     option2.text = "Metre";
                     option2.value = "2";
                     select.appendChild(option2);
+
                 } else if (cell === 'category') {
                     var option1 = document.createElement("option");
                     option1.text = "Kategori 1";
@@ -637,34 +655,23 @@
             table.deleteRow(-1);
         }
     }
+    function updateSubcategories(parentNode) {
+        var categoryIndex = parentNode.querySelector('.category').selectedIndex; 
+        var subcategorySelect = parentNode.querySelector('.subcategory'); 
 
-    function updateSubcategories(row) {
-        var categorySelect = row.querySelector('.category');
-        var subcategorySelect = row.querySelector('.subcategory');
+        var products = @Html.Raw(Json.Serialize(Model[0].Products)); 
 
-        if (categorySelect.value === "kategori1") {
-            subcategorySelect.innerHTML = '';
-            var option1 = document.createElement("option");
-            option1.text = "Alt Kategori 1";
-            option1.value = "1";
-            subcategorySelect.appendChild(option1);
+        var selectedCategoryProducts = products[categoryIndex];
+        var subcategories = selectedCategoryProducts ? selectedCategoryProducts.SubProducts : [];
 
-            var option2 = document.createElement("option");
-            option2.text = "Alt Kategori 2";
-            option2.value = "2";
-            subcategorySelect.appendChild(option2);
-        } else if (categorySelect.value === "kategori2") {
-            subcategorySelect.innerHTML = '';
-            var option1 = document.createElement("option");
-            option1.text = "Alt Kategori 3";
-            option1.value = "3";
-            subcategorySelect.appendChild(option1);
+        subcategorySelect.innerHTML = '';
 
-            var option2 = document.createElement("option");
-            option2.text = "Alt Kategori 4";
-            option2.value = "4";
-            subcategorySelect.appendChild(option2);
-        }
+        subcategories.forEach(function (subcategory) {
+            var option = document.createElement('option');
+            option.value = subcategory.Name;
+            option.textContent = subcategory.Name;
+            subcategorySelect.appendChild(option);
+        });
     }
     function sendDemand() {
         var formData = new FormData();
@@ -689,18 +696,17 @@
 
             var category = cells[0].querySelector("select[name='category[]']").value;
             var subcategory = cells[1].querySelector("select[name='subcategory[]']").value;
-            var unit = cells[2].querySelector("select[name='unit[]']").value;
-            var quantity = cells[3].querySelector("input[name='quantity']").value;
+            var unit = cells[4].querySelector("select[name='unit[]']").value;
+            var quantity = cells[5].querySelector("input[name='quantity']").value;
+            var productDescription = cells[2].querySelector("input[name='productDescription']").value;
+            var productCode = cells[3].querySelector("input[name='productCode']").value;
 
-            console.log(category, subcategory, unit, quantity);
-
-            var categoryId = category.value;
-            var subcategoryId = subcategory.value;
-
-            formData.append('Category[]', cells[0].querySelector("select[name='category[]']").value);
-            formData.append('Subcategory[]', cells[1].querySelector("select[name='subcategory[]']").value);
-            formData.append('Unit[]', cells[2].querySelector("select[name='unit[]']").value);
-            formData.append('Quantity[]', cells[3].querySelector("input[name='quantity']").value);
+            formData.append('Category[]', category);
+            formData.append('Subcategory[]', subcategory);
+            formData.append('Unit[]', unit);
+            formData.append('Quantity[]', quantity);
+            formData.append('ProductDescription[]', productDescription);
+            formData.append('ProductCode[]', productCode);
         }
         var fileInputs = document.querySelectorAll('input[type="file"]');
         for (var i = 0; i < fileInputs.length; i++) {

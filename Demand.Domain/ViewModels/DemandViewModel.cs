@@ -1,4 +1,5 @@
 ﻿using Demand.Domain.Entities;
+using Demand.Domain.NebimProductModel;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -41,8 +42,6 @@ namespace Demand.Domain.ViewModels
         #endregion
         #region RequestInfoTableFields
         public string? Material { get; set; }
-       // public int? Quantity { get; set; }
-        //public string? Unit { get; set; }
         public string? Material2 { get; set; }
         public int? Quantity2 { get; set; }
         public string? Unit2 { get; set; }
@@ -53,6 +52,8 @@ namespace Demand.Domain.ViewModels
         public List<string>? Subcategory { get; set; }
         public List<string>? Unit { get; set; }
         public List<string>? Quantity { get; set; }
+        public List<string>? ProductDescription { get; set; }
+        public List<string>? ProductCode { get; set; }
         #endregion
         #region CurrencyTypeTableFields
         public int? CurrencyTypeId { get; set; }
@@ -60,6 +61,7 @@ namespace Demand.Domain.ViewModels
         #endregion
         #region DemandOfferTableFields
         public List<DemandOfferViewModel>? DemandOffers { get; set; }
+        public List<Product>? Products { get; set; }
 
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
@@ -93,5 +95,14 @@ namespace Demand.Domain.ViewModels
         public string Metarial { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
+    }
+
+    public class Product
+    {
+        public string? Name { get; set; }
+
+        public string? ProductCode { get; set; }
+        public List<Product>? SubProducts { get; set; }
+        public string? Description { get; set; }
     }
 }

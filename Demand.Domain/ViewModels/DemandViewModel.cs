@@ -49,6 +49,10 @@ namespace Demand.Domain.ViewModels
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
         public List<string>? Category { get; set; }
+        public List<string>? ProductName { get; set; }
+
+        public List<string>? Product { get; set; }
+
         public List<string>? Subcategory { get; set; }
         public List<string>? Unit { get; set; }
         public List<string>? Quantity { get; set; }
@@ -61,9 +65,9 @@ namespace Demand.Domain.ViewModels
         #endregion
         #region DemandOfferTableFields
         public List<DemandOfferViewModel>? DemandOffers { get; set; }
-        public List<NebimCategoryModel> NebimCategoryModels { get; set; }
-        public List<NebimProductModel> NebimProductModels { get; set; }
-        public List<NebimSubCategoryModel> NebimSubCategoryModels { get; set; }
+        public List<NebimCategoryModel>? NebimCategoryModels { get; set; }
+        public List<NebimProductModel>? NebimProductModels { get; set; }
+        public List<NebimSubCategoryModel>? NebimSubCategoryModels { get; set; }
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
         public List<IFormFile>? Files { get; set; }

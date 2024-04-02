@@ -284,11 +284,11 @@ namespace Demand.Presentation.Controllers
 
             for (int i = 0; i < demandViewModel.Category.Count(); i++)
             {
-                var category = demandViewModel.ProductCode[i];
+                var category = demandViewModel.Category[i];
                 var subcategory = demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
                 var quantity = demandViewModel.Quantity[i];
-                var productname = demandViewModel.ProductDescription[i];
+                var productname = demandViewModel.Product[i];
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,

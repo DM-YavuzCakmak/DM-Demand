@@ -293,7 +293,7 @@ namespace Demand.Presentation.Controllers
                 {
                     DemandId = addedDemand.Id,
                     ProductCategoryId = Convert.ToInt32(category),
-                    ProductSubCategoryId = Convert.ToInt32(category),
+                    ProductSubCategoryId = Convert.ToInt32(subcategory),
                     Quantity = Convert.ToInt32(quantity),
                     ProductName = productname,
                     Unit = unit,

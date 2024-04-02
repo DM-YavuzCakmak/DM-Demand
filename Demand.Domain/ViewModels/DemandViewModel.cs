@@ -1,5 +1,5 @@
 ﻿using Demand.Domain.Entities;
-using Demand.Domain.NebimProductModel;
+using Demand.Domain.NebimModels;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -61,8 +61,9 @@ namespace Demand.Domain.ViewModels
         #endregion
         #region DemandOfferTableFields
         public List<DemandOfferViewModel>? DemandOffers { get; set; }
-        public List<Product>? Products { get; set; }
-
+        public List<NebimCategoryModel> NebimCategoryModels { get; set; }
+        public List<NebimProductModel> NebimProductModels { get; set; }
+        public List<NebimSubCategoryModel> NebimSubCategoryModels { get; set; }
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
         public List<IFormFile>? Files { get; set; }

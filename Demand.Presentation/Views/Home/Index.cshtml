@@ -7,12 +7,9 @@
     var claimsIdentity = (ClaimsIdentity)User.Identity;
     var claims = claimsIdentity.Claims;
     var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-    var productsJson = JsonSerializer.Serialize(Model[0].Products);
 
 }
-<script>
-    var products = @Html.Raw(productsJson);
-</script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,12 +145,12 @@
                     <tr>
                         <td>
                             <div class="select-wrapper">
-                                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode)">
-                                    @if (Model[0].Products != null)
+                                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
+                                    @if (Model[0].NebimCategoryModels != null)
                                     {
-                                        foreach (var product in Model[0].Products)
+                                        foreach (var product in Model[0].NebimCategoryModels)
                                         {
-                                            <option value="@product.Name">@product.Name</option>
+                                            <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description</option>
                                         }
                                     }
                                 </select>
@@ -161,23 +158,20 @@
                         </td>
                         <td>
                             <div class="select-wrapper">
-                                <select name="subcategory[]" class="subcategory">
-                                    @if (Model[0].Products != null)
-                                    {
-                                        foreach (var product in Model[0].Products[0].SubProducts)
-                                        {
-                                            <option value="@product.Name">@product.Name</option>
-                                        }
-                                    }
+                                <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
                                 </select>
 
                             </div>
                         </td>
                           <td class="form-group">
-                            <input type="text" name="productDescription" class="productDescription" value="@Model[0].Products[0].SubProducts[0].Description" />
+                            <div class="select-wrapper">
+                                <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
+                                  
+                                </select>
+                            </div>
                         </td>
                         <td class="form-group">
-                            <input type="text" name="productCode" class="productCode" value="@Model[0].Products[0].SubProducts[0].ProductCode" />
+                            <input type="text" name="productCode" class="productCode" />
                         </td>
                         <td>
                             <div class="select-wrapper">
@@ -655,24 +649,65 @@
             table.deleteRow(-1);
         }
     }
+
+    
     function updateSubcategories(parentNode) {
-        var categoryIndex = parentNode.querySelector('.category').selectedIndex; 
-        var subcategorySelect = parentNode.querySelector('.subcategory'); 
+        debugger;
+        var categoryValue = parentNode.querySelector('.category').value;
+        var subcategorySelect = parentNode.querySelector('.subcategory');
 
-        var products = @Html.Raw(Json.Serialize(Model[0].Products)); 
-
-        var selectedCategoryProducts = products[categoryIndex];
-        var subcategories = selectedCategoryProducts ? selectedCategoryProducts.SubProducts : [];
+        var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimSubCategoryModels));
 
         subcategorySelect.innerHTML = '';
 
-        subcategories.forEach(function (subcategory) {
-            var option = document.createElement('option');
-            option.value = subcategory.Name;
-            option.textContent = subcategory.Name;
-            subcategorySelect.appendChild(option);
+        subCategoryModels.forEach(function (subcategory) {
+            if (subcategory.productHierarchyLevel01Code == categoryValue) {
+                var option = document.createElement('option');
+                option.value = subcategory.productHierarchyLevel02Code;
+                option.textContent = subcategory.productHierarchyLevel02Description;
+                subcategorySelect.appendChild(option);
+            }
         });
     }
+
+    function updateProduct(parentNode) {
+        debugger;
+        var subcategoryValue = parentNode.querySelector('.subcategory').value;
+        var productSelect = parentNode.querySelector('.product');
+
+        var productModels = @Html.Raw(Json.Serialize(Model[0].NebimProductModels));
+
+        productSelect.innerHTML = '';
+
+        productModels.forEach(function (product) {
+            if (product.productHierarchyLevel02Code == subcategoryValue) {
+                var option = document.createElement('option');
+                option.value = product.productCode;
+                option.textContent = product.productDescription;
+                productSelect.appendChild(option);
+            }
+        });
+    }
+
+    function updateProductCode(parentNode) {
+        var productSelect = parentNode.querySelector('.product');
+        var productCodeInput = parentNode.querySelector('.productCode');
+        var productModels = @Html.Raw(Json.Serialize(Model[0].NebimProductModels));
+        var selectedProductValue = productSelect.value;
+
+        var foundProductCode = null;
+        productModels.forEach(function (product) {
+            if (product.productCode == selectedProductValue) {
+                foundProductCode = product.productCode;
+            }
+        });
+        if (foundProductCode) {
+            productCodeInput.value = foundProductCode;
+        } else {
+            productCodeInput.value = "Ürün Kodu Yok";
+        }
+    }
+
     function sendDemand() {
         var formData = new FormData();
 

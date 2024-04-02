@@ -159,7 +159,7 @@ namespace Demand.Presentation.Controllers
         {
 
             NebimConnection nebimConnection = new NebimConnection();
-            nebimConnection.RunSqlQuery();
+            nebimConnection.GetNebimCategoryModels();
 
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();

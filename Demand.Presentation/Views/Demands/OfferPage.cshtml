@@ -17,6 +17,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <style>
         body::before {
             content: "";
@@ -102,6 +105,20 @@
                 background-color: #45a049;
             }
 
+            .input-sm {
+            height: auto !important;
+            padding: 5px;
+        }
+        select {
+            width: 100%;
+            padding: 5px;
+            margin: 0 !important;
+        }
+        input {
+            width: 100%;
+            padding: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -126,22 +143,22 @@
                 {
                     <tr>
                         <td>
-                            @* <select name="productCategory" class="category-select">
-                                <option value="1" itemid="1" @(offerRequestViewModel.ProductCategoryId == 1 ? "selected" : "")>Kategori 1</option>
-                                <option value="2" itemid="2" @(offerRequestViewModel.ProductCategoryId == 2 ? "selected" : "")>Kategori 2</option>
+                            <select name="productCategory" class="category-select">
+                                <option value="1" itemid="1" >Kategori 1</option>
+                                <option value="2" itemid="2" >Kategori 2</option>
                             </select>
                         </td>
                         <td>
                             <select name="productSubCategory" class="subcategory-select">
-                                <option value="1" itemid="1" @(offerRequestViewModel.ProductSubCategoryId == 1 ? "selected" : "")>Alt Kategori 1</option>
-                                <option value="2" itemid="2" @(offerRequestViewModel.ProductSubCategoryId == 2 ? "selected" : "")>Alt Kategori 2</option>
+                                <option value="1" itemid="1">Alt Kategori 1</option>
+                                <option value="2" itemid="2">Alt Kategori 2</option>
                             </select>
                         </td>
                         <td>@offerRequestViewModel.ProductName</td>
                         <td>@offerRequestViewModel.Quantity</td>
                         <td>@offerRequestViewModel.Unit</td>
-                        <td><input type="text" name="price" class="price-input" value="@offerRequestViewModel.Price" /></td>
-                        <td><input type="text" name="totalPrice" class="totalprice-input" value="@offerRequestViewModel.TotalPrice" /></td> *@
+                        <td><input type="text" name="price" class="price-input"/></td>
+                        <td><input type="text" name="totalPrice" class="totalprice-input" readonly/></td>
                     </tr>
                 }
             </tbody>
@@ -175,3 +192,18 @@
     }
    
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.price-input').forEach(function (priceInput) {
+            priceInput.addEventListener('input', function () {
+                var row = this.closest('tr');
+                var quantity = parseFloat(row.cells[3].textContent) || 0;
+                var price = parseFloat(this.value) || 0;
+                var totalPrice = quantity * price;
+                var totalPriceInput = row.querySelector('.totalprice-input');
+                totalPriceInput.value = totalPrice.toFixed(2);
+            });
+        });
+    });
+</script>

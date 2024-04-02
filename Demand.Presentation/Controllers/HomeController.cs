@@ -86,31 +86,14 @@ namespace Demand.Presentation.Controllers
                     demandViewModels.Add(viewModel);
                 }
                 NebimConnection nebimConnection = new NebimConnection();
-                var nebimProductsInfo = nebimConnection.RunSqlQuery();
+                var nebimCategoryModels = nebimConnection.GetNebimCategoryModels();
+                demandViewModels[0].NebimCategoryModels = nebimCategoryModels;
 
-                List<Product> products = new List<Product>();
-                var topCategories = nebimProductsInfo.DistinctBy(x => x.productHierarchyLevel01).Where(x => x.productHierarchyLevel01 != "").ToList();
-                foreach (var topCategorie in topCategories)
-                {
-                    Product product = new Product();
-                    product.Name = topCategorie.productHierarchyLevel01;
-                    var findCurrentCategoriesSubProducts = nebimProductsInfo.FindAll(x => x.productHierarchyLevel01 == topCategorie.productHierarchyLevel01);
-                    if (findCurrentCategoriesSubProducts.Any())
-                    {
-                        product.SubProducts = new List<Product>();
-                        foreach (var currentSubCategorie in findCurrentCategoriesSubProducts)
-                        {
-                            product.SubProducts.Add(new Product
-                            {
-                                Name = currentSubCategorie.productHierarchyLevel02,
-                                Description = currentSubCategorie.productDescription,
-                                ProductCode = currentSubCategorie.ProductCode
-                            }); 
-                        }
-                        products.Add(product);
-                    }
-                }
-                demandViewModels[0].Products = products;
+                var nebimSubcategoryModels = nebimConnection.GetNebimSubCategoryModels();
+                demandViewModels[0].NebimSubCategoryModels = nebimSubcategoryModels;
+
+                var nebimProductModels = nebimConnection.GetNebimProductModels();
+                demandViewModels[0].NebimProductModels = nebimProductModels;
             }
             return View(demandViewModels);
 

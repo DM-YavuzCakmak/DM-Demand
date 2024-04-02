@@ -630,12 +630,24 @@ namespace Demand.Presentation.Controllers
                     ProductCategoryId = requestInfo.ProductCategoryId,
                     ProductSubCategoryId = requestInfo.ProductSubCategoryId,
                     ProductName = requestInfo.ProductName,
+                    ProductCode = requestInfo.ProductCode,
                     Quantity = requestInfo.Quantity,
                     Unit = requestInfo.Unit
                 };
 
                 offerRequestViewModels.Add(offerRequestViewModel);
             }
+
+            NebimConnection nebimConnection = new NebimConnection();
+            var nebimCategoryModels = nebimConnection.GetNebimCategoryModels();
+            offerRequestViewModels[0].NebimCategoryModels = nebimCategoryModels;
+
+            var nebimSubcategoryModels = nebimConnection.GetNebimSubCategoryModels();
+            offerRequestViewModels[0].NebimSubCategoryModels = nebimSubcategoryModels;
+
+            var nebimProductModels = nebimConnection.GetNebimProductModels();
+            offerRequestViewModels[0].NebimProductModels = nebimProductModels;
+
             return View(offerRequestViewModels);
 
         }

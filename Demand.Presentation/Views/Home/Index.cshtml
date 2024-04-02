@@ -149,7 +149,7 @@
                                 <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
                                     @if (Model[0].NebimCategoryModels != null)
                                     {
-                                        <option>Lütfen seçim yapınız.</option>
+                                        <option>Lütfen seçiniz</option>
                                         foreach (var product in Model[0].NebimCategoryModels)
                                         {
                                             <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description</option>
@@ -176,7 +176,7 @@
                             <input type="text" name="productCode[]" class="productCode" />
                         </td>    
                         <td class="form-group">
-                            <input type="text" name="productName" class="productName" />
+                            <input type="text" name="productName[]" class="productName" />
                         </td>
                         <td>
                             <div class="select-wrapper">
@@ -187,7 +187,7 @@
                             </div>
                         </td>
                         <td class="form-group">
-                            <input type="text" name="quantity" class="quantity" />
+                            <input type="text" name="quantity[]" class="quantity" />
                         </td>
                     </tr>
                 </tbody>
@@ -598,7 +598,7 @@
 
         cells.forEach(function (cell) {
             var newCell = newRow.insertCell(-1);
-            if (cell === 'category' || cell === 'subcategory' || cell === 'unit') {
+            if (cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
                 var div = document.createElement("div");
                 div.className = "select-wrapper";
                 var select = document.createElement("select");
@@ -619,26 +619,35 @@
                     select.addEventListener('change', function () {
                         updateSubcategories(this.parentNode.parentNode.parentNode);
                     });
+                    var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimCategoryModels));
+                    select.innerHTML = '';
                     var defaultOption = document.createElement('option');
                     defaultOption.text = "Lütfen seçiniz";
                     select.add(defaultOption);
-                    var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimCategoryModels));
-                    select.innerHTML = '';
                     subCategoryModels.forEach(function (subcategory) {
                       var option = document.createElement('option');
                       option.value = subcategory.productHierarchyLevel01Code;
                       option.textContent = subcategory.productHierarchyLevel01Description;
                       select.appendChild(option);
                     });
-                } 
+                } else if (cell === 'subcategory') {
+                    select.addEventListener('change', function () {
+                        updateProduct(this.parentNode.parentNode.parentNode);
+                    });
+                } else if (cell === 'product') {
+                    select.addEventListener('change', function () {
+                        updateProductCode(this.parentNode.parentNode.parentNode);
+                    });
+                }
                 div.appendChild(select);
                 newCell.appendChild(div);
             } else {
                 var input = document.createElement("input");
                 input.type = "text";
-                input.name = cell;
+                input.name = cell +"[]";
                 input.className = cell;
-                input.oninput = function () { calculateTotal(newRow); };
+                
+                newCell.className = "form-group";
                 newCell.appendChild(input);
             }
         });
@@ -693,19 +702,24 @@
     function updateProductCode(parentNode) {
         var productSelect = parentNode.querySelector('.product');
         var productCodeInput = parentNode.querySelector('.productCode');
+        var productNameInput = parentNode.querySelector('.productName');
         var productModels = @Html.Raw(Json.Serialize(Model[0].NebimProductModels));
         var selectedProductValue = productSelect.value;
 
         var foundProductCode = null;
+        var foundProductName = null;
         productModels.forEach(function (product) {
             if (product.productCode == selectedProductValue) {
                 foundProductCode = product.productCode;
+                foundProductName = product.productDescription;
             }
         });
         if (foundProductCode) {
             productCodeInput.value = foundProductCode;
+            productNameInput.value = foundProductName;
         } else {
             productCodeInput.value = "Ürün Kodu Yok";
+            productNameInput.value = "Ürün Adı Yok";
         }
     }
     function sendDemand() {
@@ -731,10 +745,10 @@
             var category = cells[0].querySelector("select[name='category[]']").value;
             var subcategory = cells[1].querySelector("select[name='subcategory[]']").value;
             var product = cells[2].querySelector("select[name='product[]']").selectedOptions[0].textContent;
-            var productName = cells[4].querySelector("input[name='productName']").value;
+            var productName = cells[4].querySelector("input[name='productName[]']").value;
             var productCode = cells[3].querySelector("input[name='productCode[]']").value;
             var unit = cells[5].querySelector("select[name='unit[]']").value;
-            var quantity = cells[6].querySelector("input[name='quantity']").value;
+            var quantity = cells[6].querySelector("input[name='quantity[]']").value;
             console.log(category, subcategory, product, productName, productCode, unit, quantity);
             formData.append('Category[]', category);
             formData.append('Subcategory[]', subcategory);

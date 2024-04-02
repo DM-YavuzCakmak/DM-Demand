@@ -15,6 +15,7 @@ namespace Demand.Domain.Entities.RequestInfoEntity
         public int? ProductCategoryId { get; set; }
         public int? ProductSubCategoryId { get; set; }
         public string ProductName { get; set; }
+        public string? ProductCode { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
     }

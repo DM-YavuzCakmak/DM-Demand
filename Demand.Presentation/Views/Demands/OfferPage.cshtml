@@ -105,15 +105,17 @@
                 background-color: #45a049;
             }
 
-            .input-sm {
+        .input-sm {
             height: auto !important;
             padding: 5px;
         }
+
         select {
             width: 100%;
             padding: 5px;
             margin: 0 !important;
         }
+
         input {
             width: 100%;
             padding: 5px;
@@ -124,47 +126,92 @@
 <body>
     <main class="table" id="demandTable">
         <h2 style="text-align: center; color: white;">TEKLİF GİRİŞİ</h2>
-<form id="siteform" enctype="multipart/form-data">
-    <section class="tableBody">
-        <table>
-            <thead>
-                <tr>
-                    <th>KATEGORİ</th>
-                    <th>ALT KATEGORİ</th>
-                    <th>ÜRÜN ADI</th>
-                    <th>MİKTAR</th>
-                    <th>BİRİM</th>
-                    <th>FİYAT</th>
-                    <th>TOPLAM FİYAT</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var offerRequestViewModel in Model)
-                {
-                    <tr>
-                        <td>
-                            <select name="productCategory" class="category-select">
-                                <option value="1" itemid="1" >Kategori 1</option>
-                                <option value="2" itemid="2" >Kategori 2</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="productSubCategory" class="subcategory-select">
-                                <option value="1" itemid="1">Alt Kategori 1</option>
-                                <option value="2" itemid="2">Alt Kategori 2</option>
-                            </select>
-                        </td>
-                        <td>@offerRequestViewModel.ProductName</td>
-                        <td>@offerRequestViewModel.Quantity</td>
-                        <td>@offerRequestViewModel.Unit</td>
-                        <td><input type="text" name="price" class="price-input"/></td>
-                        <td><input type="text" name="totalPrice" class="totalprice-input" readonly/></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </section>
-</form>
+        <form id="siteform" enctype="multipart/form-data">
+            <section class="tableBody">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>KATEGORİ</th>
+                            <th>ALT KATEGORİ</th>
+                            <th>ÜRÜN ADI</th>
+                            <th>MİKTAR</th>
+                            <th>BİRİM</th>
+                            <th>FİYAT</th>
+                            <th>TOPLAM FİYAT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var offerRequestViewModel in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
+                                        @if (Model[0].NebimCategoryModels != null)
+                                        {
+                                            <option>Lütfen seçiniz</option>
+                                            foreach (var product in Model[0].NebimCategoryModels)
+                                            {
+                                                if (product.ProductHierarchyLevel01Code == offerRequestViewModel.ProductCategoryId.ToString())
+                                                {
+                                                    <option value="@product.ProductHierarchyLevel01Code" selected>@product.ProductHierarchyLevel01Description </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description </option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
+                                        @if (Model[0].NebimSubCategoryModels != null)
+                                        {
+                                            <option>Lütfen seçiniz</option>
+                                            foreach (var product in Model[0].NebimSubCategoryModels)
+                                            {
+                                                if (product.ProductHierarchyLevel02Code == offerRequestViewModel.ProductSubCategoryId.ToString())
+                                                {
+                                                    <option value="@product.ProductHierarchyLevel02Code" selected>@product.ProductHierarchyLevel02Description </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@product.ProductHierarchyLevel02Code">@product.ProductHierarchyLevel02Description </option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
+                                        @if (Model[0].NebimProductModels != null)
+                                        {
+                                            <option>Lütfen seçiniz</option>
+                                            foreach (var product in Model[0].NebimProductModels)
+                                            {
+                                                if (product.ProductCode == offerRequestViewModel.ProductCode)
+                                                {
+                                                    <option value="@product.ProductCode" selected>@product.ProductDescription </option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@product.ProductCode">@product.ProductDescription </option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </td>
+                                <td>@offerRequestViewModel.ProductName</td>
+                                <td>@offerRequestViewModel.Quantity</td>
+                                <td>@offerRequestViewModel.Unit</td>
+                                <td><input type="text" name="price" class="price-input" /></td>
+                                <td><input type="text" name="totalPrice" class="totalprice-input" readonly /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+        </form>
     </main>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
@@ -182,6 +229,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
+
     #sendButton {
         background-color: #4CAF50;
         color: #fff;
@@ -190,7 +238,6 @@
         border-radius: 5px;
         cursor: pointer;
     }
-   
 </style>
 
 <script>
@@ -206,4 +253,25 @@
             });
         });
     });
+
+    function updateSubcategories(parentNode) {
+        debugger;
+        var categoryValue = parentNode.querySelector('.category').value;
+        var subcategorySelect = parentNode.querySelector('.subcategory');
+
+        var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimSubCategoryModels));
+
+        subcategorySelect.innerHTML = '';
+        var defaultOption = document.createElement('option');
+        defaultOption.text = "Lütfen seçiniz";
+        subcategorySelect.add(defaultOption);
+        subCategoryModels.forEach(function (subcategory) {
+            if (subcategory.productHierarchyLevel01Code == categoryValue) {
+                var option = document.createElement('option');
+                option.value = subcategory.productHierarchyLevel02Code;
+                option.textContent = subcategory.productHierarchyLevel02Description;
+                subcategorySelect.appendChild(option);
+            }
+        });
+    }
 </script>

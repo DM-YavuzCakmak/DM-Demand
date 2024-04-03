@@ -9,7 +9,10 @@ namespace Demand.Domain.ViewModels
 {
     public class OfferRequestViewModel
     {
+        public long? OfferRequestId { get; set; }
+        public long RequestInfoId { get; set; }
         public long DemandId { get; set; }
+        public long DemandOfferId { get; set; }
         public int? ProductCategoryId { get; set; }
         public int? ProductSubCategoryId { get; set; }
         public string ProductName { get; set; }

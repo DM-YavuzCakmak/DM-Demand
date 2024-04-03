@@ -18,6 +18,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
     <style>
@@ -128,11 +129,13 @@
         <h2 style="text-align: center; color: white;">TEKLİF GİRİŞİ</h2>
         <form id="siteform" enctype="multipart/form-data">
             <section class="tableBody">
-                <table>
+                <table id="dataTable">
                     <thead>
                         <tr>
                             <th>KATEGORİ</th>
                             <th>ALT KATEGORİ</th>
+                            <th>ÜRÜN</th>
+                            <th>ÜRÜN KODU</th>
                             <th>ÜRÜN ADI</th>
                             <th>MİKTAR</th>
                             <th>BİRİM</th>
@@ -144,6 +147,7 @@
                         @foreach (var offerRequestViewModel in Model)
                         {
                             <tr>
+                                <td><input type="hidden" name="requestInfoId[]" class="requestInfoId" value="@offerRequestViewModel.RequestInfoId" /></td>
                                 <td>
                                     <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
                                         @if (Model[0].NebimCategoryModels != null)
@@ -201,15 +205,28 @@
                                         }
                                     </select>
                                 </td>
-                                <td>@offerRequestViewModel.ProductName</td>
-                                <td>@offerRequestViewModel.Quantity</td>
-                                <td>@offerRequestViewModel.Unit</td>
-                                <td><input type="text" name="price" class="price-input" /></td>
-                                <td><input type="text" name="totalPrice" class="totalprice-input" readonly /></td>
+                                <td><input type="text" name="productCode[]" class="productCode" readonly value="@offerRequestViewModel.ProductCode" /></td>
+                                <td><input type="text" name="productName[]" class="productName" readonly value="@offerRequestViewModel.ProductName" /></td>
+                                <td><input type="text" name="quantity[]" class="quantity" readonly value="@offerRequestViewModel.Quantity" /></td>
+                                <td>
+                                    <select name="unit[]" class="unit">
+                                        <option value="@offerRequestViewModel.Unit">@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</option>
+                                    </select>
+                                </td>
+                                @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@
+                                <td><input type="text" name="price[]" class="price" value="@offerRequestViewModel.Price" /></td>
+                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice" /></td>
+                                <td><input type="hidden" name="offerRequestId[]" value="@(offerRequestViewModel.OfferRequestId ?? 0)" /></td>
                             </tr>
                         }
                     </tbody>
-                </table>
+                    </tabl>
+                    <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
+                    <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+
+                    <div class="button-group">
+                        <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+                    </div>
             </section>
         </form>
     </main>
@@ -242,13 +259,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.price-input').forEach(function (priceInput) {
+        document.querySelectorAll('.price').forEach(function (priceInput) {
             priceInput.addEventListener('input', function () {
                 var row = this.closest('tr');
-                var quantity = parseFloat(row.cells[3].textContent) || 0;
+                var quantity = parseFloat(row.cells[6].childNodes[0].value) || 0;
                 var price = parseFloat(this.value) || 0;
                 var totalPrice = quantity * price;
-                var totalPriceInput = row.querySelector('.totalprice-input');
+                var totalPriceInput = row.querySelector('.totalprice');
                 totalPriceInput.value = totalPrice.toFixed(2);
             });
         });
@@ -271,6 +288,193 @@
                 option.value = subcategory.productHierarchyLevel02Code;
                 option.textContent = subcategory.productHierarchyLevel02Description;
                 subcategorySelect.appendChild(option);
+            }
+        });
+    }
+
+    function updateProduct(parentNode) {
+        debugger;
+        var subcategoryValue = parentNode.querySelector('.subcategory').value;
+        var productSelect = parentNode.querySelector('.product');
+
+        var productModels = @Html.Raw(Json.Serialize(Model[0].NebimProductModels));
+
+        productSelect.innerHTML = '';
+        var defaultOption = document.createElement('option');
+        defaultOption.text = "Lütfen seçiniz";
+        productSelect.add(defaultOption);
+        productModels.forEach(function (product) {
+            if (product.productHierarchyLevel02Code == subcategoryValue) {
+                var option = document.createElement('option');
+                option.value = product.productCode;
+                option.textContent = product.productDescription;
+                productSelect.appendChild(option);
+            }
+        });
+    }
+
+    function updateProductCode(parentNode) {
+        var productSelect = parentNode.querySelector('.product');
+        var productCodeInput = parentNode.querySelector('.productCode');
+        var productNameInput = parentNode.querySelector('.productName');
+        var productModels = @Html.Raw(Json.Serialize(Model[0].NebimProductModels));
+        var selectedProductValue = productSelect.value;
+
+        var foundProductCode = null;
+        var foundProductName = null;
+        productModels.forEach(function (product) {
+            if (product.productCode == selectedProductValue) {
+                foundProductCode = product.productCode;
+                foundProductName = product.productDescription;
+            }
+        });
+        if (foundProductCode) {
+            productCodeInput.value = foundProductCode;
+            productNameInput.value = foundProductName;
+        } else {
+            productCodeInput.value = "Ürün Kodu Yok";
+            productNameInput.value = "Ürün Adı Yok";
+        }
+    }
+
+    function addRow() {
+        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow(table.rows.length);
+        var cells = ['requestInfoId', 'category', 'subcategory', 'product', 'productCode', 'productName', 'quantity', 'unit', 'price', 'totalPrice', 'offerRequestId'];
+
+        cells.forEach(function (cell) {
+            var newCell = newRow.insertCell(-1);
+            if (cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
+                var div = document.createElement("div");
+                div.className = "select-wrapper";
+                var select = document.createElement("select");
+                select.name = cell + "[]";
+                select.className = cell;
+                if (cell === 'unit') {
+                    var option1 = document.createElement("option");
+                    option1.text = "Adet";
+                    option1.value = "1";
+                    select.appendChild(option1);
+                    var option2 = document.createElement("option");
+                    option2.text = "Metre";
+                    option2.value = "2";
+                    select.appendChild(option2);
+
+                }
+                else if (cell === 'category') {
+                    select.addEventListener('change', function () {
+                        updateSubcategories(this.parentNode.parentNode.parentNode);
+                    });
+                    var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimCategoryModels));
+                    select.innerHTML = '';
+                    var defaultOption = document.createElement('option');
+                    defaultOption.text = "Lütfen seçiniz";
+                    select.add(defaultOption);
+                    subCategoryModels.forEach(function (subcategory) {
+                        var option = document.createElement('option');
+                        option.value = subcategory.productHierarchyLevel01Code;
+                        option.textContent = subcategory.productHierarchyLevel01Description;
+                        select.appendChild(option);
+                    });
+                } else if (cell === 'subcategory') {
+                    select.addEventListener('change', function () {
+                        updateProduct(this.parentNode.parentNode.parentNode);
+                    });
+                } else if (cell === 'product') {
+                    select.addEventListener('change', function () {
+                        updateProductCode(this.parentNode.parentNode.parentNode);
+                    });
+                }
+                div.appendChild(select);
+                newCell.appendChild(div);
+            } else if (cell == "offerRequestId") {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = cell + "[]";
+                input.value = 0;
+                input.className = cell;
+
+                newCell.appendChild(input);
+            } else {
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = cell + "[]";
+                input.className = cell;
+
+                if (cell === 'price') {
+                    input.addEventListener('input', function () {
+                        var row = this.closest('tr');
+                        var quantity = parseFloat(row.cells[6].childNodes[0].value) || 0;
+                        var price = parseFloat(this.value) || 0;
+                        var totalPrice = quantity * price;
+                        var totalPriceInput = row.cells[9].childNodes[0];
+                        totalPriceInput.value = totalPrice.toFixed(2);
+                    });
+                }
+
+                newCell.className = "form-group";
+                newCell.appendChild(input);
+            }
+        });
+    }
+
+    function removeRow() {
+        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        if (table.rows.length > @Html.Raw(Model.Count)) {
+            table.deleteRow(-1);
+        }
+    }
+    function sendDemand() {
+        var formData = new FormData();
+
+        formData.append('DemandOfferId', @Model[0].DemandOfferId);
+        formData.append('DemandId', @Model[0].DemandId);
+
+        var table = document.getElementById("dataTable");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName("td");
+            var requestInfoId = cells[0].querySelector("input[name='requestInfoId[]']").value;
+            var category = cells[1].querySelector("select[name='category[]']").value;
+            var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
+            var product = cells[3].querySelector("select[name='product[]']").selectedOptions[0].textContent;
+            var productName = cells[5].querySelector("input[name='productName[]']").value;
+            var productCode = cells[4].querySelector("input[name='productCode[]']").value;
+            var unit = cells[7].querySelector("select[name='unit[]']").value;
+            var quantity = cells[6].querySelector("input[name='quantity[]']").value;
+            var price = cells[8].querySelector("input[name='price[]']").value;
+            var totalPrice = cells[9].querySelector("input[name='totalPrice[]']").value;
+            var offerRequestId = cells[10].querySelector("input[name='offerRequestId[]']").value;
+            console.log(requestInfoId, category, subcategory, product, productName, productCode, unit, quantity, price, totalPrice);
+            formData.append('requestInfoId[]', requestInfoId);
+            formData.append('Category[]', category);
+            formData.append('Subcategory[]', subcategory);
+            formData.append('Unit[]', unit);
+            formData.append('Quantity[]', quantity);
+            formData.append('Product[]', product);
+            formData.append('ProductCode[]', productCode);
+            formData.append('ProductDescription[]', productName);
+            formData.append('Price[]', price);
+            formData.append('TotalPrice[]', totalPrice);
+            formData.append('OfferRequestId[]', offerRequestId);
+        }
+
+        console.log("formdata", formData);
+        $.ajax({
+            url: '@Url.Action("AddOfferRequest", "Demands")',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                console.log(result);
+                toastr.success("Offer Request Created", "Success");
+
+                window.location.href = '/api/Demands/Edit/' + @Model[0].DemandId;
+            },
+            error: function (error) {
+                toastr.error("Unexpected Error", "Error");
             }
         });
     }

@@ -42,6 +42,11 @@ namespace Demand.Business.Concrete.OfferRequestService
             return new SuccessDataResult<IList<OfferRequestEntity>>(_offerRequestRepository.GetList(filter));
         }
 
+        public IDataResult<OfferRequestEntity?> GetFirstOrDefault(Expression<Func<OfferRequestEntity, bool>> filter)
+        {
+            return new SuccessDataResult<OfferRequestEntity?>(_offerRequestRepository.GetFirstOrDefault(filter));
+        }
+
         public OfferRequestEntity Update(OfferRequestEntity offerRequest)
         {
             _offerRequestRepository.Update(offerRequest);

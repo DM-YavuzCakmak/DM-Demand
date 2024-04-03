@@ -65,6 +65,23 @@ where TContext : DbContext, new()
         }
     }
 
+    public virtual TEntity? GetFirstOrDefault(Expression<Func<TEntity, bool>> filter)
+    {
+        using (var context = new TContext())
+        {
+            try
+            {
+                return context.Set<TEntity>().FirstOrDefault(filter);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+    }
+
     public void Update(TEntity entity)
     {
         using (var context = new TContext())

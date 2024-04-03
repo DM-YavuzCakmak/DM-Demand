@@ -17,5 +17,6 @@ namespace Demand.Business.Abstract.OfferRequestService
         OfferRequestEntity Update(OfferRequestEntity offerRequest);
         IDataResult<OfferRequestEntity> GetById(long id);
         IDataResult<IList<OfferRequestEntity>> GetList(Expression<Func<OfferRequestEntity, bool>> filter);
+        IDataResult<OfferRequestEntity?> GetFirstOrDefault(Expression<Func<OfferRequestEntity, bool>> filter);
     }
 }

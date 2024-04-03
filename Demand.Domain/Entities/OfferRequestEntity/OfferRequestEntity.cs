@@ -10,7 +10,7 @@ namespace Demand.Domain.Entities.OfferRequestEntity
     [Table("OfferRequest")]
     public class OfferRequestEntity:BaseEntity
     {
-        public long? RequestInfoId { get; set; }
+        public long RequestInfoId { get; set; }
         public long DemandOfferId { get; set; }
         public decimal? UnitPrice { get; set; }
         public decimal? TotalPrice { get; set; }

@@ -194,9 +194,9 @@ namespace Demand.Presentation.Controllers
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
-                demandViewModel.Material = requestInfos[0].ProductName;
-                //demandViewModel.Quantity = requestInfos[0].Quantity;
-                //demandViewModel.Unit = requestInfos[0].Unit;
+                demandViewModel.Material1 = requestInfos[0].ProductName;
+                demandViewModel.Quantity1 = requestInfos[0].Quantity;
+                demandViewModel.Unit1 = requestInfos[0].Unit;
                 if (requestInfos.Count > 1)
                 {
                     demandViewModel.Material2 = requestInfos[1].ProductName;
@@ -214,10 +214,14 @@ namespace Demand.Presentation.Controllers
             foreach (var demandOfferEntity in demandOfferEntities.OrderBy(x => x.Id).ToList())
             {
                 DemandOfferViewModel demandOfferViewModel = new DemandOfferViewModel();
+                demandOfferViewModel.DemandOfferId = demandOfferEntity.Id;
+                demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
                     demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
+                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
+                    demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
 
                 ProviderEntity providerEntity = new ProviderEntity();
                 if (providerEntities != null && providerEntities.Any())
@@ -289,6 +293,7 @@ namespace Demand.Presentation.Controllers
                 var unit = demandViewModel.Unit[i];
                 var quantity = demandViewModel.Quantity[i];
                 var productname = demandViewModel.Product[i];
+                var productcode = demandViewModel.ProductCode[i];
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
@@ -296,6 +301,7 @@ namespace Demand.Presentation.Controllers
                     ProductSubCategoryId = Convert.ToInt32(subcategory),
                     Quantity = Convert.ToInt32(quantity),
                     ProductName = productname,
+                    ProductCode = productcode,
                     Unit = unit,
                     IsDeleted = false,
                     CreatedDate = DateTime.Now,
@@ -599,8 +605,6 @@ namespace Demand.Presentation.Controllers
             }
             #endregion
 
-
-
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
             string title = demandEntity.DemandTitle;
@@ -613,11 +617,12 @@ namespace Demand.Presentation.Controllers
             demandEntity.DemandTitle = title;
             _demandService.Update(demandEntity);
             #endregion
+
             return Ok(demandEntity);
         }
 
-        [HttpGet("OfferPage")] 
-        public IActionResult OfferPage(long? DemandId, int? OfferNumber)
+        [HttpGet("OfferPage")]
+        public IActionResult OfferPage(long? DemandId, long? DemandOfferId)
         {
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == DemandId).Data.ToList();
             List<OfferRequestViewModel> offerRequestViewModels = new List<OfferRequestViewModel>();
@@ -626,7 +631,9 @@ namespace Demand.Presentation.Controllers
             {
                 OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
                 {
+                    RequestInfoId = requestInfo.Id,
                     DemandId = requestInfo.DemandId,
+                    DemandOfferId = DemandOfferId.Value,
                     ProductCategoryId = requestInfo.ProductCategoryId,
                     ProductSubCategoryId = requestInfo.ProductSubCategoryId,
                     ProductName = requestInfo.ProductName,
@@ -634,6 +641,14 @@ namespace Demand.Presentation.Controllers
                     Quantity = requestInfo.Quantity,
                     Unit = requestInfo.Unit
                 };
+
+                OfferRequestEntity? offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.RequestInfoId == requestInfo.Id && x.DemandOfferId == DemandOfferId.Value).Data;
+                if (offerRequestEntity != null)
+                {
+                    offerRequestViewModel.OfferRequestId = offerRequestEntity.Id;
+                    offerRequestViewModel.Price = offerRequestEntity.UnitPrice ?? 0;
+                    offerRequestViewModel.TotalPrice = offerRequestEntity.TotalPrice ?? 0;
+                }
 
                 offerRequestViewModels.Add(offerRequestViewModel);
             }
@@ -650,6 +665,83 @@ namespace Demand.Presentation.Controllers
 
             return View(offerRequestViewModels);
 
+        }
+
+        [HttpPost("AddOfferRequest")]
+        public IActionResult AddOfferRequest([FromForm] DemandViewModel demandViewModel)
+        {
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            #endregion
+
+            if (demandViewModel != null)
+            {
+                for (int i = 0; i < demandViewModel.Category.Count(); i++)
+                {
+                    var requestInfoId = demandViewModel.RequestInfoId[i];
+                    if (requestInfoId != null && long.Parse(requestInfoId) > 0)
+                    { }
+                    else
+                    {
+                        var category = demandViewModel.Category[i];
+                        var subcategory = demandViewModel.Subcategory[i];
+                        var unit = demandViewModel.Unit[i];
+                        var quantity = demandViewModel.Quantity[i];
+                        var productname = demandViewModel.ProductDescription[i];
+                        var productcode = demandViewModel.ProductCode[i];
+                        var requestInfo = new RequestInfoEntity
+                        {
+                            DemandId = demandViewModel.DemandId.Value,
+                            ProductCategoryId = Convert.ToInt32(category),
+                            ProductSubCategoryId = Convert.ToInt32(subcategory),
+                            Quantity = Convert.ToInt32(quantity),
+                            ProductName = productname,
+                            ProductCode = productcode,
+                            Unit = unit,
+                            IsDeleted = false,
+                            CreatedDate = DateTime.Now,
+                            UpdatedDate = null,
+                            CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                            UpdatedAt = null,
+                        };
+
+                        var requestInfoAdd = _requestInfoService.Add(requestInfo);
+
+                        requestInfoId = requestInfoAdd.Id.ToString();
+                    }
+                    var totalPrice = demandViewModel.TotalPrice[i];
+                    var price = demandViewModel.Price[i];
+
+                    var offerRequest = new OfferRequestEntity
+                    {
+                        RequestInfoId = long.Parse(requestInfoId),
+                        DemandOfferId = demandViewModel.DemandOfferId.Value,
+                        IsDeleted = false,
+                        Status = 0,
+                        TotalPrice = decimal.Parse(totalPrice.Replace('.', ',')),
+                        UnitPrice = decimal.Parse(price.Replace('.', ',')),
+                        CreatedDate = DateTime.Now,
+                        UpdatedDate = null,
+                        CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                        UpdatedAt = null,
+                    };
+
+                    var offerRequestId = demandViewModel.OfferRequestId[i];
+                    if (offerRequestId > 0)
+                    {
+                        offerRequest.Id = offerRequestId;
+
+                        var offerRequestAdd = _offerRequestService.Update(offerRequest);
+                    }
+                    else
+                    {
+                        var offerRequestAdd = _offerRequestService.Add(offerRequest);
+                    }
+                }
+            }
+
+            return Ok();
         }
     }
 }

@@ -659,6 +659,7 @@
             table.deleteRow(-1);
         }
     }
+
     function updateSubcategories(parentNode) {
         debugger;
         var categoryValue = parentNode.querySelector('.category').value;
@@ -730,13 +731,6 @@
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
 
-
-
-        formData.append('DepartmentId', document.getElementById('department').value);
-        formData.append('Description', document.getElementById('description').value);
-        formData.append('DemandTitle', document.getElementById('demandtitle').value);
-        formData.append('CompanyLocationId', document.getElementById('location').value);
-
         var table = document.getElementById("dataTable");
         var rows = table.getElementsByTagName("tr");
 
@@ -778,6 +772,8 @@
             success: function (result) {
                 console.log(result);
                 toastr.success("Demand Created", "Success");
+
+                location.reload();
             },
             error: function (error) {
                 toastr.error("Unexpected Error", "Error");

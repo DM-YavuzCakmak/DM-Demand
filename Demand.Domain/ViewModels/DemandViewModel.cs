@@ -15,6 +15,7 @@ namespace Demand.Domain.ViewModels
         #region DemandTableFields
         public long? CompanyId { get; set; }
         public long? DemandId { get; set; }
+        public long? DemandOfferId { get; set; }
         public string? DemandTitle { get; set; }
         public string? DemanderName { get; set; }
         public string? LocationName { get; set; }
@@ -41,23 +42,29 @@ namespace Demand.Domain.ViewModels
         public byte[]? File3Path { get; set; }
         #endregion
         #region RequestInfoTableFields
-        public string? Material { get; set; }
+        public string? Material1 { get; set; }
+        public int? Quantity1 { get; set; }
+        public string? Unit1 { get; set; }
         public string? Material2 { get; set; }
         public int? Quantity2 { get; set; }
         public string? Unit2 { get; set; }
         public string? Material3 { get; set; }
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
+
+        public List<string>? RequestInfoId { get; set; }
         public List<string>? Category { get; set; }
         public List<string>? ProductName { get; set; }
-
         public List<string>? Product { get; set; }
-
         public List<string>? Subcategory { get; set; }
         public List<string>? Unit { get; set; }
         public List<string>? Quantity { get; set; }
         public List<string>? ProductDescription { get; set; }
         public List<string>? ProductCode { get; set; }
+        public List<string>? Price { get; set; }
+        public List<string>? TotalPrice { get; set; }
+        public List<long>? OfferRequestId { get; set; }
+
         #endregion
         #region CurrencyTypeTableFields
         public int? CurrencyTypeId { get; set; }
@@ -81,6 +88,7 @@ namespace Demand.Domain.ViewModels
 
     public class DemandOfferViewModel
     {
+        public long DemandOfferId { get; set; }
         public long DemandId { get; set; }
         public long CurrencyTypeId { get; set; }
         public long RequestInfoId { get; set; }
@@ -92,6 +100,7 @@ namespace Demand.Domain.ViewModels
         public string? Quantity { get; set; }
         public decimal? Price { get; set; }
         public string SupplierName { get; set; }
+        public string SupplierPhone { get; set; }
         public long SupplierId { get; set; }
     }
 

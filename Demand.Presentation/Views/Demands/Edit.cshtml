@@ -18,6 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="~/css/index.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <style>
         body::before {
             content: "";
@@ -272,9 +273,9 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName1">Firma Adı:</label>
-                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].CompanyName != null)
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].SupplierName != null)
                                     {
-                                        <input type="text" id="offerCompanyName1" name="offerCompanyName1" value="@Model?.DemandOffers?[0].CompanyName" />
+                                        <input type="text" id="offerCompanyName1" name="offerCompanyName1" value="@Model?.DemandOffers?[0].SupplierName" />
                                     }
                                     else
                                     {
@@ -286,9 +287,9 @@
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone1">Firma Telefon Numarası:</label>
-                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].CompanyPhone != null)
+                                    @if (Model.DemandOffers.Count != 0 && Model?.DemandOffers?[0].SupplierPhone != null)
                                     {
-                                        <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1" value="@Model?.DemandOffers?[0].CompanyPhone">
+                                        <input type="text" id="offerCompanyPhone1" name="offerCompanyPhone1" value="@Model?.DemandOffers?[0].SupplierPhone">
                                     }
                                     else
                                     {
@@ -330,33 +331,18 @@
                                     <label for="exchangeRate1">Dolar/Euro Kuru:</label>
                                     <input type="text" id="exchangeRate1" name="exchangeRate1" style="width: 100px;">
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="offerAmount1">Miktar:</label>
-                                    <input type="text" id="offerAmount1" name="offerAmount1" value="@Model.Quantity" style="width:100px">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerMaterial1">Malzeme :</label>
-                                    <input type="text" id="offerMaterial1" name="offerMaterial1" value="@Model.Material" style="width:250px">
-                                </div>
-
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerPrice1">Fiyat:</label>
-                                    <input type="text" id="offerPrice1" name="offerPrice1">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerTotalPrice1">Toplam Fiyat (Türk Lirası):</label>
-                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly>
+                                    <label for="offerTotalPrice1">Toplam Fiyat :</label>
+                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : "")" >
                                 </div>
                             </div>
                             <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
-
-                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 1 })" class="edit-button">Teklif Detay Giriş</a>
-
+                            @if (Model.DemandOffers.Count > 0)
+                            {
+                                <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[0].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
+                            }
 
                         </div>
                     </div>
@@ -409,9 +395,9 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="offerCompanyPhone2">Firma Telefon Numarası:</label>
-                                    @if (Model.DemandOffers.Count > 1 && Model?.DemandOffers?[1].CompanyPhone != null)
+                                    @if (Model.DemandOffers.Count > 1 && Model?.DemandOffers?[1].SupplierPhone != null)
                                     {
-                                        <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].CompanyPhone">
+                                        <input type="text" id="offerCompanyPhone2" name="offerCompanyPhone2" value="@Model?.DemandOffers?[1].SupplierPhone">
                                     }
                                     else
                                     {
@@ -454,30 +440,19 @@
                                     <label for="exchangeRate2">Dolar/Euro Kuru:</label>
                                     <input type="text" id="exchangeRate2" name="exchangeRate2" style="width: 100px;">
                                 </div>
-                                <div class="form-group">
-                                    <label for="offerAmount2">Miktar:</label>
-                                    <input type="text" id="offerAmount2" name="offerAmount2" value="@Model.Quantity" style="width:100px">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerMaterial2">Malzeme :</label>
-                                    <input type="text" id="offerMaterial2" name="offerMaterial2" value="@Model.Material2" style="width:250px">
-                                </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerPrice2">Fiyat:</label>
-                                    <input type="text" id="offerPrice2" name="offerPrice2">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerTotalPrice2">Toplam Fiyat (Türk Lirası):</label>
-                                    <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" readonly>
+                                    <label for="offerTotalPrice2">Toplam Fiyat :</label>
+                                    <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].TotalPrice : "")" >
                                 </div>
                             </div>
                             <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
-                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 2 })" class="edit-button">Teklif Detay Giriş</a>
+                            @if (Model.DemandOffers.Count > 1)
+                            {
+                                <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[1].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
+                            }
 
 
                         </div>
@@ -519,9 +494,9 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyName3">Firma Adı:</label>
-                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].CompanyName != null)
+                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].SupplierName != null)
                                     {
-                                        <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].CompanyName">
+                                        <input type="text" id="offerCompanyName3" name="offerCompanyName3" value="@Model?.DemandOffers?[2].SupplierName">
                                     }
                                     else
                                     {
@@ -531,9 +506,9 @@
 
                                 <div class="form-group">
                                     <label for="offerCompanyPhone3">Firma Telefon Numarası:</label>
-                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].CompanyPhone != null)
+                                    @if (Model.DemandOffers.Count > 2 && Model?.DemandOffers?[2].SupplierPhone != null)
                                     {
-                                        <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" value="@Model?.DemandOffers?[2].CompanyPhone">
+                                        <input type="text" id="offerCompanyPhone3" name="offerCompanyPhone3" value="@Model?.DemandOffers?[2].SupplierPhone">
 
                                     }
                                     else
@@ -576,30 +551,20 @@
                                     <label for="exchangeRate3">Dolar/Euro Kuru:</label>
                                     <input type="text" id="exchangeRate3" name="exchangeRate3" style="width: 100px;">
                                 </div>
-                                <div class="form-group">
-                                    <label for="offerAmount3">Miktar:</label>
-                                    <input type="text" id="offerAmount3" name="offerAmount3" value="@Model.Quantity" style="width:100px">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerMaterial3">Malzeme :</label>
-                                    <input type="text" id="offerMaterial3" name="offerMaterial3" value="@Model.Material3" style="width:250px">
-                                </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerPrice3">Fiyat:</label>
-                                    <input type="text" id="offerPrice3" name="offerPrice3">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="offerTotalPrice3">Toplam Fiyat (Türk Lirası):</label>
-                                    <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" readonly>
+                                    <label for="offerTotalPrice3">Toplam Fiyat:</label>
+                                    <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].TotalPrice : "")" >
                                 </div>
                             </div>
                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
-                            <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, OfferNumber = 3 })" class="edit-button">Teklif Detay Giriş</a>
+                            @if (Model.DemandOffers.Count > 2)
+                            {
+                                <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[2].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
+                            }
+                            
                         </div>
                     </div>
                 </div>
@@ -949,7 +914,7 @@
 
 
     function openOfferPage(demandId, offerNumber) {
-        window.location.href = '/api/Demands/OfferPage?demandId=' + demandId + '&offerNumber=' + offerNumber;
+        window.location.href = '/api/Demands/OfferPage?demandId=' + demandId + '&DemandOfferId=' + offerNumber;
     }
     function updateTotalPrice() {
         var amount = parseFloat($('#offerAmount1').val()) || 0;
@@ -1040,6 +1005,7 @@
             contentType: 'application/json',
             data: JSON.stringify(updateDemandViewModel),
             success: function (result) {
+                toastr.success("Demand Offer Created", "Success");
                 location.reload();
             },
             error: function (error) {

@@ -451,6 +451,21 @@ namespace Demand.Presentation.Controllers
                     demandEntity.Status = 2;
                     demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                     demandEntity.UpdatedDate = DateTime.Now;
+
+                    if (demandStatusChangeViewModel.DemandOfferId != null)
+                    {
+                        List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
+
+                        foreach (var demandOffer in demandOfferEntities)
+                        {
+                            demandOffer.Status = demandOffer.Id == demandStatusChangeViewModel.DemandOfferId ? 2 : 1;
+                            demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                            demandEntity.UpdatedDate = DateTime.Now;
+
+                            _demandOfferService.Update(demandOffer);
+                        }
+                    }
+
                     PersonnelEntity personnel = _personnelService.GetById(7).Data;
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
 
@@ -621,6 +636,130 @@ namespace Demand.Presentation.Controllers
             return Ok(demandEntity);
         }
 
+        [HttpGet("DemandOfferDetail")]
+        public IActionResult DemandOfferDetail(long DemandId)
+        {
+            NebimConnection nebimConnection = new NebimConnection();
+            nebimConnection.GetNebimCategoryModels();
+
+            DemandEntity demand = _demandService.GetById(DemandId).Data;
+            List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(DemandId).ToList();
+            CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
+            Company company = _companyService.GetById(companyLocation.CompanyId).Data;
+            PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
+            DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
+            List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == DemandId).Data.ToList();
+            List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == DemandId).Data.ToList();
+            List<long> supplierIds = new List<long>();
+            supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
+            List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                CompanyId = company.Id,
+                DemandId = DemandId,
+                DemandDate = demand.CreatedDate,
+                DemanderName = personnel.FirstName + " " + personnel.LastName,
+                DepartmentId = demand.DepartmentId,
+                Description = demand.Description,
+                CreatedDate = demand.CreatedDate,
+                IsDeleted = demand.IsDeleted,
+                RequirementDate = demand.RequirementDate,
+                CompanyLocationId = demand.CompanyLocationId,
+                CreatedAt = demand.CreatedAt,
+                LocationName = companyLocation.Name,
+                Status = demand.Status,
+                UpdatedAt = demand.UpdatedAt,
+                UpdatedDate = demand.UpdatedDate,
+                CompanyName = company.Name,
+                DepartmentName = department.Name
+            };
+            if (requestInfos.IsNotNullOrEmpty())
+            {
+                demandViewModel.Material1 = requestInfos[0].ProductName;
+                demandViewModel.Quantity1 = requestInfos[0].Quantity;
+                demandViewModel.Unit1 = requestInfos[0].Unit;
+                if (requestInfos.Count > 1)
+                {
+                    demandViewModel.Material2 = requestInfos[1].ProductName;
+                    demandViewModel.Quantity2 = requestInfos[1].Quantity;
+                    demandViewModel.Unit2 = requestInfos[1].Unit;
+                }
+                if (requestInfos.Count > 2)
+                {
+                    demandViewModel.Material3 = requestInfos[2].ProductName;
+                    demandViewModel.Quantity3 = requestInfos[2].Quantity;
+                    demandViewModel.Unit3 = requestInfos[2].Unit;
+                }
+            }
+            demandViewModel.DemandOffers = new List<DemandOfferViewModel>();
+            foreach (var demandOfferEntity in demandOfferEntities.OrderBy(x => x.Id).ToList())
+            {
+                DemandOfferViewModel demandOfferViewModel = new DemandOfferViewModel();
+                demandOfferViewModel.DemandOfferId = demandOfferEntity.Id;
+                demandOfferViewModel.Status = demandOfferEntity.Status;
+                demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
+                if (demandOfferEntity.SupplierId.HasValue)
+                    demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
+                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
+                    demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
+                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
+                    demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
+
+                ProviderEntity providerEntity = new ProviderEntity();
+                if (providerEntities != null && providerEntities.Any())
+                    providerEntity = providerEntities.Find(x => x.Id == demandOfferEntity.SupplierId);
+
+                if (providerEntity != null)
+                {
+                    demandOfferViewModel.CompanyName = providerEntity.Name;
+                    demandOfferViewModel.CompanyPhone = providerEntity.PhoneNumber;
+                    demandOfferViewModel.CompanyAddress = providerEntity.Address;
+                }
+
+                List<OfferRequestViewModel> offerRequestViewModels = new List<OfferRequestViewModel>();
+
+                foreach (var requestInfo in requestInfos)
+                {
+                    OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
+                    {
+                        RequestInfoId = requestInfo.Id,
+                        DemandId = requestInfo.DemandId,
+                        DemandOfferId = demandOfferEntity.Id,
+                        ProductCategoryId = requestInfo.ProductCategoryId,
+                        ProductSubCategoryId = requestInfo.ProductSubCategoryId,
+                        ProductName = requestInfo.ProductName,
+                        ProductCode = requestInfo.ProductCode,
+                        Quantity = requestInfo.Quantity,
+                        Unit = requestInfo.Unit
+                    };
+
+                    OfferRequestEntity? offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.RequestInfoId == requestInfo.Id && x.DemandOfferId == demandOfferEntity.Id).Data;
+                    if (offerRequestEntity != null)
+                    {
+                        offerRequestViewModel.OfferRequestId = offerRequestEntity.Id;
+                        offerRequestViewModel.Price = offerRequestEntity.UnitPrice ?? 0;
+                        offerRequestViewModel.TotalPrice = offerRequestEntity.TotalPrice ?? 0;
+
+                        offerRequestViewModels.Add(offerRequestViewModel);
+                    }
+
+                }
+                demandOfferViewModel.RequestInfoViewModels = offerRequestViewModels;
+                demandViewModel.DemandOffers.Add(demandOfferViewModel);
+            }
+            List<CurrencyTypeEntity> currencyTypes = _currencyTypeService.GetAll().Data.ToList();
+            ViewBag.CurrencyTypes = currencyTypes;
+            List<CompanyLocation> locations = _companyLocationService.GetAll().Data.ToList();
+            ViewBag.Locations = locations;
+            List<Company> companies = _companyService.GetList().Data.ToList();
+            ViewBag.Companies = companies;
+            List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
+            ViewBag.Departments = departments;
+            List<ProviderEntity> providers = _providerService.GetAll().Data.ToList();
+            ViewBag.Providers = providers;
+            return View(demandViewModel);
+        }
+
         [HttpGet("OfferPage")]
         public IActionResult OfferPage(long? DemandId, long? DemandOfferId)
         {
@@ -664,7 +803,6 @@ namespace Demand.Presentation.Controllers
             offerRequestViewModels[0].NebimProductModels = nebimProductModels;
 
             return View(offerRequestViewModels);
-
         }
 
         [HttpPost("AddOfferRequest")]

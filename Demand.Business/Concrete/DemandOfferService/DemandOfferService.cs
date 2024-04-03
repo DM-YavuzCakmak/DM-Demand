@@ -28,6 +28,12 @@ namespace Demand.Business.Concrete.DemandOfferService
             return (demandOffer);
         }
 
+        public DemandOfferEntity Update(DemandOfferEntity demandOffer)
+        {
+            _demandOfferRepository.Update(demandOffer);
+            return (demandOffer);
+        }
+
         public IDataResult<IList<DemandOfferEntity>> GetAll()
         {
             return new SuccessDataResult<IList<DemandOfferEntity>>(_demandOfferRepository.GetAll());

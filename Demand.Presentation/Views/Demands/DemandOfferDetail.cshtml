@@ -1,0 +1,689 @@
+﻿@using Demand.Domain.ViewModels
+@using System.Security.Claims
+@using Newtonsoft.Json
+@model DemandViewModel
+
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:100,400,300,600,700" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            margin-top: 20px;
+            width: 95%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #siteform {
+            width: 100%;
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            width: calc(48% - 10px);
+            margin-bottom: 10px;
+        }
+
+
+        .button-group {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                color: white;
+            }
+
+            .form-group select,
+            .form-group input[type="text"],
+            .form-group textarea {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+        .update-button {
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .update-button:hover {
+                background-color: #4cae4c;
+            }
+
+        #description {
+            height: 125px;
+            width: 100%;
+            resize: none;
+        }
+
+        #requestDate {
+            background-color: lightgray;
+            pointer-events: none;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        #addButton, #removeButton {
+            margin-top: 10px;
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            #addButton:hover, #removeButton:hover {
+                background-color: #45a049;
+            }
+
+
+
+        .plan .head h3, .plan .head h2, .plan .head h1 {
+            padding: 0;
+            margin: 0;
+            font-weight: 100;
+        }
+
+        /* body {
+                                                                            background: #eaeaea;
+                                                                            padding: 90px 0 0;
+                                                                            min-height: 900px;
+                                                                            color: #434a54;
+                                                                        } */
+
+        body * {
+            font-family: Open Sans;
+            font-weight: 100;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 2px rgba(10, 10, 10, 0.06);
+            border: none;
+            background: #fff;
+        }
+
+            .navbar ul > li > a {
+                font-weight: 600;
+                padding: 26px;
+                color: #434a54;
+                font-size: 12px;
+                text-transform: uppercase;
+            }
+
+            .navbar .container .navbar-brand {
+                margin-left: 0;
+                padding: 25px;
+            }
+
+        .main-title {
+            text-align: center;
+        }
+
+        .pricing-tables {
+            padding: 20px;
+        }
+
+            .pricing-tables h1 {
+                font-size: 48px;
+            }
+
+            .pricing-tables .plan.first {
+                border-bottom-left-radius: 4px;
+                border-top-left-radius: 4px;
+            }
+
+            .pricing-tables .plan.last {
+                border-bottom-right-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .pricing-tables .plan.recommended {
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+            }
+
+                .pricing-tables .plan.recommended .head {
+                    margin-bottom: 20px;
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+
+            .pricing-tables.attached .col-sm-4 {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .pricing-tables.attached .col-md-4 {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .pricing-tables.attached .col-sm-3 {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .pricing-tables.attached .col-md-3 {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .pricing-tables.attached .plan {
+                border-radius: 0;
+            }
+
+                .pricing-tables.attached .plan .head {
+                    border-radius: 0;
+                }
+
+                .pricing-tables.attached .plan.recommended {
+                    border-radius: 4px;
+                }
+
+                    .pricing-tables.attached .plan.recommended .head {
+                        border-top-left-radius: 4px;
+                        border-top-right-radius: 4px;
+                    }
+
+                .pricing-tables.attached .plan.last {
+                    border-bottom-right-radius: 4px;
+                }
+
+                    .pricing-tables.attached .plan.last .head {
+                        border-top-right-radius: 4px;
+                    }
+
+                .pricing-tables.attached .plan.first {
+                    border-bottom-left-radius: 4px;
+                }
+
+                    .pricing-tables.attached .plan.first .head {
+                        border-top-left-radius: 4px;
+                    }
+
+        .plan {
+            box-shadow: 0 2px 2px rgba(10, 10, 10, 0.06);
+            min-height: 100px;
+            background: #fff;
+            border-radius: 4px;
+            margin: 20px 0;
+            padding-bottom: 25px;
+            text-align: center;
+        }
+
+            .plan .head {
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+                padding: 12px 16px;
+                background: #1c1c1c;
+                color: #fff;
+            }
+
+            .plan .price {
+                border-top: 1px solid #eee;
+                margin: 0 auto 30px auto;
+                width: 80%;
+            }
+
+                .plan .price h3 {
+                    font-size: 82px;
+                    vertical-align: top;
+                    line-height: 1;
+                }
+
+                    .plan .price h3 span {
+                        font-size: 38px;
+                        vertical-align: top;
+                        position: relative;
+                        margin: 6px 0 0 -7px;
+                        display: inline-block;
+                    }
+
+                .plan .price h4 {
+                    color: #aaa;
+                    font-size: 14px;
+                }
+
+            .plan .btn {
+                padding: 10px 30px;
+                text-transform: uppercase;
+                font-weight: 500;
+            }
+
+            .plan ul {
+                list-style-type: none;
+                padding: 20px;
+                margin-top: 2px;
+            }
+
+                .plan ul li {
+                    line-height: 22px;
+                    margin-bottom: 15px;
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+
+                    .plan ul li a {
+                        text-decoration: underline;
+                        color: #e6e9ed;
+                    }
+
+                    .plan ul li:last-child {
+                        border-bottom: none;
+                    }
+
+                .plan ul strong {
+                    font-weight: 700;
+                }
+
+            .plan.recommended {
+                margin-top: 6px;
+                box-shadow: 0 0 22px rgba(10, 10, 10, 0.42);
+                position: relative;
+                z-index: 99;
+                border-radius: 4px;
+            }
+
+                .plan.recommended .head {
+                    border-top-left-radius: 4px;
+                    border-top-right-radius: 4px;
+                    background: #171717;
+                }
+
+                .plan.recommended .btn {
+                    margin-bottom: 10px;
+                }
+
+    </style>
+</head>
+<body>
+    <div>
+        <h2 style="color:white">TEKLİF DETAY</h2>
+    </div>
+    <form id="siteform" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="companyName">Şirket Adı:</label>
+                <select id="companyName" name="companyName">
+                    @foreach (var company in ViewBag.Companies)
+                    {
+                        if (Model.CompanyId == company.Id)
+                        {
+                            <option value="@company.Id" selected>@company.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Lokasyon:</label>
+                <select id="location" name="location">
+                    @foreach (var location in ViewBag.Locations)
+                    {
+                        if (Model.CompanyLocationId == location.Id)
+                        {
+                            <option value="@location.Id" selected>@location.Name</option>
+                        }
+                    }
+                    <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="requestDate">Talep Tarihi:</label>
+                <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Departman:</label>
+                <select id="department" name="department">
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        if (Model.DepartmentId == department.Id)
+                        {
+                            <option value="@department.Id" selected>@department.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="description"> Açıklama:</label>
+                <textarea id="description" name="description" readonly>@Model.Description</textarea>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <div class="pricing-tables">
+
+                <div class="row">
+                    @if (@Model.DemandOffers.Count > 0)
+                    {
+                        <div class="col-sm-4 col-md-4">
+
+                            <div class="plan">
+
+                                <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 ? "white" : (Model.DemandOffers[0].Status == 1 ? "red" : "green"));">
+                                    <h2>Teklif 1</h2>
+
+                                </div>
+
+                                <ul class="item-list">
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
+                                    <li>
+                                        <table id="dataTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ÜRÜN ADI</th>
+                                                    <th>MİKTAR</th>
+                                                    <th>BİRİM</th>
+                                                    <th>TOPLAM FİYAT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var offerRequestViewModel in Model.DemandOffers[0].RequestInfoViewModels)
+                                                {
+                                                    <tr>
+                                                        <td>@offerRequestViewModel.ProductName</td>
+                                                        <td>@offerRequestViewModel.Quantity</td>
+                                                        <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
+                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+
+                                </ul>
+
+                                <div class="price">
+                                    <h1>@(Model.DemandOffers[0].TotalPrice + "TL")</h1>
+                                </div>
+
+                                @if (Model.Status == 0)
+                                {
+                                    <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[0].DemandOfferId)">Teklifi Seç</button>
+                                }
+                            </div>
+
+
+                        </div>
+                    }
+
+
+                    @if (@Model.DemandOffers.Count > 1)
+                    {
+                        <div class="col-sm-4 col-md-4 ">
+                            <div class="plan">
+
+                                <div class="head" style="background:@(Model.DemandOffers[1].Status == 0 ? "white" : (Model.DemandOffers[1].Status == 1 ? "red" : "green"));">
+                                    <h2>Teklif 2</h2>
+
+                                </div>
+
+                                <ul class="item-list">
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName</li>
+                                    <li>
+                                        <table id="dataTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ÜRÜN ADI</th>
+                                                    <th>MİKTAR</th>
+                                                    <th>BİRİM</th>
+                                                    <th>TOPLAM FİYAT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var offerRequestViewModel in Model.DemandOffers[1].RequestInfoViewModels)
+                                                {
+                                                    <tr>
+                                                        <td>@offerRequestViewModel.ProductName</td>
+                                                        <td>@offerRequestViewModel.Quantity</td>
+                                                        <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
+                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+
+                                </ul>
+
+                                <div class="price">
+                                    <h1>@(Model.DemandOffers[1].TotalPrice + "TL")</h1>
+                                </div>
+
+                                @if (Model.Status == 0)
+                                {
+                                    <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[1].DemandOfferId)">Teklifi Seç</button>
+                                }
+                            </div>
+
+                        </div>
+                    }
+
+
+                    @if (@Model.DemandOffers.Count > 2)
+                    {
+                        <div class="col-sm-4 col-md-4  ">
+                            <div class="plan">
+
+                                <div class="head" style="background:@(Model.DemandOffers[2].Status == 0 ? "white" : (Model.DemandOffers[2].Status == 1 ? "red" : "green"));">
+                                    <h2>Teklif 3</h2>
+                                </div>
+
+                                <ul class="item-list">
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName</li>
+                                    <li>
+                                        <table id="dataTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ÜRÜN ADI</th>
+                                                    <th>MİKTAR</th>
+                                                    <th>BİRİM</th>
+                                                    <th>TOPLAM FİYAT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var offerRequestViewModel in Model.DemandOffers[2].RequestInfoViewModels)
+                                                {
+                                                    <tr>
+                                                        <td>@offerRequestViewModel.ProductName</td>
+                                                        <td>@offerRequestViewModel.Quantity</td>
+                                                        <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
+                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                </ul>
+
+                                <div class="price">
+                                    <h1>@(Model.DemandOffers[2].TotalPrice + "TL")</h1>
+                                </div>
+                                @if (Model.Status == 0)
+                                {
+                                    <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[2].DemandOfferId)">Teklifi Seç</button>
+                                }
+                            </div>
+
+                        </div>
+                    }
+                </div>
+                <!-- row-->
+
+            </div>
+            <!-- pricing-tables -->
+            @if (Model.Status == 0)
+            {
+                <div class="row">
+                    <div class="form-group">
+                        <label for="declineDescription">Red Gerekçesi:</label>
+                        <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </form>
+    <!-- /.container -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function (e) {
+        $(".navbar a").on("click", function (e) {
+            //smooth scroll if inner link
+            var to = $(this).attr("href"); // $(this) is the clicked link. We store its href.
+            if (to.substring(0, 1) == "#") {
+                $("html, body").animate({ scrollTop: $(to).offset().top - 100 }, 700);
+            }
+            return false;
+        });
+    });
+
+    function declineStatus() {
+        var demandId = @Model.DemandId;
+        var declineDescription = document.getElementById("declineDescription").value;
+
+        var demandStatusChangeViewModel = {
+            DemandId: demandId,
+            Status: 1,
+            Description: declineDescription
+        };
+
+        $.ajax({
+            url: 'ChangeStatus',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(demandStatusChangeViewModel),
+            success: function (statusResult) {
+                console.log(statusResult);
+
+                window.location.href = '/api/Home/Index';
+            },
+            error: function (error) {
+                console.error('Talep durumu değiştirme hatası:', error);
+            }
+        });
+    }
+
+    function changeStatus(demandId, demandOfferId) {
+        var demandStatusChangeViewModel = {
+            DemandId: demandId,
+            DemandOfferId: demandOfferId,
+            Status: 2
+        };
+
+        $.ajax({
+            url: 'ChangeStatus',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(demandStatusChangeViewModel),
+            success: function (statusResult) {
+                console.log(statusResult);
+            },
+            error: function (error) {
+                console.error('Talep durumu değiştirme hatası:', error);
+            }
+        });
+    }
+</script>

@@ -102,6 +102,7 @@ namespace Demand.Domain.ViewModels
         public string SupplierName { get; set; }
         public string SupplierPhone { get; set; }
         public long SupplierId { get; set; }
+        public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }
     }
 
     public class RequestInfoViewModel

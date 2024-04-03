@@ -8,6 +8,7 @@ namespace Demand.Business.Abstract.DemandOfferService
     {
         IDataResult<IList<DemandOfferEntity>> GetAll();
         DemandOfferEntity Add(DemandOfferEntity demandOffer);
+        DemandOfferEntity Update(DemandOfferEntity demandOffer);
         IDataResult<DemandOfferEntity> GetById(long id);
         IDataResult<IList<DemandOfferEntity>> GetList(Expression<Func<DemandOfferEntity, bool>> filter);
     }

@@ -5,6 +5,7 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Entities;
@@ -15,6 +16,7 @@ using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Presentation.Models;
@@ -35,9 +37,11 @@ namespace Demand.Presentation.Controllers
         private readonly ICompanyLocationService _companyLocationService;
         private readonly ICompanyService _companyService;
         private readonly IDepartmentService _departmentService;
-        private readonly IDemandProcessService _demandProcessService;
+        private readonly IDemandProcessService _demandProcessService; 
+        private readonly IProductCategoryService _productCategoryService;
 
-        public HomeController(ILogger<HomeController> logger, IDemandService demandService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, ICompanyService companyService, IDepartmentService departmentService, IDemandProcessService demandProcessService)
+
+        public HomeController(ILogger<HomeController> logger, IDemandService demandService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, ICompanyService companyService, IDepartmentService departmentService, IDemandProcessService demandProcessService, IProductCategoryService productCategoryService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -46,6 +50,7 @@ namespace Demand.Presentation.Controllers
             _companyService = companyService;
             _departmentService = departmentService;
             _demandProcessService = demandProcessService;
+            _productCategoryService = productCategoryService;
         }
 
         public IActionResult Index()
@@ -58,6 +63,8 @@ namespace Demand.Presentation.Controllers
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
             ViewBag.Department = departments;
+            List<ProductCategoryEntity> productCategories = _productCategoryService.GetAll().Data.ToList();
+            ViewBag.ProductCategories = productCategories;
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
             List<DemandProcessEntity> creatorDemandProcesses = _demandProcessService.GetList(x => x.CreatedAt == userId).Data.ToList();
             if (demandProcesses.Count > 0 || userId == 7 || creatorDemandProcesses.Count > 0)

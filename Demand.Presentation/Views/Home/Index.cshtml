@@ -58,11 +58,19 @@
                                 <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
                             </td>
                             <td>
-                                @if (demand.CreatedAt == userId || userId == 7)
+                                @if ((demand.CreatedAt == userId || userId == 7) && demand.Status ==0)
                                 {
                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                 }
-                                <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Görüntüle</a>
+                                @if (userId == 9 || userId==7)
+                                {
+                                    <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -133,6 +141,7 @@
             <table id="dataTable">
                 <thead>
                     <tr>
+                        <th>Tür</th>
                         <th>Kategori</th>
                         <th>Alt Kategori</th>
                         <th>Ürün Açıklaması</th>
@@ -144,6 +153,20 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td>
+                            <div class="select-wrapper">
+                                <select name="type" class="type">
+                                    @if (ViewBag.ProductCategories != null)
+                                    {
+                                        <option>Lütfen seçiniz</option>
+                                        foreach (var productCategory in ViewBag.ProductCategories)
+                                        {
+                                            <option value="@productCategory.Id">@productCategory.ProductCategoryName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </td>
                         <td>
                             <div class="select-wrapper">
                                 <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
@@ -545,7 +568,22 @@
                 }
             });
         });
+
+        $(".type").change(function () {
+            disableFields();
+        });
+
+        disableFields();
     });
+
+    function disableFields() {
+        var selectedTypeValue = $(".type").val();
+        if (selectedTypeValue == 5) {
+            $(".category, .subcategory, .product, .productCode").prop('disabled', false);
+        } else {
+            $(".category, .subcategory, .product, .productCode").prop('disabled', true);
+        }
+    }
     function updateLocationId() {
         var locationId = $('#location').val();
         $('#locationId').val(locationId);

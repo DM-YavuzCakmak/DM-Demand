@@ -445,7 +445,26 @@
         </div>
 
         <div class="container">
-
+            <div class="form-row">
+                @if (Model.File1Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File1Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="@Model.File1Name" class="btn btn-primary">Dosya Eki İndir</a>
+                }
+                @if (Model.File2Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File2Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="@Model.File2Name" class="btn btn-primary">Dosya Eki İndir</a>
+                }
+                @if (Model.File3Path != null)
+                {
+                    var base64 = Convert.ToBase64String(Model.File3Path);
+                    var pdfSrc = $"data:application/pdf;base64,{base64}";
+                    <a href="@pdfSrc" download="@Model.File3Name" class="btn btn-primary">Dosya Eki İndir</a>
+                }
+            </div>
             <div class="pricing-tables">
 
                 <div class="row">
@@ -455,7 +474,7 @@
 
                             <div class="plan">
 
-                                <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 ? "white" : (Model.DemandOffers[0].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 ? "black" : (Model.DemandOffers[0].Status == 1 ? "red" : "green"));">
                                     <h2>Teklif 1</h2>
 
                                 </div>
@@ -508,7 +527,7 @@
                         <div class="col-sm-4 col-md-4 ">
                             <div class="plan">
 
-                                <div class="head" style="background:@(Model.DemandOffers[1].Status == 0 ? "white" : (Model.DemandOffers[1].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[1].Status == 0 ? "black" : (Model.DemandOffers[1].Status == 1 ? "red" : "green"));">
                                     <h2>Teklif 2</h2>
 
                                 </div>
@@ -560,7 +579,7 @@
                         <div class="col-sm-4 col-md-4  ">
                             <div class="plan">
 
-                                <div class="head" style="background:@(Model.DemandOffers[2].Status == 0 ? "white" : (Model.DemandOffers[2].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[2].Status == 0 ? "black" : (Model.DemandOffers[2].Status == 1 ? "red" : "green"));">
                                     <h2>Teklif 3</h2>
                                 </div>
 
@@ -657,10 +676,12 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
-
+                toastr.success("Status Changed", "Success");
                 window.location.href = '/api/Home/Index';
             },
             error: function (error) {
+                toastr.error("Unexpected Error", "Error");
+
                 console.error('Talep durumu değiştirme hatası:', error);
             }
         });
@@ -680,9 +701,15 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
+                toastr.success("Status Changed", "Success");
+                window.location.href = '/api/Home/Index';
+
+
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Unexpected Error", "Error");
+
             }
         });
     }

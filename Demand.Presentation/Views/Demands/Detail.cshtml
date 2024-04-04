@@ -576,9 +576,14 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
+                toastr.success("Status Changed", "Success");
+                location.reload();
+
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Unexpected Error", "Error");
+
             }
         });
     }
@@ -601,9 +606,13 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
+                toastr.success("Status Changed", "Success");
+                location.reload();
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Unexpected Error", "Error");
+
             }
         });
     }

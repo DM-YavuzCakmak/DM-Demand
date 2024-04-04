@@ -10,6 +10,7 @@ using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
+using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
@@ -46,6 +47,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ProviderEntity> Providers { get; set; }
         public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
         public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
+        public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
 
     }
 }

@@ -29,6 +29,7 @@ using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
@@ -84,7 +85,7 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
-
+            
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -145,7 +146,7 @@ namespace Demand.Presentation.Controllers
 
                 }
             }
-
+           
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
@@ -516,7 +517,6 @@ namespace Demand.Presentation.Controllers
 
             return Ok(demandProcessEntity);
         }
-
         private byte[] GetFile(IFormFile file)
         {
             using var ms = new MemoryStream();
@@ -524,8 +524,6 @@ namespace Demand.Presentation.Controllers
             var fileBytes = ms.ToArray();
             return fileBytes;
         }
-
-
         private DemandMediaEntity SaveFileAndCreateEntity(IFormFile file, long demandId)
         {
             if (file != null && file.Length > 0)
@@ -548,12 +546,10 @@ namespace Demand.Presentation.Controllers
 
             return null;
         }
-
         private void AddDemandProcess()
         {
 
         }
-
         [HttpPost("UpdateDemand")]
         public IActionResult UpdateDemand([FromBody] UpdateDemandViewModel updateDemandViewModel)
         {
@@ -635,7 +631,6 @@ namespace Demand.Presentation.Controllers
 
             return Ok(demandEntity);
         }
-
         [HttpGet("DemandOfferDetail")]
         public IActionResult DemandOfferDetail(long DemandId)
         {
@@ -691,6 +686,24 @@ namespace Demand.Presentation.Controllers
                     demandViewModel.Unit3 = requestInfos[2].Unit;
                 }
             }
+            if (demandMediaEntities.IsNotNullOrEmpty())
+            {
+                demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
+                demandViewModel.File1Name = demandMediaEntities[0].FileName;
+
+                if (demandMediaEntities.Count > 1)
+                {
+                    demandViewModel.File2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[1].Path);
+                    demandViewModel.File2Name = demandMediaEntities[1].FileName;
+
+                }
+                if (demandMediaEntities.Count > 2)
+                {
+                    demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
+                    demandViewModel.File3Name = demandMediaEntities[2].FileName;
+
+                }
+            }
             demandViewModel.DemandOffers = new List<DemandOfferViewModel>();
             foreach (var demandOfferEntity in demandOfferEntities.OrderBy(x => x.Id).ToList())
             {
@@ -717,7 +730,7 @@ namespace Demand.Presentation.Controllers
                 }
 
                 List<OfferRequestViewModel> offerRequestViewModels = new List<OfferRequestViewModel>();
-
+                
                 foreach (var requestInfo in requestInfos)
                 {
                     OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
@@ -759,7 +772,6 @@ namespace Demand.Presentation.Controllers
             ViewBag.Providers = providers;
             return View(demandViewModel);
         }
-
         [HttpGet("OfferPage")]
         public IActionResult OfferPage(long? DemandId, long? DemandOfferId)
         {
@@ -804,7 +816,6 @@ namespace Demand.Presentation.Controllers
 
             return View(offerRequestViewModels);
         }
-
         [HttpPost("AddOfferRequest")]
         public IActionResult AddOfferRequest([FromForm] DemandViewModel demandViewModel)
         {

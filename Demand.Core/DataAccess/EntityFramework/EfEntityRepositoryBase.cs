@@ -41,7 +41,16 @@ where TContext : DbContext, new()
     {
         using (var context = new TContext())
         {
-            return context.Set<TEntity>().ToList();
+            try
+            {
+                return context.Set<TEntity>().ToList();
+
+            }
+            catch (Exception ex )
+            {
+
+                throw ex;
+            }
         }
     }
 

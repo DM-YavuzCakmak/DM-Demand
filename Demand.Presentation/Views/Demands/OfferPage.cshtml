@@ -222,13 +222,15 @@
                         }
                     </tbody>
                 </table>
-                <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
-                <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
 
-                <div class="button-group">
-                    <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+                <div class="button-group" style=" margin-right:15px; margin-top:15px; text-align: right; margin-bottom:10px;">
+                    <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+                    <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
                 </div>
             </section>
+            <div class="button-group" style="text-align: right; margin-right:25px;">
+                <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+            </div>
         </form>
     </main>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

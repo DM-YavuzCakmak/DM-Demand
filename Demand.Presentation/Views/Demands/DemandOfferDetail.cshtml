@@ -68,7 +68,23 @@
             margin-bottom: 10px;
         }
 
+        .decline-button {
+            background-color: #d9534f;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
 
+        
+
+        .decline-button:hover {
+            background-color: #c9302c;
+        }
         .button-group {
             display: flex;
             margin-top: 20px;
@@ -164,20 +180,11 @@
                 background-color: #45a049;
             }
 
-
-
         .plan .head h3, .plan .head h2, .plan .head h1 {
             padding: 0;
             margin: 0;
             font-weight: 100;
         }
-
-        /* body {
-                                                                            background: #eaeaea;
-                                                                            padding: 90px 0 0;
-                                                                            min-height: 900px;
-                                                                            color: #434a54;
-                                                                        } */
 
         body * {
             font-family: Open Sans;
@@ -630,8 +637,8 @@
             {
                 <div class="row">
                     <div class="form-group">
-                        <label for="declineDescription">Red Gerekçesi:</label>
-                        <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
+                        <label for="declineDescription">Gerekçe veya Not:</label>
+                        <textarea id="declineDescription" name="declineDescription" placeholder="Gerekçe veya Not"></textarea>
                     </div>
                     <div class="button-group">
                         <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>

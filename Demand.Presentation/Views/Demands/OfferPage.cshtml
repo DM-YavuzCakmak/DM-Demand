@@ -216,7 +216,8 @@
                                 </td>
                                 @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@
                                 <td><input type="text" name="price[]" class="price" value="@offerRequestViewModel.Price" /></td>
-                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice" /></td>
+                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice"/></td>
+                                <td>@offerRequestViewModel.Currency</td>
                                 <td><input type="hidden" name="offerRequestId[]" value="@(offerRequestViewModel.OfferRequestId ?? 0)" /></td>
                             </tr>
                         }
@@ -482,3 +483,4 @@
         });
     }
 </script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>

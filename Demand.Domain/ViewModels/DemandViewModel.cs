@@ -45,13 +45,18 @@ namespace Demand.Domain.ViewModels
         public string? Material1 { get; set; }
         public int? Quantity1 { get; set; }
         public string? Unit1 { get; set; }
+        public string? CurrencySymbol1 { get; set; }
         public string? Material2 { get; set; }
         public int? Quantity2 { get; set; }
         public string? Unit2 { get; set; }
+        public string? CurrencySymbol2 { get; set; }
+
         public string? Material3 { get; set; }
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
+        public string? CurrencySymbol3 { get; set; }
 
+        public string? ConfirmingNote { get; set; }
         public List<string>? RequestInfoId { get; set; }
         public List<string>? Category { get; set; }
         public List<string>? ProductName { get; set; }

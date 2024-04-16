@@ -12,6 +12,7 @@ using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
+using Demand.Core.Utilities.Results.Abstract;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.CurrencyTypeEntity;
@@ -278,7 +279,7 @@ namespace Demand.Presentation.Controllers
                 DepartmentId = (long)demandViewModel.DepartmentId,
                 Status = 0,
                 Description = demandViewModel.Description,
-                RequirementDate = DateTime.Now,/*(DateTime)demandViewModel.RequirementDate*/
+                RequirementDate =(DateTime)demandViewModel.RequirementDate,
                 IsDeleted = false,
                 CreatedDate = DateTime.Now,
                 UpdatedDate = null,
@@ -648,6 +649,7 @@ namespace Demand.Presentation.Controllers
             List<long> supplierIds = new List<long>();
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
+            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -666,7 +668,8 @@ namespace Demand.Presentation.Controllers
                 UpdatedAt = demand.UpdatedAt,
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
-                DepartmentName = department.Name
+                DepartmentName = department.Name,
+                ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription :""
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
@@ -678,12 +681,14 @@ namespace Demand.Presentation.Controllers
                     demandViewModel.Material2 = requestInfos[1].ProductName;
                     demandViewModel.Quantity2 = requestInfos[1].Quantity;
                     demandViewModel.Unit2 = requestInfos[1].Unit;
+
                 }
                 if (requestInfos.Count > 2)
                 {
                     demandViewModel.Material3 = requestInfos[2].ProductName;
                     demandViewModel.Quantity3 = requestInfos[2].Quantity;
                     demandViewModel.Unit3 = requestInfos[2].Unit;
+
                 }
             }
             if (demandMediaEntities.IsNotNullOrEmpty())
@@ -711,12 +716,14 @@ namespace Demand.Presentation.Controllers
                 demandOfferViewModel.DemandOfferId = demandOfferEntity.Id;
                 demandOfferViewModel.Status = demandOfferEntity.Status;
                 demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
+                demandOfferViewModel.CurrencyTypeId = demandOfferEntity.CurrencyTypeId;
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
                     demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
                     demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
+
 
                 ProviderEntity providerEntity = new ProviderEntity();
                 if (providerEntities != null && providerEntities.Any())
@@ -780,6 +787,8 @@ namespace Demand.Presentation.Controllers
 
             foreach (var requestInfo in requestInfos)
             {
+                IDataResult<DemandOfferEntity> demandoffer = _demandOfferService.GetById((long)DemandOfferId);
+                IDataResult<CurrencyTypeEntity> currencyType = _currencyTypeService.GetById((long)demandoffer.Data.CurrencyTypeId);
                 OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
                 {
                     RequestInfoId = requestInfo.Id,
@@ -790,7 +799,8 @@ namespace Demand.Presentation.Controllers
                     ProductName = requestInfo.ProductName,
                     ProductCode = requestInfo.ProductCode,
                     Quantity = requestInfo.Quantity,
-                    Unit = requestInfo.Unit
+                    Unit = requestInfo.Unit,
+                    Currency = currencyType.Data.Symbol
                 };
 
                 OfferRequestEntity? offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.RequestInfoId == requestInfo.Id && x.DemandOfferId == DemandOfferId.Value).Data;

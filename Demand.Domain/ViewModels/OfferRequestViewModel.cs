@@ -21,6 +21,7 @@ namespace Demand.Domain.ViewModels
         public string Unit { get; set; }
         public decimal Price { get; set; }
         public decimal TotalPrice { get; set; }
+        public string?  Currency{ get; set; }
         public List<NebimCategoryModel>? NebimCategoryModels { get; set; }
         public List<NebimSubCategoryModel>? NebimSubCategoryModels { get; set; }
         public List<NebimProductModel>? NebimProductModels { get; set; }

@@ -123,6 +123,11 @@
             pointer-events: none;
         }
 
+        #requirementDate {
+            background-color: lightgray;
+            pointer-events: none;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -213,6 +218,12 @@
             </div>
 
             <div class="form-group">
+                <label for="requirementDate">Gereklilik Tarihi:</label>
+                <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate.Value.ToShortDateString()" readonly>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
                 <label for="department">Departman:</label>
                 <select id="department" name="department">
                     @foreach (var department in ViewBag.Departments)
@@ -229,8 +240,6 @@
                     }
                 </select>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group">
                 <label for="description"> Açıklama:</label>
                 <textarea id="description" name="description">@Model.Description</textarea>
@@ -788,6 +797,7 @@
         $('#companyName').prop('disabled', true);
         $('#location').prop('disabled', true);
         $('#department').prop('disabled', true);
+        $('#requirementDate').prop('disabled', true);
 
         var demandId = @Model.DemandId;
         var companyNameFields = [

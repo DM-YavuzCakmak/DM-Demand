@@ -430,7 +430,14 @@
                 <label for="requestDate">Talep Tarihi:</label>
                 <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
             </div>
+            <div class="form-group">
+                <label for="requirementDate">Gereklilik Tarihi:</label>
+                <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate.Value.ToShortDateString()" readonly>
+            </div>
+            
+        </div>
 
+        <div class="form-row">
             <div class="form-group">
                 <label for="department">Departman:</label>
                 <select id="department" name="department">
@@ -443,12 +450,11 @@
                     }
                 </select>
             </div>
-        </div>
-        <div class="form-row">
             <div class="form-group">
                 <label for="description"> Açıklama:</label>
                 <textarea id="description" name="description" readonly>@Model.Description</textarea>
             </div>
+
         </div>
 
         <div class="container">
@@ -473,6 +479,7 @@
                 }
             </div>
             <div class="pricing-tables">
+                <h2 style="color:white;font-weight:bold;text-align:center">@Model.ConfirmingNote</h2>
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)
@@ -480,7 +487,6 @@
                         <div class="col-sm-4 col-md-4">
 
                             <div class="plan">
-
                                 <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 ? "black" : (Model.DemandOffers[0].Status == 1 ? "red" : "green"));">
                                     <h2>Teklif 1</h2>
 
@@ -515,7 +521,7 @@
                                 </ul>
 
                                 <div class="price">
-                                    <h1>@(Model.DemandOffers[0].TotalPrice + "TL")</h1>
+                                    <h1>@Model.DemandOffers[0].TotalPrice @(Model.DemandOffers[0].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[0].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
 
                                 @if (Model.Status == 0)
@@ -568,7 +574,7 @@
                                 </ul>
 
                                 <div class="price">
-                                    <h1>@(Model.DemandOffers[1].TotalPrice + "TL")</h1>
+                                    <h1>@Model.DemandOffers[1].TotalPrice @(Model.DemandOffers[1].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[1].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
 
                                 @if (Model.Status == 0)
@@ -618,7 +624,7 @@
                                 </ul>
 
                                 <div class="price">
-                                    <h1>@(Model.DemandOffers[2].TotalPrice + "TL")</h1>
+                                    <h1>@Model.DemandOffers[2].TotalPrice @(Model.DemandOffers[2].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[2].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
                                 @if (Model.Status == 0)
                                 {

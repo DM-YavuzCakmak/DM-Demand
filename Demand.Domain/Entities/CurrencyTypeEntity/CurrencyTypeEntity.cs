@@ -11,5 +11,7 @@ namespace Demand.Domain.Entities.CurrencyTypeEntity
     public class CurrencyTypeEntity:BaseEntity
     {
         public string CurrencyType { get; set; }
+        public string Symbol { get; set; }
+
     }
 }

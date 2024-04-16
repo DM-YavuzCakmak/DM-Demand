@@ -58,11 +58,11 @@
                                 <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
                             </td>
                             <td>
-                                @if ((demand.CreatedAt == userId || userId == 7) && demand.Status ==0)
+                                @if ((demand.CreatedAt == userId || userId == 7) && demand.Status == 0)
                                 {
                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                 }
-                                @if (userId == 9 || userId==7)
+                                @if (userId == 9 || userId == 7)
                                 {
                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 
@@ -116,7 +116,13 @@
                     <label for="requestDate">Talep Tarihi:</label>
                     <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
                 </div>
+                <div class="form-group">
+                    <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!) </label>
+                    <input type="date" id="requirementDate" name="requirementDate">
+                </div>
 
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label for="department">Departman:</label>
                     <select id="department" name="department">
@@ -127,16 +133,19 @@
                         }
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="description">Dosya Seç:</label>
+                    <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
+                </div>
+
             </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="description">Açıklama:</label>
                     <textarea id="description" name="description"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="description">Dosya Seç:</label>
-                    <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
-                </div>
+                
             </div>
             <table id="dataTable">
                 <thead>
@@ -188,16 +197,15 @@
 
                             </div>
                         </td>
-                          <td class="form-group">
+                        <td class="form-group">
                             <div class="select-wrapper">
                                 <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
-                                  
                                 </select>
                             </div>
                         </td>
                         <td class="form-group">
                             <input type="text" name="productCode[]" class="productCode" />
-                        </td>    
+                        </td>
                         <td class="form-group">
                             <input type="text" name="productName[]" class="productName" />
                         </td>
@@ -519,6 +527,7 @@
 
         .form-group select,
         .form-group input[type="text"],
+        .form-group input[type="date"],
         .form-group textarea {
             width: 100%;
             padding: 8px;
@@ -574,6 +583,7 @@
         });
 
         disableFields();
+
     });
 
     function disableFields() {
@@ -629,6 +639,22 @@
             });
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var requirementDateInput = document.getElementById("requirementDate");
+
+        requirementDateInput.addEventListener('change', function () {
+            var today = new Date();
+            var selectedDate = new Date(requirementDateInput.value);
+            var threeDaysLater = new Date(today);
+            threeDaysLater.setDate(today.getDate() + 3);
+
+            if (selectedDate <= threeDaysLater) {
+                requirementDateInput.value = '';
+                alert('Bugünden sonraki üç günün tarihini seçemezsiniz.');
+            }
+        });
+    });
     function addRow() {
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         var newRow = table.insertRow(table.rows.length);
@@ -652,7 +678,7 @@
                     option2.value = "2";
                     select.appendChild(option2);
 
-                } 
+                }
                 else if (cell === 'category') {
                     select.addEventListener('change', function () {
                         updateSubcategories(this.parentNode.parentNode.parentNode);
@@ -663,10 +689,10 @@
                     defaultOption.text = "Lütfen seçiniz";
                     select.add(defaultOption);
                     subCategoryModels.forEach(function (subcategory) {
-                      var option = document.createElement('option');
-                      option.value = subcategory.productHierarchyLevel01Code;
-                      option.textContent = subcategory.productHierarchyLevel01Description;
-                      select.appendChild(option);
+                        var option = document.createElement('option');
+                        option.value = subcategory.productHierarchyLevel01Code;
+                        option.textContent = subcategory.productHierarchyLevel01Description;
+                        select.appendChild(option);
                     });
                 } else if (cell === 'subcategory') {
                     select.addEventListener('change', function () {
@@ -682,9 +708,9 @@
             } else {
                 var input = document.createElement("input");
                 input.type = "text";
-                input.name = cell +"[]";
+                input.name = cell + "[]";
                 input.className = cell;
-                
+
                 newCell.className = "form-group";
                 newCell.appendChild(input);
             }
@@ -768,19 +794,21 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
+        formData.append('RequirementDate', document.getElementById('requirementDate').value);
+
 
         var table = document.getElementById("dataTable");
         var rows = table.getElementsByTagName("tr");
 
         for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].getElementsByTagName("td");
-            var category = cells[0].querySelector("select[name='category[]']").value;
-            var subcategory = cells[1].querySelector("select[name='subcategory[]']").value;
-            var product = cells[2].querySelector("select[name='product[]']").selectedOptions[0].textContent;
-            var productName = cells[4].querySelector("input[name='productName[]']").value;
-            var productCode = cells[3].querySelector("input[name='productCode[]']").value;
-            var unit = cells[5].querySelector("select[name='unit[]']").value;
-            var quantity = cells[6].querySelector("input[name='quantity[]']").value;
+            var category = cells[1].querySelector("select[name='category[]']").value;
+            var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
+            var product = cells[3].querySelector("select[name='product[]']").selectedOptions[0].textContent;
+            var productName = cells[5].querySelector("input[name='productName[]']").value;
+            var productCode = cells[4].querySelector("input[name='productCode[]']").value;
+            var unit = cells[6].querySelector("select[name='unit[]']").value;
+            var quantity = cells[7].querySelector("input[name='quantity[]']").value;
             console.log(category, subcategory, product, productName, productCode, unit, quantity);
             formData.append('Category[]', category);
             formData.append('Subcategory[]', subcategory);

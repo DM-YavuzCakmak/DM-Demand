@@ -67,7 +67,7 @@ builder.Services.AddControllersWithViews();
 #region DbContext
 builder.Services.AddDbContext<DemandContext>(options =>
 {
-    options.UseSqlServer("Data Source=172.30.47.17,1433;Initial Catalog=Demand;User Id=sa;Password=123456;TrustServerCertificate=true;");
+    options.UseSqlServer("Data Source=172.30.196.15,1433;Initial Catalog=Demand;User Id=sa;Password=123456;TrustServerCertificate=true;");
 });
 #endregion
 

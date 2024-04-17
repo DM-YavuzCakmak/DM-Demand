@@ -447,6 +447,22 @@ namespace Demand.Presentation.Controllers
                                 "Saygılarımızla.";
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
                 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 else
                 {
                     DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
@@ -476,6 +492,18 @@ namespace Demand.Presentation.Controllers
                                 demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" +
                                 "Saygılarımızla.";
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+
+
+
+
+
+
+
+
+
+
+
+
 
                     _demandService.Update(demandEntity);
                 }

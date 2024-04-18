@@ -7,7 +7,6 @@
     var claimsIdentity = (ClaimsIdentity)User.Identity;
     var claims = claimsIdentity.Claims;
     var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-
 }
 
 <!DOCTYPE html>
@@ -53,21 +52,28 @@
                             <td>@demand.DemandTitle</td>
                             <td>@demand.DemanderName</td>
                             <td>@demand.LocationName</td>
-                            <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
+                            @if (Model.Count > 0 && demand.DemandDate != null)
+                            {
+                                <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
+
+                            }
+                            @if (Model.Count>0 && demand.Status != null)
+                            {
+                                <td>
+                                    <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
+                                </td>
+                            }
                             <td>
-                                <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
-                            </td>
-                            <td>
-                                @if ((demand.CreatedAt == userId || userId == 7) && demand.Status == 0)
+                                @if ((demand.CreatedAt == userId || userId == 10) && demand.Status == 0)
                                 {
                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                 }
-                                @if (userId == 9 || userId == 7)
+                                @if (userId == 12 || userId == 10)
                                 {
                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 
                                 }
-                                else
+                                else if(Model.Count>0)
                                 {
                                     <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
                                 }
@@ -164,7 +170,7 @@
                     <tr>
                         <td>
                             <div class="select-wrapper">
-                                <select name="type" class="type">
+                                <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
                                     @if (ViewBag.ProductCategories != null)
                                     {
                                         <option>Lütfen seçiniz</option>
@@ -578,22 +584,9 @@
             });
         });
 
-        $(".type").change(function () {
-            disableFields();
-        });
-
-        disableFields();
 
     });
 
-    function disableFields() {
-        var selectedTypeValue = $(".type").val();
-        if (selectedTypeValue == 5) {
-            $(".category, .subcategory, .product, .productCode").prop('disabled', false);
-        } else {
-            $(".category, .subcategory, .product, .productCode").prop('disabled', true);
-        }
-    }
     function updateLocationId() {
         var locationId = $('#location').val();
         $('#locationId').val(locationId);
@@ -658,11 +651,11 @@
     function addRow() {
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         var newRow = table.insertRow(table.rows.length);
-        var cells = ['category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
+        var cells = ['type','category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
 
         cells.forEach(function (cell) {
             var newCell = newRow.insertCell(-1);
-            if (cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
+            if (cell === 'type' || cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
                 var div = document.createElement("div");
                 div.className = "select-wrapper";
                 var select = document.createElement("select");
@@ -677,7 +670,6 @@
                     option2.text = "Metre";
                     option2.value = "2";
                     select.appendChild(option2);
-
                 }
                 else if (cell === 'category') {
                     select.addEventListener('change', function () {
@@ -692,6 +684,21 @@
                         var option = document.createElement('option');
                         option.value = subcategory.productHierarchyLevel01Code;
                         option.textContent = subcategory.productHierarchyLevel01Description;
+                        select.appendChild(option);
+                    });
+                } else if (cell === 'type') {
+                    select.addEventListener('change', function () {
+                        disableFields(this.parentNode.parentNode.parentNode);
+                    });
+                    var subCategoryModels = @Html.Raw(Json.Serialize(ViewBag.ProductCategories));
+                    select.innerHTML = '';
+                    var defaultOption = document.createElement('option');
+                    defaultOption.text = "Lütfen seçiniz";
+                    select.add(defaultOption);
+                    subCategoryModels.forEach(function (subcategory) {
+                        var option = document.createElement('option');
+                        option.value = subcategory.id;
+                        option.textContent = subcategory.productCategoryName;
                         select.appendChild(option);
                     });
                 } else if (cell === 'subcategory') {
@@ -721,6 +728,21 @@
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         if (table.rows.length > 1) {
             table.deleteRow(-1);
+        }
+    }
+
+    function disableFields(parentNode) {
+        var selectedTypeValue = parentNode.querySelector('.type').value;
+        if (selectedTypeValue == 1) {
+            parentNode.querySelector('.category').disabled = false;
+            parentNode.querySelector('.subcategory').disabled = false;
+            parentNode.querySelector('.product').disabled = false;
+            parentNode.querySelector('.productCode').disabled = false;
+        } else {
+            parentNode.querySelector('.category').disabled = true;
+            parentNode.querySelector('.subcategory').disabled = true;
+            parentNode.querySelector('.product').disabled = true;
+            parentNode.querySelector('.productCode').disabled = true;
         }
     }
 

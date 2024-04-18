@@ -30,7 +30,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=172.30.47.17,1433;Initial Catalog=Demand;User Id=sa;Password=123456;TrustServerCertificate=true;");
+            optionsBuilder.UseSqlServer("Data Source=172.30.196.15;Initial Catalog=Demand;User ID=sa;Password=HsMEfeS23@.;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;");
         }
         public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<PersonnelEntity> Personnel { get; set; }

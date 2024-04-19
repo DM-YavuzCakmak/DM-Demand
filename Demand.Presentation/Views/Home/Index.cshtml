@@ -826,17 +826,20 @@
             var cells = rows[i].getElementsByTagName("td");
             var category = cells[1].querySelector("select[name='category[]']").value;
             var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
-            var product = cells[3].querySelector("select[name='product[]']").selectedOptions[0].textContent;
+            if (category.trim() !== "" && subcategory.trim() !== "") {
+                formData.append('Category[]', category);
+                formData.append('Subcategory[]', subcategory);
+            }
+
             var productName = cells[5].querySelector("input[name='productName[]']").value;
             var productCode = cells[4].querySelector("input[name='productCode[]']").value;
             var unit = cells[6].querySelector("select[name='unit[]']").value;
             var quantity = cells[7].querySelector("input[name='quantity[]']").value;
-            console.log(category, subcategory, product, productName, productCode, unit, quantity);
+            console.log(category, subcategory, productName, productCode, unit, quantity);
             formData.append('Category[]', category);
             formData.append('Subcategory[]', subcategory);
             formData.append('Unit[]', unit);
             formData.append('Quantity[]', quantity);
-            formData.append('Product[]', product);
             formData.append('ProductCode[]', productCode);
             formData.append('ProductName[]', productName);
         }

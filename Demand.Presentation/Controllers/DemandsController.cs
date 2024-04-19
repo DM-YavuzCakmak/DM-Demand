@@ -290,11 +290,11 @@ namespace Demand.Presentation.Controllers
 
             for (int i = 0; i < demandViewModel.Category.Count(); i++)
             {
-                var category = demandViewModel.Category[i];
-                var subcategory = demandViewModel.Subcategory[i];
+                var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
+                var subcategory = demandViewModel.Subcategory[i] ==null ? null : demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
                 var quantity = demandViewModel.Quantity[i];
-                var productname = demandViewModel.Product[i];
+                var productname = demandViewModel.ProductName[i];
                 var productcode = demandViewModel.ProductCode[i];
                 var requestInfo = new RequestInfoEntity
                 {

@@ -288,7 +288,7 @@ namespace Demand.Presentation.Controllers
             };
             var addedDemand = _demandService.AddDemand(demandEntity);
 
-            for (int i = 0; i < demandViewModel.Category.Count(); i++)
+            for (int i = 0; i < demandViewModel.Category.Count()-1; i++)
             {
                 var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
                 var subcategory = demandViewModel.Subcategory[i] ==null ? null : demandViewModel.Subcategory[i];
@@ -365,11 +365,11 @@ namespace Demand.Presentation.Controllers
                     {
                         if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
                         {
-                            string demandLink = "xxxxx";
-                            var emailBody = $"Merhabalar Sayın " + parentPersonnel.FirstName + " " + parentPersonnel.LastName + ",<br/><br/>" +
-                                        personnelEntity.FirstName + " " + personnelEntity.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
-                                        "Talep URL :" + demandLink + " <br/><br/>" +
-                                        "Saygılarımızla.";
+                            string demandLink = "http://172.30.44.13:5734/api/Demands?id=" + demandProcessEntity.DemandId;
+                            var emailBody = $"Merhabalar Sayın {parentPersonnel.FirstName} {parentPersonnel.LastName},<br/><br/>" +
+                                            $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
+                                            $"Talep URL : <a href='{demandLink}'> TALEP GÖRÜNTÜLE </a> <br/><br/>" +
+                                            "Saygılarımızla.";
                             EmailHelper.SendEmail(new List<string> { parentPersonnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
                         }
                     }
@@ -382,13 +382,13 @@ namespace Demand.Presentation.Controllers
             }
             else
             {
-                PersonnelEntity personnel = _personnelService.GetById(7).Data;
+                PersonnelEntity personnel = _personnelService.GetById(10).Data;
 
-                string demandLink = "xxxxx";
-                var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                            personnelEntity.FirstName + " " + personnelEntity.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol etmenizi rica ederiz.<br/><br/>" +
-                            "Talep URL :" + demandLink + " <br/><br/>" +
-                            "Saygılarımızla.";
+                string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + addedDemand.Id;
+                var emailBody = $"Merhabalar Sayın {personnel.FirstName} {personnel.LastName},<br/><br/>" +
+                     $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol etmenizi rica ederiz.<br/><br/>" +
+                     $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                     "Saygılarımızla.";
                 EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
             }
             return Ok(addedDemand);
@@ -448,21 +448,6 @@ namespace Demand.Presentation.Controllers
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 else
                 {
                     DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
@@ -484,7 +469,7 @@ namespace Demand.Presentation.Controllers
                         }
                     }
 
-                    PersonnelEntity personnel = _personnelService.GetById(7).Data;
+                    PersonnelEntity personnel = _personnelService.GetById(10).Data;
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
 
                     string demandLink = "xxxxx";

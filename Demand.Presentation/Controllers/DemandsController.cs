@@ -290,7 +290,7 @@ namespace Demand.Presentation.Controllers
             };
             var addedDemand = _demandService.AddDemand(demandEntity);
 
-            for (int i = 0; i < demandViewModel.Category.Count()-1; i++)
+            for (int i = 0; i < demandViewModel.ProductName.Count; i++)
             {
                 var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
                 var subcategory = demandViewModel.Subcategory[i] ==null ? null : demandViewModel.Subcategory[i];

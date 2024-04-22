@@ -30,7 +30,6 @@ using System.Security.Claims;
 
 namespace Demand.Presentation.Controllers
 {
-    [UserToken]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -54,6 +53,7 @@ namespace Demand.Presentation.Controllers
             _demandProcessService = demandProcessService;
             _productCategoryService = productCategoryService;
         }
+        [UserToken]
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -112,6 +112,8 @@ namespace Demand.Presentation.Controllers
             return View(demandViewModels);
 
         }
+        [UserToken]
+
         public IActionResult GetFilterData(int? status = null, long? locationId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             List<DemandViewModel> demandViewModels = new List<DemandViewModel>();
@@ -150,7 +152,7 @@ namespace Demand.Presentation.Controllers
         }
 
 
-
+        [UserToken]
         public IActionResult Privacy()
         {
             return View();

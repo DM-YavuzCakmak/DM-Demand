@@ -7,6 +7,7 @@ using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Concrete.DemandService;
+using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Entities;
 using Demand.Core.Utilities.Results.Abstract;
@@ -29,6 +30,7 @@ using System.Security.Claims;
 
 namespace Demand.Presentation.Controllers
 {
+    [UserToken]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -52,7 +54,6 @@ namespace Demand.Presentation.Controllers
             _demandProcessService = demandProcessService;
             _productCategoryService = productCategoryService;
         }
-
         public IActionResult Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;

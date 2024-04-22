@@ -1,5 +1,6 @@
 ﻿using Demand.Business.Abstract.RequestInfo;
 using Demand.Business.Concrete.RequestInfo;
+using Demand.Core.Attribute;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,8 @@ namespace Demand.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UserToken]
+
     public class RequestInfoController : Controller
     {
         private readonly IRequestInfoService _requestInfoService;

@@ -1,4 +1,5 @@
 ﻿using Demand.Business.Abstract.CompanyLocation;
+using Demand.Core.Attribute;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -6,6 +7,8 @@ namespace Demand.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UserToken]
+
     public class CompanyLocationsController : ControllerBase
     {
         private readonly ICompanyLocationService _companyLocationService;

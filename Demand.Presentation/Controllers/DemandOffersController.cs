@@ -5,6 +5,7 @@ using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Business.Concrete.DemandMediaService;
 using Demand.Business.Concrete.DemandService;
+using Demand.Core.Attribute;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
@@ -16,6 +17,7 @@ namespace Demand.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UserToken]
     public class DemandOffersController : Controller
     {
         private readonly ILogger<HomeController> _logger;

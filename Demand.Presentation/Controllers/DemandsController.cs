@@ -10,6 +10,7 @@ using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
+using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
 using Demand.Core.Utilities.Results.Abstract;
@@ -39,6 +40,7 @@ namespace Demand.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [UserToken]
     public class DemandsController : Controller
     {
         private readonly IDemandService _demandService;

@@ -6,8 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
 			<PrivateAssets>all</PrivateAssets>

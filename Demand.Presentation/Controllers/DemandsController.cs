@@ -88,7 +88,7 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
-            
+
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -149,7 +149,7 @@ namespace Demand.Presentation.Controllers
 
                 }
             }
-           
+
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
@@ -281,7 +281,7 @@ namespace Demand.Presentation.Controllers
                 DepartmentId = (long)demandViewModel.DepartmentId,
                 Status = 0,
                 Description = demandViewModel.Description,
-                RequirementDate =(DateTime)demandViewModel.RequirementDate,
+                RequirementDate = (DateTime)demandViewModel.RequirementDate,
                 IsDeleted = false,
                 CreatedDate = DateTime.Now,
                 UpdatedDate = null,
@@ -293,7 +293,7 @@ namespace Demand.Presentation.Controllers
             for (int i = 0; i < demandViewModel.ProductName.Count; i++)
             {
                 var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
-                var subcategory = demandViewModel.Subcategory[i] ==null ? null : demandViewModel.Subcategory[i];
+                var subcategory = demandViewModel.Subcategory[i] == null ? null : demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
                 var quantity = demandViewModel.Quantity[i];
                 var productname = demandViewModel.ProductName[i];
@@ -426,13 +426,61 @@ namespace Demand.Presentation.Controllers
                 return BadRequest("Talep Durumu Değiştirmeye Uygun Değildir.");
             }
 
-            demandProcessEntity.Status = demandStatusChangeViewModel.Status;
+            demandProcessEntity.Status = demandStatusChangeViewModel.Status == 2 && demandProcessEntity.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) ? 0 : demandStatusChangeViewModel.Status;
             demandProcessEntity.Desciription = demandStatusChangeViewModel.Description ?? string.Empty;
             demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             demandProcessEntity.UpdatedDate = DateTime.Now;
 
             _demandProcessService.UpdateDemandProcess(demandProcessEntity);
 
+            if (demandProcessEntity.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && demandProcessEntity.Status == 0)
+            {
+                DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
+                if (nextDemandProcessEntity != null)
+                {
+                    PersonnelEntity personnel = _personnelService.GetById(10).Data;
+                    PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
+                    DemandEntity demand = _demandService.GetById(demandProcessEntity.DemandId).Data;
+
+                    string demandLink = "xxxxx";
+                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
+                                "Talep URL :" + demandLink + " <br/><br/>" +
+                                "Saygılarımızla.";
+                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                }
+                else
+                {
+                    DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
+                    demandEntity.Status = 2;
+                    demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                    demandEntity.UpdatedDate = DateTime.Now;
+
+                    if (demandStatusChangeViewModel.DemandOfferId != null)
+                    {
+                        List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
+
+                        foreach (var demandOffer in demandOfferEntities)
+                        {
+                            demandOffer.Status = demandOffer.Id == demandStatusChangeViewModel.DemandOfferId ? 2 : 1;
+                            demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                            demandEntity.UpdatedDate = DateTime.Now;
+
+                            _demandOfferService.Update(demandOffer);
+                        }
+                    }
+
+                    PersonnelEntity personnel = _personnelService.GetById(10).Data;
+                    PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
+
+                    string demandLink = "xxxxx";
+                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" +
+                                "Saygılarımızla.";
+                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                    _demandService.Update(demandEntity);
+                }
+            }
             if (demandProcessEntity.Status == 2)//Approve
             {
                 DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
@@ -479,19 +527,6 @@ namespace Demand.Presentation.Controllers
                                 demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" +
                                 "Saygılarımızla.";
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
-
-
-
-
-
-
-
-
-
-
-
-
-
                     _demandService.Update(demandEntity);
                 }
             }
@@ -530,6 +565,7 @@ namespace Demand.Presentation.Controllers
                 }
 
             }
+
 
             return Ok(demandProcessEntity);
         }
@@ -684,7 +720,7 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription :""
+                ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : ""
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
@@ -752,7 +788,7 @@ namespace Demand.Presentation.Controllers
                 }
 
                 List<OfferRequestViewModel> offerRequestViewModels = new List<OfferRequestViewModel>();
-                
+
                 foreach (var requestInfo in requestInfos)
                 {
                     OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel

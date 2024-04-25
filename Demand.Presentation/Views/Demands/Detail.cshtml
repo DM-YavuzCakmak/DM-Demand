@@ -590,7 +590,7 @@
             success: function (statusResult) {
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
-                location.reload();
+                window.location.href = '/api/Home/Index';
 
             },
             error: function (error) {
@@ -620,7 +620,7 @@
             success: function (statusResult) {
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
-                location.reload();
+                window.location.href = '/api/Home/Index';
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);

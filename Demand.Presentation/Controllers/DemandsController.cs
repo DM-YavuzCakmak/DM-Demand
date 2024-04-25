@@ -7,9 +7,11 @@ using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.OfferRequestService;
+using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
+using Demand.Business.Abstract.RoleService;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
@@ -24,9 +26,12 @@ using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.PersonnelRole;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
+using Demand.Domain.Entities.Role;
 using Demand.Domain.ViewModels;
+using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
@@ -57,8 +62,10 @@ namespace Demand.Presentation.Controllers
         private readonly IDemandOfferService _demandOfferService;
         private readonly IProviderService _providerService;
         private readonly IOfferRequestService _offerRequestService;
+        private readonly IPersonnelRoleService _personnelRoleService;
+        private readonly IRoleService _roleService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -74,6 +81,8 @@ namespace Demand.Presentation.Controllers
             _demandOfferService = demandOfferService;
             _providerService = providerService;
             _offerRequestService = offerRequestService;
+            _personnelRoleService = personnelRoleService;
+            _roleService = roleService;
         }
 
         public IActionResult Detail(long id)
@@ -381,6 +390,43 @@ namespace Demand.Presentation.Controllers
                     else
                         break;
                 }
+                RoleEntity roleEntity = _roleService.GetById(3).Data;
+                List<PersonnelRoleEntity> personnelRole = _personnelRoleService.GetList( x=> x.RoleId == roleEntity.Id).Data.ToList();
+                PersonnelEntity personnelForSales = _personnelService.GetById(personnelRole[0].PersonnelId).Data;
+                
+                i++;
+                DemandProcessEntity demandProcessForOffer = new DemandProcessEntity
+                {
+                    DemandId = addedDemand.Id,
+                    ManagerId = personnelForSales.Id,
+                    IsDeleted = false,
+                    HierarchyOrder = i,
+                    Desciription = string.Empty,
+                    Status = 0,
+                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                    CreatedDate = DateTime.Now,
+                    UpdatedAt = null,
+                    UpdatedDate = null,
+                };
+                _demandProcessService.AddDemandProcess(demandProcessForOffer);
+
+
+                i++;
+                DemandProcessEntity demandProcessLastManager = new DemandProcessEntity
+                {
+                    DemandId = addedDemand.Id,
+                    ManagerId = parentPersonnel.Id,
+                    IsDeleted = false,
+                    HierarchyOrder = i,
+                    Desciription = string.Empty,
+                    Status = 0,
+                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                    CreatedDate = DateTime.Now,
+                    UpdatedAt = null,
+                    UpdatedDate = null,
+                };
+                _demandProcessService.AddDemandProcess(demandProcessLastManager);
+
             }
             else
             {
@@ -415,7 +461,7 @@ namespace Demand.Presentation.Controllers
 
             List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
 
-            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value));
+            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && x.Status ==0);
             if (demandProcessEntity == null)
             {
                 return BadRequest("Talebe Ait Durum Değiştirme Yetkiniz Bulunmamaktadır.");
@@ -426,61 +472,13 @@ namespace Demand.Presentation.Controllers
                 return BadRequest("Talep Durumu Değiştirmeye Uygun Değildir.");
             }
 
-            demandProcessEntity.Status = demandStatusChangeViewModel.Status == 2 && demandProcessEntity.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) ? 0 : demandStatusChangeViewModel.Status;
+            demandProcessEntity.Status = demandStatusChangeViewModel.Status;
             demandProcessEntity.Desciription = demandStatusChangeViewModel.Description ?? string.Empty;
             demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             demandProcessEntity.UpdatedDate = DateTime.Now;
 
             _demandProcessService.UpdateDemandProcess(demandProcessEntity);
 
-            if (demandProcessEntity.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && demandProcessEntity.Status == 0)
-            {
-                DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
-                if (nextDemandProcessEntity != null)
-                {
-                    PersonnelEntity personnel = _personnelService.GetById(10).Data;
-                    PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
-                    DemandEntity demand = _demandService.GetById(demandProcessEntity.DemandId).Data;
-
-                    string demandLink = "xxxxx";
-                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
-                                "Talep URL :" + demandLink + " <br/><br/>" +
-                                "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
-                }
-                else
-                {
-                    DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
-                    demandEntity.Status = 2;
-                    demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                    demandEntity.UpdatedDate = DateTime.Now;
-
-                    if (demandStatusChangeViewModel.DemandOfferId != null)
-                    {
-                        List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
-
-                        foreach (var demandOffer in demandOfferEntities)
-                        {
-                            demandOffer.Status = demandOffer.Id == demandStatusChangeViewModel.DemandOfferId ? 2 : 1;
-                            demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                            demandEntity.UpdatedDate = DateTime.Now;
-
-                            _demandOfferService.Update(demandOffer);
-                        }
-                    }
-
-                    PersonnelEntity personnel = _personnelService.GetById(10).Data;
-                    PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
-
-                    string demandLink = "xxxxx";
-                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" +
-                                "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
-                    _demandService.Update(demandEntity);
-                }
-            }
             if (demandProcessEntity.Status == 2)//Approve
             {
                 DemandProcessEntity? nextDemandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.HierarchyOrder == demandProcessEntity.HierarchyOrder + 1);
@@ -490,12 +488,25 @@ namespace Demand.Presentation.Controllers
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
                     DemandEntity demand = _demandService.GetById(demandProcessEntity.DemandId).Data;
 
-                    string demandLink = "xxxxx";
-                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
-                                "Talep URL :" + demandLink + " <br/><br/>" +
-                                "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                    if (nextDemandProcessEntity.ManagerId == 10)
+                    {
+
+                        string demandLink = "xxxxx";
+                        var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                                    demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmış ve onaylanmıştır. Lütfen teklif ve diğer detay bilgileri doldurmanızı rica ederiz.<br/><br/>" +
+                                    "Talep URL :" + demandLink + " <br/><br/>" +
+                                    "Saygılarımızla.";
+                        EmailHelper.SendEmail(new List<string> { personnel.Email }, "Teklif Girişi Bekleyen Satın Alma Talebi", emailBody);
+                    }
+                    else
+                    {
+                        string demandLink = "xxxxx";
+                        var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                                    demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
+                                    "Talep URL :" + demandLink + " <br/><br/>" +
+                                    "Saygılarımızla.";
+                        EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                    }
                 }
 
                 else
@@ -565,7 +576,6 @@ namespace Demand.Presentation.Controllers
                 }
 
             }
-
 
             return Ok(demandProcessEntity);
         }
@@ -887,7 +897,7 @@ namespace Demand.Presentation.Controllers
 
             if (demandViewModel != null)
             {
-                for (int i = 0; i < demandViewModel.Category.Count(); i++)
+                for (int i = 0; i < demandViewModel.ProductName.Count(); i++)
                 {
                     var requestInfoId = demandViewModel.RequestInfoId[i];
                     if (requestInfoId != null && long.Parse(requestInfoId) > 0)

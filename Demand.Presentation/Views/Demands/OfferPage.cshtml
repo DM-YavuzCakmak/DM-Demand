@@ -429,7 +429,10 @@
         }
     }
     function sendDemand() {
-        var formData = new FormData();
+        var demandofferId = @Model[0].DemandOfferId;
+        var demandId = @Model[0].DemandId;
+        console.log(demandofferId, demandId);
+    var formData = new FormData();
 
         formData.append('DemandOfferId', @Model[0].DemandOfferId);
         formData.append('DemandId', @Model[0].DemandId);
@@ -442,6 +445,10 @@
             var requestInfoId = cells[0].querySelector("input[name='requestInfoId[]']").value;
             var category = cells[1].querySelector("select[name='category[]']").value;
             var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
+            if (category.trim() !== "" && subcategory.trim() !== "") {
+                formData.append('Category[]', category);
+                formData.append('Subcategory[]', subcategory);
+            }
             var product = cells[3].querySelector("select[name='product[]']").selectedOptions[0].textContent;
             var productName = cells[5].querySelector("input[name='productName[]']").value;
             var productCode = cells[4].querySelector("input[name='productCode[]']").value;
@@ -449,7 +456,7 @@
             var quantity = cells[6].querySelector("input[name='quantity[]']").value;
             var price = cells[8].querySelector("input[name='price[]']").value;
             var totalPrice = cells[9].querySelector("input[name='totalPrice[]']").value;
-            var offerRequestId = cells[10].querySelector("input[name='offerRequestId[]']").value;
+            var offerRequestId = cells[11].querySelector("input[name='offerRequestId[]']").value;
             console.log(requestInfoId, category, subcategory, product, productName, productCode, unit, quantity, price, totalPrice);
             formData.append('requestInfoId[]', requestInfoId);
             formData.append('Category[]', category);
@@ -458,7 +465,7 @@
             formData.append('Quantity[]', quantity);
             formData.append('Product[]', product);
             formData.append('ProductCode[]', productCode);
-            formData.append('ProductDescription[]', productName);
+            formData.append('ProductName[]', productName);
             formData.append('Price[]', price);
             formData.append('TotalPrice[]', totalPrice);
             formData.append('OfferRequestId[]', offerRequestId);

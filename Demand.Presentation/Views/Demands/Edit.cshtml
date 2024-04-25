@@ -580,8 +580,8 @@
             </div>
         }
         <div class="button-group">
-            @*             <button onclick="updateDemand()" type="button" class="update-button">Güncelle</button>
-            *@
+            <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Teklifleri Gönder</button>
+           
         </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -1021,6 +1021,32 @@
             },
             error: function (error) {
                 console.error('Error updating demand:', error);
+            }
+        });
+    }
+
+    function changeStatus(demandId) {
+        var demandStatusChangeViewModel = {
+            DemandId: demandId,
+            Status: 2
+        };
+
+        $.ajax({
+            url: '/api/Demands/ChangeStatus',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(demandStatusChangeViewModel),
+            success: function (statusResult) {
+                console.log(statusResult);
+                toastr.success("Status Changed", "Success");
+                window.location.href = '/api/Home/Index';
+
+
+            },
+            error: function (error) {
+                console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Unexpected Error", "Error");
+
             }
         });
     }

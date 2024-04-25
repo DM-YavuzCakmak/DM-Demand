@@ -648,7 +648,12 @@
                     </div>
                     <div class="button-group">
                         <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+                    @if (Model.DemandOffers.Count <= 0)
+                    {
+                            <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Onayla ve Teklife Gönder</button>
+                    }
                     </div>
+
                 </div>
             }
         </div>

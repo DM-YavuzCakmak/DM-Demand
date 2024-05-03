@@ -132,6 +132,40 @@
             resize: none;
             margin-top: 10px;
         }
+
+        .popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .popup-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+            .popup-button:hover {
+                background-color: #45a049;
+            }
     </style>
 </head>
 <body>
@@ -226,10 +260,14 @@
                 <label for="declineDescription">Red Gerekçesi:</label>
                 <textarea id="declineDescription" name="declineDescription" placeholder="Red gerekçesi..."></textarea>
             </div>
-            <div class="button-group">
-                <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-                <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
-            </div>
+            @if (Model.isApprovedActive == true)
+            {
+                <div class="button-group">
+                    <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+                    <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
+                </div>
+            }
+            
         </main>
     </form>
     <div id="overlay"></div>
@@ -589,18 +627,26 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
-                toastr.success("Status Changed", "Success");
-                window.location.href = '/api/Home/Index';
-
+                var popupMessage = "Talep durumu başarıyla değiştirildi.";
+                var popup = $("<div></div>").addClass("popup-container");
+                var message = $("<p></p>").addClass("popup-message").text(popupMessage);
+                popup.append(message);
+                var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
+                    popup.fadeOut(200, function () {
+                        $(this).remove();
+                    });
+                    window.location.href = '/Home/Index';
+                });
+                popup.append(closeButton);
+                $('body').append(popup);
+                popup.hide().fadeIn(300);
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
-                toastr.error("Unexpected Error", "Error");
-
+                toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
             }
         });
     }
-
 
     function declineStatus() {
         var demandId = @Model.DemandId;
@@ -620,7 +666,7 @@
             success: function (statusResult) {
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
-                window.location.href = '/api/Home/Index';
+                window.location.href = '/Home/Index';
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);

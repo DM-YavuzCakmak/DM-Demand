@@ -389,6 +389,40 @@
                     margin-bottom: 10px;
                 }
 
+        .popup-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .popup-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+            .popup-button:hover {
+                background-color: #45a049;
+            }
+
     </style>
 </head>
 <body>
@@ -635,27 +669,28 @@
                         </div>
                     }
                 </div>
-                <!-- row-->
-
             </div>
-            <!-- pricing-tables -->
-            @if (Model.Status == 0)
+            @if (Model.isApprovedActive == true)
             {
-                <div class="row">
-                    <div class="form-group">
-                        <label for="declineDescription">Gerekçe veya Not:</label>
-                        <textarea id="declineDescription" name="declineDescription" placeholder="Gerekçe veya Not"></textarea>
-                    </div>
-                    <div class="button-group">
-                        <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-                    @if (Model.DemandOffers.Count <= 0)
-                    {
-                            <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Onayla ve Teklife Gönder</button>
-                    }
-                    </div>
+                @if (Model.Status == 0)
+                {
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="declineDescription">Gerekçe veya Not:</label>
+                            <textarea id="declineDescription" name="declineDescription" placeholder="Gerekçe veya Not"></textarea>
+                        </div>
+                        <div class="button-group">
+                            <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+                            @if (Model.DemandOffers.Count <= 0)
+                            {
+                                <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Onayla ve Teklife Gönder</button>
+                            }
+                        </div>
 
-                </div>
+                    </div>
+                }
             }
+           
         </div>
     </form>
     <!-- /.container -->
@@ -695,7 +730,7 @@
             success: function (statusResult) {
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
-                window.location.href = '/api/Home/Index';
+                window.location.href = '/Home/Index';
             },
             error: function (error) {
                 toastr.error("Unexpected Error", "Error");
@@ -705,29 +740,43 @@
         });
     }
 
-    function changeStatus(demandId, demandOfferId) {
+    function changeStatus() {
+        var demandId = @Model.DemandId;
         var demandStatusChangeViewModel = {
             DemandId: demandId,
-            DemandOfferId: demandOfferId,
             Status: 2
         };
 
         $.ajax({
-            url: 'ChangeStatus',
+            url: 'Demands/ChangeStatus',
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
-                toastr.success("Status Changed", "Success");
-                window.location.href = '/api/Home/Index';
-
-
+                // Popup gösterme
+                var popupMessage = "Talep durumu başarıyla değiştirildi.";
+                // Popup oluşturma
+                var popup = $("<div></div>").addClass("popup-container");
+                // Mesajı ekleyerek yazı boyutunu ayarla
+                var message = $("<p></p>").addClass("popup-message").text(popupMessage);
+                popup.append(message);
+                // Kapatma butonu ekleme
+                var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
+                    popup.fadeOut(200, function () {
+                        $(this).remove();
+                    });
+                    window.location.href = '/Home/Index';
+                });
+                // Butonu popup'a ekleme
+                popup.append(closeButton);
+                // Popup'ı ekranın üzerine ekleme ve fadeIn efekti
+                $('body').append(popup);
+                popup.hide().fadeIn(300);
             },
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
-                toastr.error("Unexpected Error", "Error");
-
+                toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
             }
         });
     }

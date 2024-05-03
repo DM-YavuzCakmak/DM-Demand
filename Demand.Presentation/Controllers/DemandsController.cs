@@ -87,6 +87,11 @@ namespace Demand.Presentation.Controllers
 
         public IActionResult Detail(long id)
         {
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            long userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            #endregion
             List<DemandOfferViewModel> demandOfferViewModels = new List<DemandOfferViewModel>();
             List<RequestInfoViewModel> requestInfoViewModels = new List<RequestInfoViewModel>();
             DemandEntity demand = _demandService.GetById(id).Data;
@@ -97,7 +102,7 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
-
+            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status==0).Data.FirstOrDefault();
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -116,7 +121,8 @@ namespace Demand.Presentation.Controllers
                 UpdatedAt = demand.UpdatedAt,
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
-                DepartmentName = department.Name
+                DepartmentName = department.Name,
+                isApprovedActive = demandProcess.IsNotNull() && demandProcess.ManagerId == userId? true : false,
             };
             foreach (var requestInfo in requestInfos)
             {
@@ -491,20 +497,20 @@ namespace Demand.Presentation.Controllers
                     if (nextDemandProcessEntity.ManagerId == 10)
                     {
 
-                        string demandLink = "xxxxx";
+                        string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmış ve onaylanmıştır. Lütfen teklif ve diğer detay bilgileri doldurmanızı rica ederiz.<br/><br/>" +
-                                    "Talep URL :" + demandLink + " <br/><br/>" +
-                                    "Saygılarımızla.";
+                                     $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                     "Saygılarımızla.";
                         EmailHelper.SendEmail(new List<string> { personnel.Email }, "Teklif Girişi Bekleyen Satın Alma Talebi", emailBody);
                     }
                     else
                     {
-                        string demandLink = "xxxxx";
+                        string demandLink = "http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
-                                    "Talep URL :" + demandLink + " <br/><br/>" +
-                                    "Saygılarımızla.";
+                                     $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                     "Saygılarımızla.";
                         EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
                     }
                 }
@@ -533,11 +539,11 @@ namespace Demand.Presentation.Controllers
                     PersonnelEntity personnel = _personnelService.GetById(10).Data;
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
 
-                    string demandLink = "xxxxx";
+                    string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
                     var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
-                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" +
-                                "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                     "Saygılarımızla.";
+                    EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onaylanan Satın Alma Talebi", emailBody);
                     _demandService.Update(demandEntity);
                 }
             }
@@ -696,6 +702,11 @@ namespace Demand.Presentation.Controllers
         [HttpGet("DemandOfferDetail")]
         public IActionResult DemandOfferDetail(long DemandId)
         {
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            long userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            #endregion
             NebimConnection nebimConnection = new NebimConnection();
             nebimConnection.GetNebimCategoryModels();
 
@@ -711,6 +722,9 @@ namespace Demand.Presentation.Controllers
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
+            DemandProcessEntity isApprovedActiveProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0 && x.DemandId == demand.Id).Data.FirstOrDefault();
+
+
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -730,7 +744,8 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : ""
+                ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
+                isApprovedActive = isApprovedActiveProcess.IsNotNull() && isApprovedActiveProcess.ManagerId == userId ? true : false
             };
             if (requestInfos.IsNotNullOrEmpty())
             {

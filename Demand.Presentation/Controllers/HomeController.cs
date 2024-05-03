@@ -73,13 +73,20 @@ namespace Demand.Presentation.Controllers
                 List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.ToList();
                 foreach (var demand in DemandList)
                 {
+                    PersonnelEntity whoseTurnPersonnel = new PersonnelEntity();
+                    DemandProcessEntity whoseTurnProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
+                    if (whoseTurnProcess.IsNotNull())
+                    {
+                        whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
+                    }
                     DemandViewModel viewModel = new DemandViewModel
                     {
                         DemandId = demand.Id,
                         DemandDate = demand.CreatedDate,
                         Status = demand.Status,
                         DemandTitle = demand.DemandTitle,
-                        CreatedAt = demand.CreatedAt
+                        CreatedAt = demand.CreatedAt,
+                        WhoseTurn = whoseTurnPersonnel.IsNotNull() ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : null
                     };
                     IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
                     if (personnelResult.IsNotNull())

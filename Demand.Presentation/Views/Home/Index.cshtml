@@ -41,6 +41,7 @@
                         <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                        <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
                         <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                     </tr>
                 </thead>
@@ -63,6 +64,8 @@
                                     <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
                                 </td>
                             }
+                            <td>@demand.WhoseTurn</td>
+
                             <td>
                                 @if ((demand.CreatedAt == userId || userId == 10) && demand.Status == 0)
                                 {

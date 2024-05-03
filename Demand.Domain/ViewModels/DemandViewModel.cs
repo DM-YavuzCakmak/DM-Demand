@@ -20,6 +20,7 @@ namespace Demand.Domain.ViewModels
         public string? DemanderName { get; set; }
         public string? LocationName { get; set; }
         public DateTime DemandDate { get; set; }
+        public string?  WhoseTurn { get; set; }
         public int? Status{ get; set; }
         public long? CompanyLocationId { get; set; }
         public long? DepartmentId { get; set; }
@@ -89,6 +90,7 @@ namespace Demand.Domain.ViewModels
         public string?  File3Name{ get; set; }
         #region ProviderTableFields
         #endregion
+        public bool? isApprovedActive { get; set; }
     }
 
     public class DemandOfferViewModel

@@ -693,18 +693,15 @@
            
         </div>
     </form>
-    <!-- /.container -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
 
 <script>
     $(document).ready(function (e) {
         $(".navbar a").on("click", function (e) {
-            //smooth scroll if inner link
-            var to = $(this).attr("href"); // $(this) is the clicked link. We store its href.
+            var to = $(this).attr("href"); 
             if (to.substring(0, 1) == "#") {
                 $("html, body").animate({ scrollTop: $(to).offset().top - 100 }, 700);
             }
@@ -748,29 +745,23 @@
         };
 
         $.ajax({
-            url: 'Demands/ChangeStatus',
+            url: 'ChangeStatus',
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
-                // Popup gösterme
                 var popupMessage = "Talep durumu başarıyla değiştirildi.";
-                // Popup oluşturma
                 var popup = $("<div></div>").addClass("popup-container");
-                // Mesajı ekleyerek yazı boyutunu ayarla
                 var message = $("<p></p>").addClass("popup-message").text(popupMessage);
                 popup.append(message);
-                // Kapatma butonu ekleme
                 var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
                     popup.fadeOut(200, function () {
                         $(this).remove();
                     });
                     window.location.href = '/Home/Index';
                 });
-                // Butonu popup'a ekleme
                 popup.append(closeButton);
-                // Popup'ı ekranın üzerine ekleme ve fadeIn efekti
                 $('body').append(popup);
                 popup.hide().fadeIn(300);
             },

@@ -478,7 +478,7 @@ namespace Demand.Presentation.Controllers
                 return BadRequest("Talep Durumu Değiştirmeye Uygun Değildir.");
             }
 
-            demandProcessEntity.Status = demandStatusChangeViewModel.Status;
+            demandProcessEntity.Status = (int)demandStatusChangeViewModel.Status;
             demandProcessEntity.Desciription = demandStatusChangeViewModel.Description ?? string.Empty;
             demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             demandProcessEntity.UpdatedDate = DateTime.Now;
@@ -517,7 +517,7 @@ namespace Demand.Presentation.Controllers
 
                 else
                 {
-                    DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
+                    DemandEntity demandEntity = _demandService.GetById((long)demandStatusChangeViewModel.DemandId).Data;
                     demandEntity.Status = 2;
                     demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                     demandEntity.UpdatedDate = DateTime.Now;
@@ -549,7 +549,7 @@ namespace Demand.Presentation.Controllers
             }
             else if (demandProcessEntity.Status == 1)//Cancelled
             {
-                DemandEntity demandEntity = _demandService.GetById(demandStatusChangeViewModel.DemandId).Data;
+                DemandEntity demandEntity = _demandService.GetById((long)demandStatusChangeViewModel.DemandId).Data;
                 demandEntity.Status = 1;
                 demandEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
                 demandEntity.UpdatedDate = DateTime.Now;

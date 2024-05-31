@@ -54,8 +54,9 @@ namespace Demand.Presentation.Controllers
             _productCategoryService = productCategoryService;
         }
         [UserToken]
-        public IActionResult Index()
+        public IActionResult Index ()
         {
+            string whoseTurn = "";
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
             var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
@@ -78,7 +79,9 @@ namespace Demand.Presentation.Controllers
                     if (whoseTurnProcess.IsNotNull())
                     {
                         whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
+                         whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status !=1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : null;
                     }
+
                     DemandViewModel viewModel = new DemandViewModel
                     {
                         DemandId = demand.Id,
@@ -86,7 +89,7 @@ namespace Demand.Presentation.Controllers
                         Status = demand.Status,
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
-                        WhoseTurn = whoseTurnPersonnel.IsNotNull() ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : null
+                        WhoseTurn = whoseTurn
                     };
                     IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
                     if (personnelResult.IsNotNull())

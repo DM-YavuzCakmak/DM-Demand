@@ -58,7 +58,7 @@
                                 <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
 
                             }
-                            @if (Model.Count>0 && demand.Status != null)
+                            @if (Model.Count > 0 && demand.Status != null)
                             {
                                 <td>
                                     <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
@@ -76,7 +76,7 @@
                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 
                                 }
-                                else if(Model.Count>0 && demand.DemanderName != null)
+                                else if (Model.Count > 0 && demand.DemanderName != null)
                                 {
                                     <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
                                 }
@@ -154,7 +154,7 @@
                     <label for="description">Açıklama:</label>
                     <textarea id="description" name="description"></textarea>
                 </div>
-                
+
             </div>
             <table id="dataTable">
                 <thead>
@@ -282,6 +282,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        display: inline-block; /* Butonun içeriğini ortalamak için */
+        text-align: center; /* Butonun içeriğini ortalamak için */
     }
 
         .edit-button:hover {
@@ -299,6 +301,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        display: inline-block; /* Butonun içeriğini ortalamak için */
+        text-align: center; /* Butonun içeriğini ortalamak için */
     }
 
         .view-button:hover {
@@ -654,7 +658,7 @@
     function addRow() {
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         var newRow = table.insertRow(table.rows.length);
-        var cells = ['type','category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
+        var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
 
         cells.forEach(function (cell) {
             var newCell = newRow.insertCell(-1);

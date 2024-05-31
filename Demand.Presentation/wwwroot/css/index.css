@@ -130,8 +130,16 @@ td img {
 
 table, th, td {
     border-collapse: collapse;
-    padding: 1rem;
+    padding: 0.5rem;
     text-align: left;
+    table-layout: auto;
+    word-wrap: break-word;
+}
+
+@media (min-width: 1025px) {
+    table, th, td {
+        padding: 0.5rem;
+    }
 }
 
 thead th {
@@ -239,4 +247,54 @@ thead th.asc span.icon-arrow {
 
 thead th.active, tbody td.active {
     color: #6c00bd;
+}
+
+@media (max-width: 600px) {
+    .edit-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%; /* Butonu tam genişlikte yapar */
+        box-sizing: border-box; /* Butonun kenar boşlukları dahil tüm genişliği kapsaması için */
+    }
+}
+
+/* Orta ekranlar için */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .edit-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+}
+
+/* Büyük ekranlar için */
+@media (min-width: 1025px) {
+    .edit-button {
+        padding: 8px 15px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .view-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 100%; /* Butonu tam genişlikte yapar */
+        box-sizing: border-box; /* Butonun kenar boşlukları dahil tüm genişliği kapsaması için */
+    }
+}
+
+/* Orta ekranlar için */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .view-button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+}
+
+/* Büyük ekranlar için */
+@media (min-width: 1025px) {
+    .view-button {
+        padding: 8px 15px;
+        font-size: 18px;
+    }
 }

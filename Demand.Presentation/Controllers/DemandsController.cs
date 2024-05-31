@@ -581,6 +581,7 @@ namespace Demand.Presentation.Controllers
                     EmailHelper.SendEmail(new List<string> { personnelEntity.Email }, "İptal Edilen Satın Alma Talebi", emailBody);
                 }
 
+
             }
 
             return Ok(demandProcessEntity);
@@ -597,8 +598,11 @@ namespace Demand.Presentation.Controllers
             if (file != null && file.Length > 0)
             {
                 string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                string partToRemove = @"Demand.Presentation";
+                string newPath = uploadsFolder.Replace(partToRemove, "");
+                newPath = newPath.Replace(@"\\", @"\");
                 string uniqueFileName = demandId + "_" + file.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                string filePath = Path.Combine(newPath, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
@@ -613,6 +617,22 @@ namespace Demand.Presentation.Controllers
             }
 
             return null;
+        }
+
+        private string RemovePathPart(string originalPath, string partToRemove)
+        {
+            int index = originalPath.IndexOf(partToRemove, StringComparison.OrdinalIgnoreCase);
+            if (index == -1)
+            {
+                return originalPath;
+            }
+
+            string beforePart = originalPath.Substring(0, index);
+
+            string afterPart = originalPath.Substring(index + partToRemove.Length);
+            string newPath = Path.Combine(beforePart, afterPart).TrimStart(Path.DirectorySeparatorChar);
+
+            return newPath;
         }
         private void AddDemandProcess()
         {

@@ -36,6 +36,7 @@ using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
@@ -976,7 +977,7 @@ namespace Demand.Presentation.Controllers
                         DemandOfferId = demandViewModel.DemandOfferId.Value,
                         IsDeleted = false,
                         Status = 0,
-                        TotalPrice = decimal.Parse(totalPrice.Replace('.', ',')),
+                        TotalPrice = decimal.Parse(totalPrice, CultureInfo.InvariantCulture),
                         UnitPrice = decimal.Parse(price.Replace('.', ',')),
                         CreatedDate = DateTime.Now,
                         UpdatedDate = null,

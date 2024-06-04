@@ -558,7 +558,7 @@
                                     <h1>@Model.DemandOffers[0].TotalPrice @(Model.DemandOffers[0].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[0].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
 
-                                @if (Model.Status == 0)
+                                @if (Model.Status == 0 && userId !=10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[0].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -611,7 +611,7 @@
                                     <h1>@Model.DemandOffers[1].TotalPrice @(Model.DemandOffers[1].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[1].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
 
-                                @if (Model.Status == 0)
+                                @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[1].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -660,7 +660,7 @@
                                 <div class="price">
                                     <h1>@Model.DemandOffers[2].TotalPrice @(Model.DemandOffers[2].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[2].CurrencyTypeId == 2 ? "$" : "€"))</h1>
                                 </div>
-                                @if (Model.Status == 0)
+                                @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[2].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -672,7 +672,7 @@
             </div>
             @if (Model.isApprovedActive == true)
             {
-                @if (Model.Status == 0)
+                @if (Model.Status == 0 && userId != 10)
                 {
                     <div class="row">
                         <div class="form-group">

@@ -191,6 +191,7 @@ namespace Demand.Presentation.Controllers
             List<long> supplierIds = new List<long>();
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
+            DemandProcessEntity demandProcess = _demandProcessService.GetList(x=> x.DemandId == demand.Id && x.Status==0).Data.FirstOrDefault();
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -209,7 +210,8 @@ namespace Demand.Presentation.Controllers
                 UpdatedAt = demand.UpdatedAt,
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
-                DepartmentName = department.Name
+                DepartmentName = department.Name,
+                isOppenOffer= demandProcess.ManagerId==10 ? true : false
             };
             if (requestInfos.IsNotNullOrEmpty())
             {

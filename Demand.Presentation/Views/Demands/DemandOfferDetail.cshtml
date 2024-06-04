@@ -545,7 +545,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@Model.DemandOffers[0].TotalPrice</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -598,7 +598,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@Model.DemandOffers[1].TotalPrice</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -649,7 +649,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@Model.DemandOffers[2].TotalPrice</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -737,10 +737,17 @@
         });
     }
 
-    function changeStatus() {
+    function changeStatus(DemandId,DemandOfferId) {
         var demandId = @Model.DemandId;
+        var demandOfferId = DemandOfferId;
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        console.log(demandOfferId);
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
         var demandStatusChangeViewModel = {
             DemandId: demandId,
+            DemandOfferId : demandOfferId,
             Status: 2
         };
 

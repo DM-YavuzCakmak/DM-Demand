@@ -91,6 +91,7 @@ namespace Demand.Domain.ViewModels
         #region ProviderTableFields
         #endregion
         public bool? isApprovedActive { get; set; }
+        public bool? isOppenOffer { get; set; } = false;
     }
 
     public class DemandOfferViewModel

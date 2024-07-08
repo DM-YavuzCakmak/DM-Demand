@@ -19,6 +19,7 @@
     <link href="~/css/index.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:100,400,300,600,700" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
@@ -686,7 +687,6 @@
                                 <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Onayla ve Teklife Gönder</button>
                             }
                         </div>
-
                     </div>
                 }
             }
@@ -697,6 +697,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
 </body>
 </html>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
 
 <script>
     $(document).ready(function (e) {
@@ -709,16 +710,15 @@
         });
     });
 
-    function declineStatus() {
-        var demandId = @Model.DemandId;
+    function declineStatus(DemandId) {
         var declineDescription = document.getElementById("declineDescription").value;
 
         var demandStatusChangeViewModel = {
-            DemandId: demandId,
+            DemandId: DemandId,
             Status: 1,
             Description: declineDescription
         };
-
+        console.log(demandStatusChangeViewModel);
         $.ajax({
             url: 'ChangeStatus',
             type: 'PUT',
@@ -726,12 +726,21 @@
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
                 console.log(statusResult);
-                toastr.success("Status Changed", "Success");
-                window.location.href = '/Home/Index';
+                var popupMessage = "Talep durumu başarıyla değiştirildi.";
+                var popup = $("<div></div>").addClass("popup-container");
+                var message = $("<p></p>").addClass("popup-message").text(popupMessage);
+                popup.append(message);
+                var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
+                    popup.fadeOut(200, function () {
+                        $(this).remove();
+                    });
+                    window.location.href = '/Home/Index';
+                });
+                popup.append(closeButton);
+                $("body").append(popup);
             },
             error: function (error) {
                 toastr.error("Unexpected Error", "Error");
-
                 console.error('Talep durumu değiştirme hatası:', error);
             }
         });
@@ -775,6 +784,7 @@
             error: function (error) {
                 console.error('Talep durumu değiştirme hatası:', error);
                 toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
+
             }
         });
     }

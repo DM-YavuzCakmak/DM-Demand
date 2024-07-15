@@ -42,7 +42,9 @@ public class AuthorizationsController : Controller
             {
                 var identity = new System.Security.Claims.ClaimsIdentity(new[]
                 {
-                   new System.Security.Claims.Claim("UserId", dataResult.Data.Id.ToString())
+                   new System.Security.Claims.Claim("UserId", dataResult.Data.Id.ToString()),
+                   new System.Security.Claims.Claim("FirstName", dataResult.Data.FirstName.ToString()),
+                   new System.Security.Claims.Claim("LastName", dataResult.Data.LastName.ToString())
                 }, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,

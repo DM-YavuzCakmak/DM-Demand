@@ -347,7 +347,9 @@
                                     <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : "")" >
                                 </div>
                             </div>
-                            <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
+@*                             <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
+ *@                            <button onclick="validateAndSubmit(1)" type="button" class="update-button">Kaydet</button>
+
                             @if (Model.DemandOffers.Count > 0)
                             {
                                 <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[0].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
@@ -457,7 +459,9 @@
                                     <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].TotalPrice : "")" >
                                 </div>
                             </div>
-                            <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
+@*                             <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
+ *@                                                        <button onclick="validateAndSubmit(2)" type="button" class="update-button">Kaydet</button>
+
                             @if (Model.DemandOffers.Count > 1)
                             {
                                 <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[1].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
@@ -568,7 +572,8 @@
                                     <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].TotalPrice : "")" >
                                 </div>
                             </div>
-                            <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
+@*                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
+ *@                            <button onclick="validateAndSubmit(3)" type="button" class="update-button">Kaydet</button>
                             @if (Model.DemandOffers.Count > 2)
                             {
                                 <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[2].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
@@ -578,11 +583,14 @@
                     </div>
                 </div>
             </div>
-        
-        <div class="button-group">
+        @if (ViewBag.OfferRequest !=null)
+            {
+                <div class="button-group">
             <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Teklifleri Gönder</button>
            
             </div>
+            }
+        
         }
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -982,6 +990,20 @@
             OfferCompanyId: selectedProviderId
         };
     }
+
+
+
+    function validateAndSubmit(offerNumber) {
+    var currencyType = $('#offerCurrencyType1').val();
+    var exchangeRate = $('#exchangeRate1').val();
+    
+    if ((currencyType == '2' || currencyType == '3') && exchangeRate.trim() === '') {
+        toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
+        return false;
+    }
+        updateDemand(offerNumber);
+}
+
 
     function updateDemand(offerNumber) {
         var demandId = @Model.DemandId;

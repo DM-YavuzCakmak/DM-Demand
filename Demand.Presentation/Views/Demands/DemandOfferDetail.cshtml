@@ -725,7 +725,7 @@
             contentType: 'application/json',
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
-                console.log(statusResult);
+               console.log(statusResult);
                 var popupMessage = "Talep durumu başarıyla değiştirildi.";
                 var popup = $("<div></div>").addClass("popup-container");
                 var message = $("<p></p>").addClass("popup-message").text(popupMessage);
@@ -737,11 +737,13 @@
                     window.location.href = '/Home/Index';
                 });
                 popup.append(closeButton);
-                $("body").append(popup);
+                $('body').append(popup);
+                popup.hide().fadeIn(300);
             },
             error: function (error) {
-                toastr.error("Unexpected Error", "Error");
                 console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
+
             }
         });
     }

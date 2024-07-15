@@ -7,6 +7,8 @@
     var claimsIdentity = (ClaimsIdentity)User.Identity;
     var claims = claimsIdentity.Claims;
     var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+    var userName = claims.FirstOrDefault(x => x.Type == "FirstName")?.Value;
+    var userLastName = claims.FirstOrDefault(x => x.Type == "LastName")?.Value;
 }
 
 <!DOCTYPE html>
@@ -21,7 +23,14 @@
 </head>
 
 <body>
+    <div class="header">
+    <div class="logo">
     <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+    </div>
+    <div class="user-info">
+        <p>@userName  @userLastName</p>
+    </div>
+</div>
     <main class="table" id="demandTable">
         <section class="table__header">
             <h1>Talep Listesi</h1>
@@ -257,7 +266,31 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
+    
+    .header {
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        color: white;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
 
+    .user-info {
+        text-align: right;
+        margin-right: 20px;
+    }
+
+    .user-info p {
+        margin: 0;
+        font-weight: bold;
+        color: white;
+    }
     .create-demand-button {
         background-color: #3498db;
         color: #fff;

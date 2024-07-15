@@ -180,7 +180,7 @@ namespace Demand.Presentation.Controllers
 
             NebimConnection nebimConnection = new NebimConnection();
             nebimConnection.GetNebimCategoryModels();
-
+            OfferRequestEntity? offerRequestEntity = null;
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
@@ -189,10 +189,15 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
+            if (demandOfferEntities.Count>0)
+            {
+                 offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.DemandOfferId == demandOfferEntities[0].Id).Data;
+            }
             List<long> supplierIds = new List<long>();
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             DemandProcessEntity demandProcess = _demandProcessService.GetList(x=> x.DemandId == demand.Id && x.Status==0).Data.FirstOrDefault();
+
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -267,6 +272,7 @@ namespace Demand.Presentation.Controllers
             ViewBag.Departments = departments;
             List<ProviderEntity> providers = _providerService.GetAll().Data.ToList();
             ViewBag.Providers = providers;
+            ViewBag.OfferRequest = offerRequestEntity;
             return View(demandViewModel);
 
         }

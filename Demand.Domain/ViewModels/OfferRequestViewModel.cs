@@ -1,4 +1,5 @@
-﻿using Demand.Domain.NebimModels;
+﻿using Demand.Domain.Entities.ProductCategoryEntity;
+using Demand.Domain.NebimModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,6 @@ namespace Demand.Domain.ViewModels
         public List<NebimCategoryModel>? NebimCategoryModels { get; set; }
         public List<NebimSubCategoryModel>? NebimSubCategoryModels { get; set; }
         public List<NebimProductModel>? NebimProductModels { get; set; }
+        public List<ProductCategoryEntity>? ProductCategories { get; set; }
     }
 }

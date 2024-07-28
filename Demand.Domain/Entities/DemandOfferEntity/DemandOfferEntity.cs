@@ -17,6 +17,7 @@ namespace Demand.Domain.Entities.DemandOfferEntity
         public string? SupplierName { get; set; }
         public string? SupplierPhone { get; set; }
         public string? SupplierContactName { get; set; }
+        public string? SupplierAdress { get; set; }
         public long? SupplierId { get; set; }
     }
 }

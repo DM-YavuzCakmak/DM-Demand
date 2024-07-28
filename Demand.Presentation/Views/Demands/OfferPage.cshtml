@@ -133,6 +133,7 @@
                     <thead>
                         <tr>
                             <th>NO</th>
+                            <th>TÜR</th>
                             <th>KATEGORİ</th>
                             <th>ALT KATEGORİ</th>
                             <th>ÜRÜN</th>
@@ -149,6 +150,27 @@
                         {
                             <tr>
                                 <td><input type="hidden" name="requestInfoId[]" class="requestInfoId" value="@offerRequestViewModel.RequestInfoId" /></td>
+                                <td>
+                                    <div class="select-wrapper">
+                                        <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
+                                            @if (Model[0].ProductCategories != null)
+                                            {
+                                                <option>Lütfen seçiniz</option>
+                                                foreach (var productCategory in Model[0].ProductCategories)
+                                                {
+                                                    if (productCategory.Id == 1/*offerRequestViewModel.ProductCategoryId*/)
+                                                    {
+                                                        <option value="@productCategory.Id" selected>@productCategory.ProductCategoryName </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@productCategory.Id">@productCategory.ProductCategoryName </option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </td>
                                 <td>
                                     <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
                                         @if (Model[0].NebimCategoryModels != null)
@@ -216,8 +238,10 @@
                                 </td>
                                 @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@
                                 <td><input type="text" name="price[]" class="price" value="@offerRequestViewModel.Price" /></td>
-                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice"/></td>
-                                <td>@offerRequestViewModel.Currency</td>
+                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice" /></td>
+                                @*                                 <td>@offerRequestViewModel.Currency</td>
+                            *@
+                                <td><input type="text" name="currency[]" class="currency" readonly value="@offerRequestViewModel.Currency" /></td>
                                 <td><input type="hidden" name="offerRequestId[]" value="@(offerRequestViewModel.OfferRequestId ?? 0)" /></td>
                             </tr>
                         }
@@ -344,11 +368,11 @@
     function addRow() {
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         var newRow = table.insertRow(table.rows.length);
-        var cells = ['requestInfoId', 'category', 'subcategory', 'product', 'productCode', 'productName', 'quantity', 'unit', 'price', 'totalPrice', 'offerRequestId'];
+        var cells = ['requestInfoId', 'type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'quantity', 'unit', 'price', 'totalPrice', 'currency', 'offerRequestId'];
 
         cells.forEach(function (cell) {
             var newCell = newRow.insertCell(-1);
-            if (cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
+            if (cell === 'type' || cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
                 var div = document.createElement("div");
                 div.className = "select-wrapper";
                 var select = document.createElement("select");
@@ -364,6 +388,22 @@
                     option2.value = "2";
                     select.appendChild(option2);
 
+                }
+                else if (cell === 'type') {
+                    select.addEventListener('change', function () {
+                        disableFields(this.parentNode.parentNode.parentNode);
+                    });
+                    var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].ProductCategories));
+                    select.innerHTML = '';
+                    var defaultOption = document.createElement('option');
+                    defaultOption.text = "Lütfen seçiniz";
+                    select.add(defaultOption);
+                    subCategoryModels.forEach(function (subcategory) {
+                        var option = document.createElement('option');
+                        option.value = subcategory.id;
+                        option.textContent = subcategory.productCategoryName;
+                        select.appendChild(option);
+                    });
                 }
                 else if (cell === 'category') {
                     select.addEventListener('change', function () {
@@ -391,11 +431,21 @@
                 }
                 div.appendChild(select);
                 newCell.appendChild(div);
-            } else if (cell == "offerRequestId") {
+            } else if (cell == "offerRequestId" || cell == "requestInfoId") {
+                debugger;
                 var input = document.createElement("input");
                 input.type = "hidden";
                 input.name = cell + "[]";
                 input.value = 0;
+                input.className = cell;
+
+                newCell.appendChild(input);
+            } else if (cell == "currency") {
+                debugger;
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = cell + "[]";
+                input.value = "@Model[0].Currency";
                 input.className = cell;
 
                 newCell.appendChild(input);
@@ -422,6 +472,21 @@
         });
     }
 
+    function disableFields(parentNode) {
+        var selectedTypeValue = parentNode.querySelector('.type').value;
+        if (selectedTypeValue == 1) {
+            parentNode.querySelector('.category').disabled = false;
+            parentNode.querySelector('.subcategory').disabled = false;
+            parentNode.querySelector('.product').disabled = false;
+            parentNode.querySelector('.productCode').disabled = false;
+        } else {
+            parentNode.querySelector('.category').disabled = true;
+            parentNode.querySelector('.subcategory').disabled = true;
+            parentNode.querySelector('.product').disabled = true;
+            parentNode.querySelector('.productCode').disabled = true;
+        }
+    }
+
     function removeRow() {
         var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
         if (table.rows.length > @Html.Raw(Model.Count)) {
@@ -432,7 +497,7 @@
         var demandofferId = @Model[0].DemandOfferId;
         var demandId = @Model[0].DemandId;
         console.log(demandofferId, demandId);
-    var formData = new FormData();
+        var formData = new FormData();
 
         formData.append('DemandOfferId', @Model[0].DemandOfferId);
         formData.append('DemandId', @Model[0].DemandId);

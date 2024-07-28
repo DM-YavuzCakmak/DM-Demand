@@ -9,9 +9,11 @@ using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Business.Abstract.RoleService;
+using Demand.Business.Concrete.ProductCategoryService;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
@@ -27,6 +29,7 @@ using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
+using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
@@ -65,8 +68,9 @@ namespace Demand.Presentation.Controllers
         private readonly IOfferRequestService _offerRequestService;
         private readonly IPersonnelRoleService _personnelRoleService;
         private readonly IRoleService _roleService;
+        private readonly IProductCategoryService _productCategoryService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService, IProductCategoryService productCategoryService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -84,6 +88,7 @@ namespace Demand.Presentation.Controllers
             _offerRequestService = offerRequestService;
             _personnelRoleService = personnelRoleService;
             _roleService = roleService;
+            _productCategoryService = productCategoryService;
         }
 
         public IActionResult Detail(long id)
@@ -103,7 +108,7 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
-            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status==0).Data.FirstOrDefault();
+            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0).Data.FirstOrDefault();
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -123,7 +128,7 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isApprovedActive = demandProcess.IsNotNull() && demandProcess.ManagerId == userId? true : false,
+                isApprovedActive = demandProcess.IsNotNull() && demandProcess.ManagerId == userId ? true : false,
             };
             foreach (var requestInfo in requestInfos)
             {
@@ -189,14 +194,14 @@ namespace Demand.Presentation.Controllers
             DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
             List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
             List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == id).Data.ToList();
-            if (demandOfferEntities.Count>0)
+            if (demandOfferEntities.Count > 0)
             {
-                 offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.DemandOfferId == demandOfferEntities[0].Id).Data;
+                offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.DemandOfferId == demandOfferEntities[0].Id).Data;
             }
             List<long> supplierIds = new List<long>();
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
-            DemandProcessEntity demandProcess = _demandProcessService.GetList(x=> x.DemandId == demand.Id && x.Status==0).Data.FirstOrDefault();
+            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
 
             DemandViewModel demandViewModel = new DemandViewModel
             {
@@ -217,7 +222,7 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isOppenOffer= demandProcess.ManagerId==10 ? true : false
+                isOppenOffer = demandProcess.ManagerId == 10 ? true : false
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
@@ -249,6 +254,8 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
                     demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
+                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierAdress))
+                    demandOfferViewModel.SupplierAdress = demandOfferEntity.SupplierAdress;
 
                 ProviderEntity providerEntity = new ProviderEntity();
                 if (providerEntities != null && providerEntities.Any())
@@ -336,6 +343,7 @@ namespace Demand.Presentation.Controllers
                     UpdatedDate = null,
                     CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
                     UpdatedAt = null,
+                    IsFirst = true,
                 };
 
                 var requestInfoAdd = _requestInfoService.Add(requestInfo);
@@ -406,9 +414,9 @@ namespace Demand.Presentation.Controllers
                         break;
                 }
                 RoleEntity roleEntity = _roleService.GetById(3).Data;
-                List<PersonnelRoleEntity> personnelRole = _personnelRoleService.GetList( x=> x.RoleId == roleEntity.Id).Data.ToList();
+                List<PersonnelRoleEntity> personnelRole = _personnelRoleService.GetList(x => x.RoleId == roleEntity.Id).Data.ToList();
                 PersonnelEntity personnelForSales = _personnelService.GetById(personnelRole[0].PersonnelId).Data;
-                
+
                 i++;
                 DemandProcessEntity demandProcessForOffer = new DemandProcessEntity
                 {
@@ -476,7 +484,7 @@ namespace Demand.Presentation.Controllers
 
             List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
 
-            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && x.Status ==0);
+            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && x.Status == 0);
             if (demandProcessEntity == null)
             {
                 return BadRequest("Talebe Ait Durum Değiştirme Yetkiniz Bulunmamaktadır.");
@@ -688,6 +696,7 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.SupplierId = updateDemandViewModel.OfferCompanyId.IsNotNull() ? updateDemandViewModel.OfferCompanyId.Value : providerEntity.Id;
                 demandOfferEntity.IsDeleted = false;
                 //demandOfferEntity.RequestInfoId = requestInfo.Id;
+                demandOfferEntity.SupplierAdress = updateDemandViewModel.OfferCompanyAddress;
                 demandOfferEntity.Status = 0;
                 demandOfferEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
                 demandOfferEntity.UpdatedAt = null;
@@ -914,9 +923,14 @@ namespace Demand.Presentation.Controllers
                     offerRequestViewModel.OfferRequestId = offerRequestEntity.Id;
                     offerRequestViewModel.Price = offerRequestEntity.UnitPrice ?? 0;
                     offerRequestViewModel.TotalPrice = offerRequestEntity.TotalPrice ?? 0;
+
+                    offerRequestViewModels.Add(offerRequestViewModel);
+                }
+                else if (requestInfo.IsFirst)
+                {
+                    offerRequestViewModels.Add(offerRequestViewModel);
                 }
 
-                offerRequestViewModels.Add(offerRequestViewModel);
             }
 
             NebimConnection nebimConnection = new NebimConnection();
@@ -928,6 +942,9 @@ namespace Demand.Presentation.Controllers
 
             var nebimProductModels = nebimConnection.GetNebimProductModels();
             offerRequestViewModels[0].NebimProductModels = nebimProductModels;
+
+            List<ProductCategoryEntity> productCategories = _productCategoryService.GetAll().Data.ToList();
+            offerRequestViewModels[0].ProductCategories = productCategories;
 
             return View(offerRequestViewModels);
         }
@@ -952,7 +969,7 @@ namespace Demand.Presentation.Controllers
                         var subcategory = demandViewModel.Subcategory[i];
                         var unit = demandViewModel.Unit[i];
                         var quantity = demandViewModel.Quantity[i];
-                        var productname = demandViewModel.ProductDescription[i];
+                        var productname = demandViewModel.ProductName[i];
                         var productcode = demandViewModel.ProductCode[i];
                         var requestInfo = new RequestInfoEntity
                         {
@@ -964,6 +981,7 @@ namespace Demand.Presentation.Controllers
                             ProductCode = productcode,
                             Unit = unit,
                             IsDeleted = false,
+                            IsFirst = false,
                             CreatedDate = DateTime.Now,
                             UpdatedDate = null,
                             CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),

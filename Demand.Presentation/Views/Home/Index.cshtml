@@ -315,8 +315,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        display: inline-block; /* Butonun içeriğini ortalamak için */
-        text-align: center; /* Butonun içeriğini ortalamak için */
+        display: inline-block; 
+        text-align: center;
     }
 
         .edit-button:hover {
@@ -334,8 +334,8 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        display: inline-block; /* Butonun içeriğini ortalamak için */
-        text-align: center; /* Butonun içeriğini ortalamak için */
+        display: inline-block; 
+        text-align: center;
     }
 
         .view-button:hover {
@@ -405,7 +405,7 @@
             }
 
     #addButton, #removeButton {
-        background-color: #4CAF50; /* Yeşil */
+        background-color: #4CAF50;
         border: none;
         color: white;
         padding: 10px 20px;
@@ -419,7 +419,7 @@
     }
 
         #addButton:hover, #removeButton:hover {
-            background-color: #45a049; /* Koyu yeşil */
+            background-color: #45a049;
         }
 
     .popup {
@@ -773,6 +773,7 @@
 
     function disableFields(parentNode) {
         var selectedTypeValue = parentNode.querySelector('.type').value;
+        debugger;
         if (selectedTypeValue == 1) {
             parentNode.querySelector('.category').disabled = false;
             parentNode.querySelector('.subcategory').disabled = false;

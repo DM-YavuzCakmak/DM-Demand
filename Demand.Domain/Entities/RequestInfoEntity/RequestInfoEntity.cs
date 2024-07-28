@@ -18,5 +18,6 @@ namespace Demand.Domain.Entities.RequestInfoEntity
         public string? ProductCode { get; set; }
         public int? Quantity { get; set; }
         public string Unit { get; set; }
+        public bool  IsFirst { get; set; }
     }
 }

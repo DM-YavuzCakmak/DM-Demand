@@ -309,9 +309,9 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCompanyAddress1">Firma Address:</label>
-                                    @if (Model.DemandOffers.Count != 0 && @Model?.DemandOffers?[0].CompanyAddress != null)
+                                    @if (Model.DemandOffers.Count != 0 && @Model?.DemandOffers?[0].SupplierAdress != null)
                                     {
-                                        <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].CompanyAddress">
+                                        <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].SupplierAdress">
                                     }
                                     else
                                     {

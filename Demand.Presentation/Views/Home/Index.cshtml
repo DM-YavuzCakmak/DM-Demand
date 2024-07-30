@@ -243,10 +243,12 @@
             </table>
             <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
             <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+            <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
 
-            <div class="button-group">
+
+        @*     <div class="button-group">
                 <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
-            </div>
+            </div> *@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -404,7 +406,7 @@
                 background-color: #f4f4f4;
             }
 
-    #addButton, #removeButton {
+    #addButton, #removeButton, #sendButton {
         background-color: #4CAF50;
         border: none;
         color: white;
@@ -418,7 +420,7 @@
         border-radius: 5px;
     }
 
-        #addButton:hover, #removeButton:hover {
+        #addButton:hover, #removeButton, #sendButton:hover {
             background-color: #45a049;
         }
 
@@ -553,14 +555,14 @@
         resize: none;
     }
 
-    #sendButton {
+/*     #sendButton {
         background-color: #4CAF50;
         color: #fff;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-    }
+    } */
 
     .form-group {
         width: calc(50% - 10px);
@@ -656,11 +658,15 @@
             overlay.style.display = "block";
             popup.style.display = "block";
 
+            popup.style.width = "80%";
+            popup.style.height = "90%";
+
             overlay.addEventListener("click", function () {
                 closeCreateDemandPopup();
             });
         }
     }
+
     function closeCreateDemandPopup() {
         var overlay = document.getElementById("overlay");
         var popup = document.getElementById("createDemandPopup");
@@ -673,6 +679,7 @@
             });
         }
     }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         var requirementDateInput = document.getElementById("requirementDate");

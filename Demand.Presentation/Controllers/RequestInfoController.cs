@@ -28,8 +28,8 @@ namespace Demand.Presentation.Controllers
             var offerRequestViewModel = new OfferRequestViewModel
             {
                 DemandId = (long)offerDetailViewModel.DemandId,
-                ProductCategoryId = 1, // Örnek olarak sabit bir değer atandı
-                ProductSubCategoryId = 1, // Örnek olarak sabit bir değer atandı
+                NebimCategoryId = 1, // Örnek olarak sabit bir değer atandı
+                NebimSubCategoryId = 1, // Örnek olarak sabit bir değer atandı
                 ProductName = "Örnek Ürün", // Örnek olarak sabit bir değer atandı
                 Quantity = 10, // Örnek olarak sabit bir değer atandı
                 Unit = "Adet", // Örnek olarak sabit bir değer atandı

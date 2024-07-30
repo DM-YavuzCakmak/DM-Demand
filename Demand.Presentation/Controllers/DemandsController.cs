@@ -332,8 +332,8 @@ namespace Demand.Presentation.Controllers
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
-                    ProductCategoryId = Convert.ToInt32(category),
-                    ProductSubCategoryId = Convert.ToInt32(subcategory),
+                    NebimCategoryId = Convert.ToInt32(category),
+                    NebimSubCategoryId = Convert.ToInt32(subcategory),
                     Quantity = Convert.ToInt32(quantity),
                     ProductName = productname,
                     ProductCode = productcode,
@@ -857,10 +857,11 @@ namespace Demand.Presentation.Controllers
                     OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
                     {
                         RequestInfoId = requestInfo.Id,
+                        ProductCategoryId = requestInfo.ProductCategoryId,
                         DemandId = requestInfo.DemandId,
                         DemandOfferId = demandOfferEntity.Id,
-                        ProductCategoryId = requestInfo.ProductCategoryId,
-                        ProductSubCategoryId = requestInfo.ProductSubCategoryId,
+                        NebimCategoryId = requestInfo.NebimCategoryId,
+                        NebimSubCategoryId = requestInfo.NebimSubCategoryId,
                         ProductName = requestInfo.ProductName,
                         ProductCode = requestInfo.ProductCode,
                         Quantity = requestInfo.Quantity,
@@ -905,11 +906,12 @@ namespace Demand.Presentation.Controllers
                 IDataResult<CurrencyTypeEntity> currencyType = _currencyTypeService.GetById((long)demandoffer.Data.CurrencyTypeId);
                 OfferRequestViewModel offerRequestViewModel = new OfferRequestViewModel
                 {
+                    ProductCategoryId = requestInfo.ProductCategoryId,
                     RequestInfoId = requestInfo.Id,
                     DemandId = requestInfo.DemandId,
                     DemandOfferId = DemandOfferId.Value,
-                    ProductCategoryId = requestInfo.ProductCategoryId,
-                    ProductSubCategoryId = requestInfo.ProductSubCategoryId,
+                    NebimCategoryId = requestInfo.NebimCategoryId,
+                    NebimSubCategoryId = requestInfo.NebimSubCategoryId,
                     ProductName = requestInfo.ProductName,
                     ProductCode = requestInfo.ProductCode,
                     Quantity = requestInfo.Quantity,
@@ -965,6 +967,7 @@ namespace Demand.Presentation.Controllers
                     { }
                     else
                     {
+                        var type = demandViewModel.Type[i];
                         var category = demandViewModel.Category[i];
                         var subcategory = demandViewModel.Subcategory[i];
                         var unit = demandViewModel.Unit[i];
@@ -974,8 +977,9 @@ namespace Demand.Presentation.Controllers
                         var requestInfo = new RequestInfoEntity
                         {
                             DemandId = demandViewModel.DemandId.Value,
-                            ProductCategoryId = Convert.ToInt32(category),
-                            ProductSubCategoryId = Convert.ToInt32(subcategory),
+                            ProductCategoryId= Convert.ToInt32(type),
+                            NebimCategoryId = Convert.ToInt32(category),
+                            NebimSubCategoryId = Convert.ToInt32(subcategory),
                             Quantity = Convert.ToInt32(quantity),
                             ProductName = productname,
                             ProductCode = productcode,

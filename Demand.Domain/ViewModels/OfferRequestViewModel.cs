@@ -14,8 +14,8 @@ namespace Demand.Domain.ViewModels
         public long RequestInfoId { get; set; }
         public long DemandId { get; set; }
         public long DemandOfferId { get; set; }
-        public int? ProductCategoryId { get; set; }
-        public int? ProductSubCategoryId { get; set; }
+        public int? NebimCategoryId { get; set; }
+        public int? NebimSubCategoryId { get; set; }
         public string ProductName { get; set; }
         public string? ProductCode { get; set; }
         public int? Quantity { get; set; }
@@ -23,6 +23,7 @@ namespace Demand.Domain.ViewModels
         public decimal Price { get; set; }
         public decimal TotalPrice { get; set; }
         public string?  Currency{ get; set; }
+        public int? ProductCategoryId  { get; set; }
         public List<NebimCategoryModel>? NebimCategoryModels { get; set; }
         public List<NebimSubCategoryModel>? NebimSubCategoryModels { get; set; }
         public List<NebimProductModel>? NebimProductModels { get; set; }

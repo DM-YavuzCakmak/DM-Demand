@@ -59,6 +59,7 @@ namespace Demand.Domain.ViewModels
 
         public string? ConfirmingNote { get; set; }
         public List<string>? RequestInfoId { get; set; }
+        public List<string>? Type { get; set; }
         public List<string>? Category { get; set; }
         public List<string>? ProductName { get; set; }
         public List<string>? Product { get; set; }

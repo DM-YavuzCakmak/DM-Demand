@@ -158,7 +158,7 @@
                                                 <option>Lütfen seçiniz</option>
                                                 foreach (var productCategory in Model[0].ProductCategories)
                                                 {
-                                                    if (productCategory.Id == 1/*offerRequestViewModel.ProductCategoryId*/)
+                                                    if (productCategory.Id ==offerRequestViewModel.ProductCategoryId)
                                                     {
                                                         <option value="@productCategory.Id" selected>@productCategory.ProductCategoryName </option>
                                                     }
@@ -178,7 +178,7 @@
                                             <option>Lütfen seçiniz</option>
                                             foreach (var product in Model[0].NebimCategoryModels)
                                             {
-                                                if (product.ProductHierarchyLevel01Code == offerRequestViewModel.ProductCategoryId.ToString())
+                                                if (product.ProductHierarchyLevel01Code == offerRequestViewModel.NebimCategoryId.ToString())
                                                 {
                                                     <option value="@product.ProductHierarchyLevel01Code" selected>@product.ProductHierarchyLevel01Description </option>
                                                 }
@@ -197,7 +197,7 @@
                                             <option>Lütfen seçiniz</option>
                                             foreach (var product in Model[0].NebimSubCategoryModels)
                                             {
-                                                if (product.ProductHierarchyLevel02Code == offerRequestViewModel.ProductSubCategoryId.ToString())
+                                                if (product.ProductHierarchyLevel02Code == offerRequestViewModel.NebimSubCategoryId.ToString())
                                                 {
                                                     <option value="@product.ProductHierarchyLevel02Code" selected>@product.ProductHierarchyLevel02Description </option>
                                                 }
@@ -290,7 +290,7 @@
         document.querySelectorAll('.price').forEach(function (priceInput) {
             priceInput.addEventListener('input', function () {
                 var row = this.closest('tr');
-                var quantity = parseFloat(row.cells[6].childNodes[0].value) || 0;
+                var quantity = parseFloat(row.cells[7].childNodes[0].value) || 0;
                 var price = parseFloat(this.value) || 0;
                 var totalPrice = quantity * price;
                 var totalPriceInput = row.querySelector('.totalprice');
@@ -458,10 +458,10 @@
                 if (cell === 'price') {
                     input.addEventListener('input', function () {
                         var row = this.closest('tr');
-                        var quantity = parseFloat(row.cells[6].childNodes[0].value) || 0;
+                        var quantity = parseFloat(row.cells[7].childNodes[0].value) || 0;
                         var price = parseFloat(this.value) || 0;
                         var totalPrice = quantity * price;
-                        var totalPriceInput = row.cells[9].childNodes[0];
+                        var totalPriceInput = row.cells[10].childNodes[0];
                         totalPriceInput.value = totalPrice.toFixed(2);
                     });
                 }
@@ -508,22 +508,25 @@
         for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].getElementsByTagName("td");
             var requestInfoId = cells[0].querySelector("input[name='requestInfoId[]']").value;
-            var category = cells[1].querySelector("select[name='category[]']").value;
-            var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
+            var type = cells[1].querySelector("select[name='type[]']").value;
+            var category = cells[2].querySelector("select[name='category[]']").value;
+            var subcategory = cells[3].querySelector("select[name='subcategory[]']").value;
             if (category.trim() !== "" && subcategory.trim() !== "") {
                 formData.append('Category[]', category);
                 formData.append('Subcategory[]', subcategory);
             }
-            var product = cells[3].querySelector("select[name='product[]']").selectedOptions[0].textContent;
-            var productName = cells[5].querySelector("input[name='productName[]']").value;
-            var productCode = cells[4].querySelector("input[name='productCode[]']").value;
-            var unit = cells[7].querySelector("select[name='unit[]']").value;
-            var quantity = cells[6].querySelector("input[name='quantity[]']").value;
-            var price = cells[8].querySelector("input[name='price[]']").value;
-            var totalPrice = cells[9].querySelector("input[name='totalPrice[]']").value;
-            var offerRequestId = cells[11].querySelector("input[name='offerRequestId[]']").value;
+            var selectElement = cells[4].querySelector("select[name='product[]']");
+            var product = selectElement.selectedOptions.length > 0 ? selectElement.selectedOptions[0].textContent : '';
+            var productName = cells[6].querySelector("input[name='productName[]']").value;
+            var productCode = cells[5].querySelector("input[name='productCode[]']").value;
+            var unit = cells[8].querySelector("select[name='unit[]']").value;
+            var quantity = cells[7].querySelector("input[name='quantity[]']").value;
+            var price = cells[9].querySelector("input[name='price[]']").value;
+            var totalPrice = cells[10].querySelector("input[name='totalPrice[]']").value;
+            var offerRequestId = cells[12].querySelector("input[name='offerRequestId[]']").value;
             console.log(requestInfoId, category, subcategory, product, productName, productCode, unit, quantity, price, totalPrice);
             formData.append('requestInfoId[]', requestInfoId);
+            formData.append('Type[]', type);
             formData.append('Category[]', category);
             formData.append('Subcategory[]', subcategory);
             formData.append('Unit[]', unit);

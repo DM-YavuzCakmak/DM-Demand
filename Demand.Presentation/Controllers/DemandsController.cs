@@ -555,12 +555,21 @@ namespace Demand.Presentation.Controllers
 
                     PersonnelEntity personnel = _personnelService.GetById(10).Data;
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
-
-                    string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
-                    var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
+                    string demandLink = "";
+                    var emailBody="";
+                    demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                     emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                 demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                      "Saygılarımızla.";
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onaylanan Satın Alma Talebi", emailBody);
+
+                    /*Finans Mail*/
+
+                     demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                     emailBody = $"Merhabalar Sayın  Okan KÜÇÜK   ,<br/><br/>" /*+ personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +*/+
+                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                     "Saygılarımızla.";
+                    EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com" }, "Onaylanan Satın Alma Talebi", emailBody);
                     _demandService.Update(demandEntity);
                 }
             }

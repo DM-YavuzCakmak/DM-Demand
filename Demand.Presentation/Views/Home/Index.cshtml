@@ -132,13 +132,12 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="requestDate">Talep Tarihi:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToShortDateString()" readonly>
+                    <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!) </label>
-                    <input type="date" id="requirementDate" name="requirementDate">
+                    <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!)</label>
+                    <input type="date" id="requirementDate" name="requirementDate" min="@DateTime.Now.ToString("yyyy-MM-dd")">
                 </div>
-
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -628,6 +627,10 @@
         });
 
 
+    });
+
+    document.getElementById('requirementDate').addEventListener('keypress', function (e) {
+        e.preventDefault();
     });
 
     function updateLocationId() {

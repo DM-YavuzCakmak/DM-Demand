@@ -344,7 +344,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerTotalPrice1">Toplam Fiyat :</label>
-                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : "")" >
+                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : 0)" >
                                 </div>
                             </div>
 @*                             <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
@@ -456,7 +456,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerTotalPrice2">Toplam Fiyat :</label>
-                                    <input type="text" id="offerTotalPrice2" name="offerTotalPrice2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].TotalPrice : "")" >
+                                    <input type="text" id="offerTotalPrice2" readonly name="offerTotalPrice2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].TotalPrice : 0)">
                                 </div>
                             </div>
 @*                             <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
@@ -569,7 +569,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerTotalPrice3">Toplam Fiyat:</label>
-                                    <input type="text" id="offerTotalPrice3" name="offerTotalPrice3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].TotalPrice : "")" >
+                                    <input type="text" id="offerTotalPrice3" readonly name="offerTotalPrice3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].TotalPrice : 0)">
                                 </div>
                             </div>
 @*                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>

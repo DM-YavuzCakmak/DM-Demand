@@ -18,6 +18,7 @@ using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
 using Demand.Core.Utilities.Results.Abstract;
+using Demand.Core.Utilities.Results.Concrete;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.CurrencyTypeEntity;
@@ -1032,6 +1033,24 @@ namespace Demand.Presentation.Controllers
                     else
                     {
                         var offerRequestAdd = _offerRequestService.Add(offerRequest);
+                    }
+                }
+
+                IDataResult<IList<OfferRequestEntity>> data = _offerRequestService.GetList(x => x.DemandOfferId == demandViewModel.DemandOfferId);
+                if (data.Success)
+                {
+                    List<OfferRequestEntity> offerRequests = data.Data.ToList();
+                    decimal sumTotalPrice= 0;
+                    foreach (var offerRequest in offerRequests)
+                    {
+                        sumTotalPrice += offerRequest.TotalPrice.Value;
+                    }
+
+                    DemandOfferEntity demandOfferEntity = _demandOfferService.GetById(offerRequests[0].DemandOfferId).Data;
+                    if (demandOfferEntity.IsNotNull())
+                    {
+                        demandOfferEntity.TotalPrice = sumTotalPrice;
+                        _demandOfferService.Update(demandOfferEntity);
                     }
                 }
             }

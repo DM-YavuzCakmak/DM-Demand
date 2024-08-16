@@ -15,6 +15,8 @@ namespace Demand.Domain.ViewModels
         public long? DepartmentId { get; set; }
         public string? Description { get; set; }
 
+        public decimal? ExchangeRate { get; set; }
+
         // Teklif bilgileri
         public string? OfferCompanyName { get; set; }
         public long? OfferCompanyId { get; set; }

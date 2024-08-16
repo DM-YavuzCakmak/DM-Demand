@@ -92,6 +92,7 @@ namespace Demand.Domain.ViewModels
         #region ProviderTableFields
         #endregion
         public bool? isApprovedActive { get; set; }
+        public decimal? ExchangeRate{ get; set; }
         public bool? isOppenOffer { get; set; } = false;
     }
 
@@ -112,6 +113,7 @@ namespace Demand.Domain.ViewModels
         public string SupplierPhone { get; set; }
         public long SupplierId { get; set; }
         public string? SupplierAdress { get; set; }
+        public decimal?  ExchangeRate { get; set; }
 
         public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }
     }

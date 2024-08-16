@@ -711,6 +711,7 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
                 demandOfferEntity.UpdatedAt = null;
                 demandOfferEntity.UpdatedDate = null;
+                demandOfferEntity.ExchangeRate = updateDemandViewModel.ExchangeRate;
                 var demandOfferAdd = _demandOfferService.Add(demandOfferEntity);
                 #region
                 //if (demandOfferAdd.Id.IsNotNull())
@@ -750,6 +751,10 @@ namespace Demand.Presentation.Controllers
         [HttpGet("DemandOfferDetail")]
         public IActionResult DemandOfferDetail(long DemandId)
         {
+            try
+            {
+
+           
             #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
@@ -794,6 +799,7 @@ namespace Demand.Presentation.Controllers
                 DepartmentName = department.Name,
                 ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
                 isApprovedActive = isApprovedActiveProcess.IsNotNull() && isApprovedActiveProcess.ManagerId == userId ? true : false
+                
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
@@ -840,6 +846,7 @@ namespace Demand.Presentation.Controllers
                 demandOfferViewModel.DemandOfferId = demandOfferEntity.Id;
                 demandOfferViewModel.Status = demandOfferEntity.Status;
                 demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
+                demandOfferViewModel.ExchangeRate = demandOfferEntity.ExchangeRate;
                 demandOfferViewModel.CurrencyTypeId = demandOfferEntity.CurrencyTypeId;
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
@@ -902,7 +909,14 @@ namespace Demand.Presentation.Controllers
             ViewBag.Departments = departments;
             List<ProviderEntity> providers = _providerService.GetAll().Data.ToList();
             ViewBag.Providers = providers;
-            return View(demandViewModel);
+                return View(demandViewModel);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
         [HttpGet("OfferPage")]
         public IActionResult OfferPage(long? DemandId, long? DemandOfferId)

@@ -994,15 +994,29 @@
 
 
     function validateAndSubmit(offerNumber) {
-    var currencyType = $('#offerCurrencyType1').val();
-    var exchangeRate = $('#exchangeRate1').val();
-    
-    if ((currencyType == '2' || currencyType == '3') && exchangeRate.trim() === '') {
-        toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
-        return false;
-    }
+        var currencyType1 = $('#offerCurrencyType1').val();
+        var exchangeRate1 = $('#exchangeRate1').val();
+        var currencyType2 = $('#offerCurrencyType2').val();
+        var exchangeRate2 = $('#exchangeRate2').val();
+        var currencyType3 = $('#offerCurrencyType3').val();
+        var exchangeRate3 = $('#exchangeRate3').val();
+
+        // Türk Lirası dışındaki para birimleri için kur bilgisi kontrolü
+        if ((currencyType1 == '2' || currencyType1 == '3') && exchangeRate1.trim() === '') {
+            toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
+            return false;
+        }
+        if ((currencyType2 == '2' || currencyType2 == '3') && exchangeRate2.trim() === '') {
+            toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
+            return false;
+        }
+        if ((currencyType3 == '2' || currencyType3 == '3') && exchangeRate3.trim() === '') {
+            toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
+            return false;
+        }
         updateDemand(offerNumber);
-}
+
+    }
 
 
     function updateDemand(offerNumber) {
@@ -1013,6 +1027,16 @@
         var description = $('#description').val();
 
         var offer1Data = getOfferData(offerNumber);
+
+        var exchangeRate = '';
+        if (offerNumber === 1) {
+            exchangeRate = $('#exchangeRate1').val().trim();
+        } else if (offerNumber === 2) {
+            exchangeRate = $('#exchangeRate2').val().trim();
+        } else if (offerNumber === 3) {
+            exchangeRate = $('#exchangeRate3').val().trim();
+        }
+
         var updateDemandViewModel = {
             DemandId: demandId,
             CompanyId: companyId,
@@ -1029,8 +1053,12 @@
             OfferMaterial: offer1Data.OfferMaterial,
             OfferPrice: offer1Data.OfferPrice,
             OfferTotalPrice: offer1Data.OfferTotalPrice,
-            OfferCompanyId: offer1Data.OfferCompanyId
+            OfferCompanyId: offer1Data.OfferCompanyId,
+
+            // Eğer exchangeRate boş değilse, model'e ekleyin
+            ExchangeRate: exchangeRate !== '' ? exchangeRate : null
         };
+
         console.log(updateDemandViewModel);
         $.ajax({
             url: '/api/Demands/UpdateDemand',

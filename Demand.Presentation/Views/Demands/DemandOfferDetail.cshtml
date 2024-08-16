@@ -557,6 +557,11 @@
 
                                 <div class="price">
                                     <h1>@Model.DemandOffers[0].TotalPrice @(Model.DemandOffers[0].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[0].CurrencyTypeId == 2 ? "$" : "€"))</h1>
+                                    @if ((Model.DemandOffers[0].CurrencyTypeId != 1))
+                                    {
+                                        decimal totalPriceInCurrency = (decimal)(Model.DemandOffers[0].TotalPrice * (decimal)Model.DemandOffers[0].ExchangeRate);
+                                        <h1> @totalPriceInCurrency.ToString("#,0.00") TL</h1>
+                                    }
                                 </div>
 
                                 @if (Model.Status == 0 && userId !=10)
@@ -610,6 +615,11 @@
 
                                 <div class="price">
                                     <h1>@Model.DemandOffers[1].TotalPrice @(Model.DemandOffers[1].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[1].CurrencyTypeId == 2 ? "$" : "€"))</h1>
+                                    @if ((Model.DemandOffers[1].CurrencyTypeId != 1))
+                                    {
+                                        decimal totalPriceInCurrency = (decimal)(Model.DemandOffers[0].TotalPrice * (decimal)Model.DemandOffers[0].ExchangeRate);
+                                        <h1> @totalPriceInCurrency.ToString("#,0.00") TL</h1>
+                                    }
                                 </div>
 
                                 @if (Model.Status == 0 && userId != 10)
@@ -660,6 +670,11 @@
 
                                 <div class="price">
                                     <h1>@Model.DemandOffers[2].TotalPrice @(Model.DemandOffers[2].CurrencyTypeId == 1 ? "TL" : (Model.DemandOffers[2].CurrencyTypeId == 2 ? "$" : "€"))</h1>
+                                    @if ((Model.DemandOffers[2].CurrencyTypeId != 1))
+                                    {
+                                        decimal totalPriceInCurrency = (decimal)(Model.DemandOffers[0].TotalPrice * (decimal)Model.DemandOffers[0].ExchangeRate);
+                                        <h1> @totalPriceInCurrency.ToString("#,0.00") TL</h1>
+                                    }
                                 </div>
                                 @if (Model.Status == 0 && userId != 10)
                                 {

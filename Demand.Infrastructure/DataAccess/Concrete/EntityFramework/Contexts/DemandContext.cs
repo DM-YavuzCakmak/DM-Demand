@@ -15,6 +15,8 @@ using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Numerics;
 
 namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
 {
@@ -48,6 +50,14 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
         public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DemandOfferEntity>().Property(a => a.ExchangeRate).HasPrecision(18,2);
+            modelBuilder.Entity<DemandOfferEntity>().Property(a => a.TotalPrice).HasPrecision(18, 2);
+
+        }
 
     }
 }

@@ -51,7 +51,6 @@ namespace Demand.Domain.ViewModels
         public int? Quantity2 { get; set; }
         public string? Unit2 { get; set; }
         public string? CurrencySymbol2 { get; set; }
-
         public string? Material3 { get; set; }
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
@@ -94,6 +93,7 @@ namespace Demand.Domain.ViewModels
         public bool? isApprovedActive { get; set; }
         public decimal? ExchangeRate{ get; set; }
         public bool? isOppenOffer { get; set; } = false;
+        public bool? isDemandOffer { get; set; } = false;
     }
 
     public class DemandOfferViewModel
@@ -114,6 +114,8 @@ namespace Demand.Domain.ViewModels
         public long SupplierId { get; set; }
         public string? SupplierAdress { get; set; }
         public decimal?  ExchangeRate { get; set; }
+        public int UnitManager { get; set; }
+
 
         public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }
     }

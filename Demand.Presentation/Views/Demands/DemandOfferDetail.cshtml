@@ -81,6 +81,7 @@
             font-size: 24px; /* Tüm para birimleri için aynı font büyüklüğü */
             margin: 0; /* Boşlukları sıfırla */
         }
+
         .decline-button {
             background-color: #d9534f;
             color: #fff;
@@ -93,11 +94,12 @@
             margin-right: 10px;
         }
 
-        
 
-        .decline-button:hover {
-            background-color: #c9302c;
-        }
+
+            .decline-button:hover {
+                background-color: #c9302c;
+            }
+
         .button-group {
             display: flex;
             margin-top: 20px;
@@ -481,7 +483,7 @@
                 <label for="requirementDate">Gereklilik Tarihi:</label>
                 <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate.Value.ToShortDateString()" readonly>
             </div>
-            
+
         </div>
 
         <div class="form-row">
@@ -503,6 +505,16 @@
             </div>
 
         </div>
+        @if (Model.DemandOffers.Count>0)
+        {
+            @if (Model.Status == 0 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) && (Model.DemandOffers[0].UnitManager == 2 || Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
+            {
+                <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
+                    Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
+                </p>
+            }
+        }
+        
 
         <div class="container">
             <div class="form-row">
@@ -534,10 +546,10 @@
                         <!-- Teklif 1 -->
                         <div class="col-sm-4 col-md-4">
                             <div class="plan">
-                                <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 ? "black" : (Model.DemandOffers[0].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 2 ? "orange" : Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 1 ? "black" :Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 0 ? "black" :  Model.DemandOffers[0].Status == 1 ? "red" : "green");">
                                     <h2>Teklif 1</h2>
                                 </div>
-
+                                
                                 <ul class="item-list">
                                     <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
                                     <li>
@@ -566,7 +578,7 @@
                                 </ul>
 
                                 <div class="price">
-                                    @if (Model.DemandOffers[0].CurrencyTypeId!= null && Model.DemandOffers[0].CurrencyTypeId == 1)
+                                    @if (Model.DemandOffers[0].CurrencyTypeId != null && Model.DemandOffers[0].CurrencyTypeId == 1)
                                     {
                                         <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice TL</h1>
                                     }
@@ -598,10 +610,9 @@
 
                     @if (@Model.DemandOffers.Count > 1)
                     {
-                        <!-- Teklif 2 -->
                         <div class="col-sm-4 col-md-4">
                             <div class="plan">
-                                <div class="head" style="background:@(Model.DemandOffers[1].Status == 0 ? "black" : (Model.DemandOffers[1].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[1].Status == 0 && Model.DemandOffers[1].UnitManager == 2 ? "orange" : Model.DemandOffers[1].Status == 0 && Model.DemandOffers[1].UnitManager == 1 ? "black" :Model.DemandOffers[1].Status == 0 && Model.DemandOffers[1].UnitManager == 0 ? "black" :  Model.DemandOffers[1].Status == 1 ? "red" : "green");">
                                     <h2>Teklif 2</h2>
                                 </div>
 
@@ -632,7 +643,6 @@
                                     </li>
                                 </ul>
 
-                                <!-- TL Fiyatı -->
                                 <div class="price">
                                     @if (Model.DemandOffers[1].CurrencyTypeId == 1)
                                     {
@@ -669,7 +679,7 @@
                         <!-- Teklif 3 -->
                         <div class="col-sm-4 col-md-4">
                             <div class="plan">
-                                <div class="head" style="background:@(Model.DemandOffers[2].Status == 0 ? "black" : (Model.DemandOffers[2].Status == 1 ? "red" : "green"));">
+                                <div class="head" style="background:@(Model.DemandOffers[2].Status == 0 && Model.DemandOffers[2].UnitManager == 2 ? "orange" : Model.DemandOffers[2].Status == 0 && Model.DemandOffers[2].UnitManager == 1 ? "black" :Model.DemandOffers[2].Status == 0 && Model.DemandOffers[2].UnitManager == 0 ? "black" :  Model.DemandOffers[2].Status == 1 ? "red" : "green");">
                                     <h2>Teklif 3</h2>
                                 </div>
 
@@ -751,7 +761,7 @@
                     </div>
                 }
             }
-           
+
         </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -763,7 +773,7 @@
 <script>
     $(document).ready(function (e) {
         $(".navbar a").on("click", function (e) {
-            var to = $(this).attr("href"); 
+            var to = $(this).attr("href");
             if (to.substring(0, 1) == "#") {
                 $("html, body").animate({ scrollTop: $(to).offset().top - 100 }, 700);
             }
@@ -786,7 +796,7 @@
             contentType: 'application/json',
             data: JSON.stringify(demandStatusChangeViewModel),
             success: function (statusResult) {
-               console.log(statusResult);
+                console.log(statusResult);
                 var popupMessage = "Talep durumu başarıyla değiştirildi.";
                 var popup = $("<div></div>").addClass("popup-container");
                 var message = $("<p></p>").addClass("popup-message").text(popupMessage);
@@ -809,7 +819,7 @@
         });
     }
 
-    function changeStatus(DemandId,DemandOfferId) {
+    function changeStatus(DemandId, DemandOfferId) {
         var demandId = @Model.DemandId;
         var demandOfferId = DemandOfferId;
         console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -819,7 +829,7 @@
 
         var demandStatusChangeViewModel = {
             DemandId: demandId,
-            DemandOfferId : demandOfferId,
+            DemandOfferId: demandOfferId,
             Status: 2
         };
 

@@ -14,6 +14,8 @@ namespace Demand.Domain.Entities.DemandOfferEntity
         public long CurrencyTypeId { get; set; }
         public decimal? TotalPrice { get; set; }
         public int? Status { get; set; }
+        public int? UnitManager { get; set; }
+
         public string? SupplierName { get; set; }
         public string? SupplierPhone { get; set; }
         public string? SupplierContactName { get; set; }

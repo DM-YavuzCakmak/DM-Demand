@@ -80,7 +80,7 @@
                                 {
                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                 }
-                                @if (userId == 12 || userId == 10)
+                                @if (userId == 12 || userId == 10 || @demand.isDemandOffer == true)
                                 {
                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 

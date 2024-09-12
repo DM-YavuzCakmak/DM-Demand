@@ -141,16 +141,25 @@
             </div>
 
             <div class="form-row">
+
+                <div class="form-group">
+                    <label for="locationUnits">Lokasyon Birimi:</label>
+                    <select id="locationUnits" name="locationUnits" ">
+                    </select>
+                    <input type="hidden" id="locationUnitsId" name="locationUnitsId" />
+                </div>
+
                 <div class="form-group">
                     <label for="requestDate">Talep Tarihi:</label>
                     <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" readonly>
                 </div>
+               
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!)</label>
                     <input type="date" id="requirementDate" name="requirementDate" min="@DateTime.Now.ToString("yyyy-MM-dd")">
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
                     <label for="department">Departman:</label>
                     <select id="department" name="department">
@@ -161,12 +170,14 @@
                         }
                     </select>
                 </div>
-                <div class="form-group">
+                
+
+            </div>
+
+            <div class="form-group">
                     <label for="description">Dosya Seç:</label>
                     <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
                 </div>
-
-            </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -623,6 +634,33 @@
             });
         });
 
+
+
+
+        $('#location').change(function () {
+            var selectedLocationId = $(this).val();
+            console.log("selectedLocationId",selectedLocationId);
+            $.ajax({
+                url: '/api/CompanyLocationUnits/GetLocationUnits?locationId=' + selectedLocationId,
+                type: 'GET',
+                success: function (data) {
+                    $('#locationUnits').empty();
+                    $.each(data.data, function (index, item) {
+                        $('#locationUnits').append($('<option>', {
+                            value: item.id,
+                            text: item.name
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching locations:', error);
+                }
+            });
+        });
+
+
+
+
         $('#searchInput').on('input', function () {
             var searchText = $(this).val().toLowerCase();
 
@@ -879,7 +917,11 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
+        formData.append('LocationUnitId', document.getElementById('locationUnits').value);
         formData.append('RequirementDate', document.getElementById('requirementDate').value);
+
+        var aa = document.getElementById('locationUnits').value;
+        console.log(aa);
 
 
         var table = document.getElementById("dataTable");

@@ -163,7 +163,6 @@ namespace Demand.Presentation.Controllers
                 }
                 demandViewModels.Add(viewModel);
             }
-
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();

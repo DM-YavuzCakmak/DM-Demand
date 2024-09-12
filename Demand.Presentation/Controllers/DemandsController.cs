@@ -375,6 +375,7 @@ namespace Demand.Presentation.Controllers
             var demandEntity = new DemandEntity
             {
                 CompanyLocationId = (long)demandViewModel.CompanyLocationId,
+                LocationUnitId = (long)demandViewModel.LocationUnitId,
                 DemandTitle = demandViewModel.DemandTitle,
                 DepartmentId = (long)demandViewModel.DepartmentId,
                 Status = 0,

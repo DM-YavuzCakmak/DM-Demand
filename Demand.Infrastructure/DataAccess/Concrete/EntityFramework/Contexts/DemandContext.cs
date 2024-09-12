@@ -1,6 +1,7 @@
 ﻿using Demand.Domain.Entities.ApprovedSupplierEntity;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
+using Demand.Domain.Entities.CompanyLocationUnitsEntity;
 using Demand.Domain.Entities.CurrencyTypeEntity;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
@@ -50,6 +51,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
         public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
+        public virtual DbSet<CompanyLocationUnitsEntity>  CompanyLocationUnits{ get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

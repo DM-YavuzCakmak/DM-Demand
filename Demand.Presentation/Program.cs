@@ -1,6 +1,7 @@
 using Demand.Business.Abstract.ApprovedSupplierService;
 using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyLocation;
+using Demand.Business.Abstract.CompanyLocationUnitsService;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Abstract.CurrencyTypeService;
 using Demand.Business.Abstract.DemandMediaService;
@@ -18,6 +19,7 @@ using Demand.Business.Abstract.RoleService;
 using Demand.Business.Concrete.ApprovedSupplierService;
 using Demand.Business.Concrete.AuthorizationService;
 using Demand.Business.Concrete.CompanyLocation;
+using Demand.Business.Concrete.CompanyLocationUnitsService;
 using Demand.Business.Concrete.CompanyService;
 using Demand.Business.Concrete.CurrencyTypeService;
 using Demand.Business.Concrete.DemandMediaService;
@@ -34,6 +36,7 @@ using Demand.Business.Concrete.RequestInfo;
 using Demand.Business.Concrete.RoleService;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Infrastructure.DataAccess.Abstract.ApprovedSuplier;
+using Demand.Infrastructure.DataAccess.Abstract.CompanyLocationUnits;
 using Demand.Infrastructure.DataAccess.Abstract.CurrencyType;
 using Demand.Infrastructure.DataAccess.Abstract.DemandMedia;
 using Demand.Infrastructure.DataAccess.Abstract.DemandOffer;
@@ -51,6 +54,7 @@ using Demand.Infrastructure.DataAccess.Abstract.RequestInfo;
 using Demand.Infrastructure.DataAccess.Abstract.Role;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.ApprovedSupplier;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationRepository;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationUnits;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CurrencyType;
@@ -90,6 +94,11 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 #region CompanyLocation
 builder.Services.AddScoped<ICompanyLocationRepository, CompanyLocationRepository>();
 builder.Services.AddScoped<ICompanyLocationService, CompanyLocationService>();
+#endregion
+
+#region CompanyLocation
+builder.Services.AddScoped<ICompanyLocationUnitsRepository, CompanyLocationUnitsRepository>();
+builder.Services.AddScoped<ICompanyLocationUnitsService, CompanyLocationUnitsService>();
 #endregion
 
 #region Demand

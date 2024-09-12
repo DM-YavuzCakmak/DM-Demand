@@ -23,6 +23,7 @@ namespace Demand.Domain.ViewModels
         public string?  WhoseTurn { get; set; }
         public int? Status{ get; set; }
         public long? CompanyLocationId { get; set; }
+        public long? LocationUnitId { get; set; }
         public long? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public string? CompanyName { get; set; }

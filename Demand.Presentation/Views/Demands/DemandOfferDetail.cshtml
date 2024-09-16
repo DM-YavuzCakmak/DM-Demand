@@ -505,16 +505,17 @@
             </div>
 
         </div>
-        @if (Model.DemandOffers.Count>0)
+        @if (Model.DemandOffers.Count > 0)
         {
-            @if (Model.Status == 0 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) && (Model.DemandOffers[0].UnitManager == 2 || Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
+            @if (Model.Status == 0 && Model.DemandOffers.Count >= 3 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) &&(Model.DemandOffers[0].UnitManager == 2 ||
+           Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
             {
                 <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
                     Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
                 </p>
             }
         }
-        
+
 
         <div class="container">
             <div class="form-row">
@@ -549,7 +550,7 @@
                                 <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 2 ? "orange" : Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 1 ? "black" :Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 0 ? "black" :  Model.DemandOffers[0].Status == 1 ? "red" : "green");">
                                     <h2>Teklif 1</h2>
                                 </div>
-                                
+
                                 <ul class="item-list">
                                     <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
                                     <li>

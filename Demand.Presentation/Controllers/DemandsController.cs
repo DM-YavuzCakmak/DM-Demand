@@ -6,6 +6,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.OfferMediaService;
 using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
@@ -27,6 +28,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.OfferMediaEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
@@ -70,8 +72,9 @@ namespace Demand.Presentation.Controllers
         private readonly IPersonnelRoleService _personnelRoleService;
         private readonly IRoleService _roleService;
         private readonly IProductCategoryService _productCategoryService;
+        private readonly IOfferMediaService _offerMediaService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService, IProductCategoryService productCategoryService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService, IProductCategoryService productCategoryService, IOfferMediaService offerMediaService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -90,6 +93,7 @@ namespace Demand.Presentation.Controllers
             _personnelRoleService = personnelRoleService;
             _roleService = roleService;
             _productCategoryService = productCategoryService;
+            _offerMediaService = offerMediaService;
         }
 
         public IActionResult Detail(long id)
@@ -323,6 +327,16 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierAdress))
                     demandOfferViewModel.SupplierAdress = demandOfferEntity.SupplierAdress;
+                if (demandOfferEntity.DeadlineDate.IsNotNull())
+                {
+                    demandOfferViewModel.DeadlineDate = demandOfferEntity.DeadlineDate;
+
+                }  
+                if (demandOfferEntity.MaturityDate.IsNotNull())
+                {
+                    demandOfferViewModel.MaturityDate = demandOfferEntity.MaturityDate;
+
+                }
 
                 ProviderEntity providerEntity = new ProviderEntity();
                 if (providerEntities != null && providerEntities.Any())
@@ -755,6 +769,32 @@ namespace Demand.Presentation.Controllers
             return null;
         }
 
+        private OfferMediaEntity SaveFileAndCreateOfferMedia(IFormFile file, long offerId)
+        {
+            if (file != null && file.Length > 0)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                //string partToRemove = @"Demand.Presentation";
+                string newPath = uploadsFolder;
+                newPath = newPath.Replace(@"\\", @"\");
+                string uniqueFileName = offerId + "_" + file.FileName;
+                string filePath = Path.Combine(newPath, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                return new OfferMediaEntity
+                {
+                    OfferId = offerId,
+                    Path = "\\uploads\\" + uniqueFileName
+                };
+            }
+
+            return null;
+        }
+
         private string RemovePathPart(string originalPath, string partToRemove)
         {
             int index = originalPath.IndexOf(partToRemove, StringComparison.OrdinalIgnoreCase);
@@ -775,7 +815,7 @@ namespace Demand.Presentation.Controllers
 
         }
         [HttpPost("UpdateDemand")]
-        public IActionResult UpdateDemand([FromBody] UpdateDemandViewModel updateDemandViewModel)
+        public IActionResult UpdateDemand([FromForm] UpdateDemandViewModel updateDemandViewModel)
         {
             ProviderEntity providerEntity = new ProviderEntity();
             ProviderEntity providerEntity2 = new ProviderEntity();
@@ -822,7 +862,33 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.UpdatedDate = null;
                 demandOfferEntity.ExchangeRate = updateDemandViewModel.ExchangeRate;
                 demandOfferEntity.UnitManager = 0;
+                demandOfferEntity.DeadlineDate = updateDemandViewModel.DeadlineDate;
+                demandOfferEntity.MaturityDate = updateDemandViewModel.MaturityDate;
+                demandOfferEntity.PaymentType = updateDemandViewModel.PaymentType;
+                demandOfferEntity.PartialPayment = updateDemandViewModel.PartialPayment;
+                demandOfferEntity.InstallmentPayment = updateDemandViewModel.InstallmentPayment;
+                
                 var demandOfferAdd = _demandOfferService.Add(demandOfferEntity);
+
+                //if (updateDemandViewModel.Files != null && updateDemandViewModel.Files.Count > 0)
+                //{
+
+                //    foreach (var file in updateDemandViewModel.Files)
+                //    {
+                //        string fileName = demandOfferAdd.Id + "_" + file.FileName;
+
+                //        OfferMediaEntity offerMediaEntity = SaveFileAndCreateOfferMedia(file, demandOfferAdd.Id);
+                //        offerMediaEntity.Path = offerMediaEntity.Path;
+                //        offerMediaEntity.FileName = file.FileName;
+                //        offerMediaEntity.IsDeleted = false;
+                //        offerMediaEntity.CreatedDate = DateTime.Now;
+                //        offerMediaEntity.UpdatedDate = null;
+                //        offerMediaEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                //        offerMediaEntity.UpdatedAt = null;
+                //        _offerMediaService.AddOfferMedia(offerMediaEntity);
+
+                //    }
+                //}
                 #region
                 //if (demandOfferAdd.Id.IsNotNull())
                 //{
@@ -842,6 +908,7 @@ namespace Demand.Presentation.Controllers
                 #endregion
             }
             #endregion
+
 
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;

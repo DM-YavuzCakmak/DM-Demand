@@ -85,7 +85,6 @@ namespace Demand.Domain.ViewModels
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
         public List<IFormFile>? Files { get; set; }
-        public string[]? FileNames { get; set; }
         public string?  File1Name{ get; set; }
         public string?  File2Name{ get; set; }
         public string?  File3Name{ get; set; }
@@ -116,6 +115,14 @@ namespace Demand.Domain.ViewModels
         public string? SupplierAdress { get; set; }
         public decimal?  ExchangeRate { get; set; }
         public int UnitManager { get; set; }
+        public DateTime?  DeadlineDate{ get; set; }
+        public DateTime? MaturityDate { get; set; }
+        public int? PaymentType { get; set; }
+        public int? InstallmentPayment { get; set; }
+        public int? PartialPayment { get; set; }
+
+        public List<IFormFile>? Files { get; set; }
+        public string? File1Name { get; set; }
 
 
         public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }

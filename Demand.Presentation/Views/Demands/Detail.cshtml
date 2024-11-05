@@ -44,8 +44,13 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
            
         }
+
+
+
 
         .form-group {
             width: calc(50% - 10px);
@@ -102,19 +107,7 @@
                 border-radius: 5px;
             }
 
-        #description {
-            height: 125px;
-            width: 100%;
-            resize: none;
-        }
-
-        #description {
-            height: 125px;
-            width: 100%;
-            resize: none;
-            background-color: lightgray;
-            pointer-events: none;
-        }
+        
 
         #requestDate {
             background-color: lightgray;
@@ -232,7 +225,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="description">Açıklama:</label>
-                    <textarea id="description" name="description" readonly>@Model.Description</textarea>
+                    <textarea id="description" name="description" style="overflow-y: auto !important;">@Model.Description</textarea>
                 </div>
             </div>
             <div class="form-row">
@@ -505,9 +498,12 @@
     }
 
     #description {
-        height: 125px;
-        width: 500px;
+        height: 250px;
+        width: 740px;
         resize: none;
+        background-color: lightgray;
+        overflow-y: auto;
+        pointer-events: none;
     }
 
     #sendButton {

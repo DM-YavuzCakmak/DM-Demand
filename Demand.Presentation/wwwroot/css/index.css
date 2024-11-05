@@ -1,5 +1,11 @@
 ﻿
 
+
+textarea {
+    overflow-y: auto; /* Dikey kaydırma */
+    overflow-x: hidden; /* Yatay kaydırmayı gizle */
+}
+
 #logo {
     position: absolute;
     top: 20px;

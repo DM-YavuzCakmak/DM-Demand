@@ -153,7 +153,7 @@
                     <label for="requestDate">Talep Tarihi:</label>
                     <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" readonly>
                 </div>
-               
+
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -164,20 +164,20 @@
                     <label for="department">Departman:</label>
                     <select id="department" name="department">
                         <option value="Please Select department">Lütfen departman seçin..</option>
-                        @foreach (var department in ViewBag.Department)
-                        {
+                    @foreach (var department in ViewBag.Department)
+                    {
                             <option value="@department.Id">@department.Name</option>
-                        }
+                    }
                     </select>
                 </div>
-                
+
 
             </div>
 
             <div class="form-group">
-                    <label for="description">Dosya Seç:</label>
-                    <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
-                </div>
+                <label for="description">Dosya Seç:</label>
+                <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
+            </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -199,76 +199,76 @@
                         <th>Adet</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="select-wrapper">
-                                <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
-                                    @if (ViewBag.ProductCategories != null)
-                                    {
-                                        <option>Lütfen seçiniz</option>
-                                        foreach (var productCategory in ViewBag.ProductCategories)
-                                        {
-                                            <option value="@productCategory.Id">@productCategory.ProductCategoryName</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="select-wrapper">
-                                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
-                                    @if (Model[0].NebimCategoryModels != null)
-                                    {
-                                        <option>Lütfen seçiniz</option>
-                                        foreach (var product in Model[0].NebimCategoryModels)
-                                        {
-                                            <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description</option>
-                                        }
-                                    }
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="select-wrapper">
-                                <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
-                                </select>
+                    @* <tbody>
+                <tr>
+                <td>
+                <div class="select-wrapper">
+                <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
+                @if (ViewBag.ProductCategories != null)
+                {
+                <option>Lütfen seçiniz</option>
+                foreach (var productCategory in ViewBag.ProductCategories)
+                {
+                <option value="@productCategory.Id">@productCategory.ProductCategoryName</option>
+                }
+                }
+                </select>
+                </div>
+                </td>
+                <td>
+                <div class="select-wrapper">
+                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
+                @if (Model[0].NebimCategoryModels != null)
+                {
+                <option>Lütfen seçiniz</option>
+                foreach (var product in Model[0].NebimCategoryModels)
+                {
+                <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description</option>
+                }
+                }
+                </select>
+                </div>
+                </td>
+                <td>
+                <div class="select-wrapper">
+                <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
+                </select>
 
-                            </div>
-                        </td>
-                        <td class="form-group">
-                            <div class="select-wrapper">
-                                <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
-                                </select>
-                            </div>
-                        </td>
-                        <td class="form-group">
-                            <input type="text" name="productCode[]" class="productCode" />
-                        </td>
-                        <td class="form-group">
-                            <input type="text" name="productName[]" class="productName" />
-                        </td>
-                        <td>
-                            <div class="select-wrapper">
-                                <select name="unit[]" class="unit">
-                                    <option value="1">Adet</option>
-                                    <option value="2">Metre</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td class="form-group">
-                            <input type="text" name="quantity[]" class="quantity" />
-                        </td>
-                    </tr>
-                </tbody>
+                </div>
+                </td>
+                <td class="form-group">
+                <div class="select-wrapper">
+                <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
+                </select>
+                </div>
+                </td>
+                <td class="form-group">
+                <input type="text" name="productCode[]" class="productCode" />
+                </td>
+                <td class="form-group">
+                <input type="text" name="productName[]" class="productName" />
+                </td>
+                <td>
+                <div class="select-wrapper">
+                <select name="unit[]" class="unit">
+                <option value="1">Adet</option>
+                <option value="2">Metre</option>
+                </select>
+                </div>
+                </td>
+                <td class="form-group">
+                <input type="text" name="quantity[]" class="quantity" />
+                </td>
+                </tr>
+                </tbody> *@
             </table>
             <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
             <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
             <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
 
 
-        @*     <div class="button-group">
-                <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+                    @*     <div class="button-group">
+            <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
             </div> *@
         </div>
     </div>
@@ -289,7 +289,7 @@
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
     }
-    
+
     .header {
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1000;
@@ -309,11 +309,12 @@
         margin-right: 20px;
     }
 
-    .user-info p {
-        margin: 0;
-        font-weight: bold;
-        color: white;
-    }
+        .user-info p {
+            margin: 0;
+            font-weight: bold;
+            color: white;
+        }
+
     .create-demand-button {
         background-color: #3498db;
         color: #fff;
@@ -338,7 +339,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        display: inline-block; 
+        display: inline-block;
         text-align: center;
     }
 
@@ -357,7 +358,7 @@
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        display: inline-block; 
+        display: inline-block;
         text-align: center;
     }
 
@@ -576,14 +577,14 @@
         resize: none;
     }
 
-/*     #sendButton {
-        background-color: #4CAF50;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    } */
+    /*     #sendButton {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        } */
 
     .form-group {
         width: calc(50% - 10px);
@@ -639,7 +640,7 @@
 
         $('#location').change(function () {
             var selectedLocationId = $(this).val();
-            console.log("selectedLocationId",selectedLocationId);
+            console.log("selectedLocationId", selectedLocationId);
             $.ajax({
                 url: '/api/CompanyLocationUnits/GetLocationUnits?locationId=' + selectedLocationId,
                 type: 'GET',
@@ -749,11 +750,12 @@
         });
     });
     function addRow() {
-        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        var table = document.getElementById("dataTable");//.getElementsByTagName('tbody')[0];
         var newRow = table.insertRow(table.rows.length);
         var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
 
         cells.forEach(function (cell) {
+            var selectedCompanyId = $('#companyName').val();
             var newCell = newRow.insertCell(-1);
             if (cell === 'type' || cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
                 var div = document.createElement("div");
@@ -772,6 +774,12 @@
                     select.appendChild(option2);
                 }
                 else if (cell === 'category') {
+                    var locationUnitId = $('#locationUnits').val();
+                    var companyBrandCode = 1;
+                    if (locationUnitId == 2 || locationUnitId == 8) {
+                        companyBrandCode = 0;
+                    }
+
                     select.addEventListener('change', function () {
                         updateSubcategories(this.parentNode.parentNode.parentNode);
                     });
@@ -781,10 +789,12 @@
                     defaultOption.text = "Lütfen seçiniz";
                     select.add(defaultOption);
                     subCategoryModels.forEach(function (subcategory) {
-                        var option = document.createElement('option');
-                        option.value = subcategory.productHierarchyLevel01Code;
-                        option.textContent = subcategory.productHierarchyLevel01Description;
-                        select.appendChild(option);
+                        if (subcategory.companyCode == selectedCompanyId && subcategory.companyBrandCode == companyBrandCode) {
+                            var option = document.createElement('option');
+                            option.value = subcategory.productHierarchyLevel01Code;
+                            option.textContent = subcategory.productHierarchyLevel01Description;
+                            select.appendChild(option);
+                        }
                     });
                 } else if (cell === 'type') {
                     select.addEventListener('change', function () {
@@ -825,7 +835,7 @@
     }
 
     function removeRow() {
-        var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+        var table = document.getElementById("dataTable");//.getElementsByTagName('tbody')[0];
         if (table.rows.length > 1) {
             table.deleteRow(-1);
         }
@@ -849,6 +859,13 @@
 
     function updateSubcategories(parentNode) {
         debugger;
+        var selectedCompanyId = $('#companyName').val();
+        var locationUnitId = $('#locationUnits').val();
+        var companyBrandCode = 1;
+        if (locationUnitId == 2 || locationUnitId == 8) {
+            companyBrandCode = 0;
+        }
+
         var categoryValue = parentNode.querySelector('.category').value;
         var subcategorySelect = parentNode.querySelector('.subcategory');
 
@@ -859,7 +876,7 @@
         defaultOption.text = "Lütfen seçiniz";
         subcategorySelect.add(defaultOption);
         subCategoryModels.forEach(function (subcategory) {
-            if (subcategory.productHierarchyLevel01Code == categoryValue) {
+            if (subcategory.companyCode == selectedCompanyId && subcategory.companyBrandCode == companyBrandCode && subcategory.productHierarchyLevel01Code == categoryValue) {
                 var option = document.createElement('option');
                 option.value = subcategory.productHierarchyLevel02Code;
                 option.textContent = subcategory.productHierarchyLevel02Description;
@@ -869,6 +886,13 @@
     }
     function updateProduct(parentNode) {
         debugger;
+        var selectedCompanyId = $('#companyName').val();
+        var locationUnitId = $('#locationUnits').val();
+        var companyBrandCode = 1;
+        if (locationUnitId == 2 || locationUnitId == 8) {
+            companyBrandCode = 0;
+        }
+
         var subcategoryValue = parentNode.querySelector('.subcategory').value;
         var productSelect = parentNode.querySelector('.product');
 
@@ -879,7 +903,7 @@
         defaultOption.text = "Lütfen seçiniz";
         productSelect.add(defaultOption);
         productModels.forEach(function (product) {
-            if (product.productHierarchyLevel02Code == subcategoryValue) {
+            if (product.companyCode == selectedCompanyId && product.companyBrandCode == companyBrandCode && product.productHierarchyLevel02Code == subcategoryValue) {
                 var option = document.createElement('option');
                 option.value = product.productCode;
                 option.textContent = product.productDescription;
@@ -888,6 +912,13 @@
         });
     }
     function updateProductCode(parentNode) {
+        var selectedCompanyId = $('#companyName').val();
+        var locationUnitId = $('#locationUnits').val();
+        var companyBrandCode = 1;
+        if (locationUnitId == 2 || locationUnitId == 8) {
+            companyBrandCode = 0;
+        }
+
         var productSelect = parentNode.querySelector('.product');
         var productCodeInput = parentNode.querySelector('.productCode');
         var productNameInput = parentNode.querySelector('.productName');
@@ -897,7 +928,7 @@
         var foundProductCode = null;
         var foundProductName = null;
         productModels.forEach(function (product) {
-            if (product.productCode == selectedProductValue) {
+            if (product.companyCode == selectedCompanyId && product.companyBrandCode == companyBrandCode && product.productCode == selectedProductValue) {
                 foundProductCode = product.productCode;
                 foundProductName = product.productDescription;
             }

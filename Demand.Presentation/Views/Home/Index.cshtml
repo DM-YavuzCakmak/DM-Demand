@@ -75,7 +75,7 @@
                             <td>@demand.LocationName</td>
                             @if (Model.Count > 0 && demand.DemanderName != null)
                             {
-                                <td>@demand.DemandDate.ToString("dd.MM.yyyy")</td>
+                                <td>@demand.DemandDate.ToString("yyyy-MM-dd")</td>
 
                             }
                             @if (Model.Count > 0 && demand.Status != null)
@@ -578,13 +578,13 @@
     }
 
     /*     #sendButton {
-            background-color: #4CAF50;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        } */
+                background-color: #4CAF50;
+                color: #fff;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            } */
 
     .form-group {
         width: calc(50% - 10px);
@@ -636,8 +636,6 @@
         });
 
 
-
-
         $('#location').change(function () {
             var selectedLocationId = $(this).val();
             console.log("selectedLocationId", selectedLocationId);
@@ -675,6 +673,30 @@
                 }
             });
         });
+
+
+        var table = $('#demandTable').DataTable({
+            "columnDefs": [
+                {
+                    "targets": [4],
+                    "type": "date"
+                }
+            ],
+            "order": [[1, 'desc']]
+        });
+
+        $('#demandTable th').on('click', function () {
+            var columnIndex = $(this).index();
+            var isAscending = table.order()[0][1] === 'asc';
+
+            if (isAscending) {
+                table.order([columnIndex, 'desc']).draw();
+            } else {
+                table.order([columnIndex, 'asc']).draw();
+            }
+        });
+
+
 
 
     });

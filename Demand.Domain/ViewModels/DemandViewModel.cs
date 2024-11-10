@@ -94,6 +94,24 @@ namespace Demand.Domain.ViewModels
         public decimal? ExchangeRate{ get; set; }
         public bool? isOppenOffer { get; set; } = false;
         public bool? isDemandOffer { get; set; } = false;
+
+        public List<IFormFile>? ProformoFiles { get; set; }
+        public string? ProformoFile1Name { get; set; }
+        public string? ProformoFile2Name { get; set; }
+        public string? ProformoFile3Name { get; set; }
+
+        public byte[]? ProformoFile1Path { get; set; }
+        public byte[]? ProformoFile2Path { get; set; }
+        public byte[]? ProformoFile3Path { get; set; }
+        public int? PaymentType { get; set; }
+        public string? PaymentTypeText { get; set; }
+        public int? PartialPayment  { get; set; }
+        public string? PartialPaymentText { get; set; }
+        public int? InstallmentPayment { get; set; }
+        public string? InstallmentPaymentText { get; set; }
+
+
+
     }
 
     public class DemandOfferViewModel

@@ -36,6 +36,7 @@ using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
+using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
 using Kep.Helpers.Extensions;
@@ -490,12 +491,13 @@ namespace Demand.Presentation.Controllers
                         }
                     }
 
-                    if (parentPersonnel.ParentId != null)
-                        parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
-                    else
-                        break;
+                    //if (parentPersonnel.ParentId != null)
+                    //    parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
+                    //else
+                    //    break;
+                    break;
                 }
-                RoleEntity roleEntity = _roleService.GetById(3).Data;
+                RoleEntity roleEntity = _roleService.GetById((int)PersonnelRoleEnum.SatınAlmaManager).Data;
                 List<PersonnelRoleEntity> personnelRole = _personnelRoleService.GetList(x => x.RoleId == roleEntity.Id).Data.ToList();
                 PersonnelEntity personnelForSales = _personnelService.GetById(personnelRole[0].PersonnelId).Data;
 
@@ -535,10 +537,11 @@ namespace Demand.Presentation.Controllers
                 _demandProcessService.AddDemandProcess(demandProcessFirstApprovedManager);
 
                 i++;
+
                 DemandProcessEntity demandProcessLastManager = new DemandProcessEntity
                 {
                     DemandId = addedDemand.Id,
-                    ManagerId = parentPersonnel.Id,
+                    ManagerId = (int)FirstApprovedPersonnel.ParentId,
                     IsDeleted = false,
                     HierarchyOrder = i,
                     Desciription = string.Empty,
@@ -550,7 +553,7 @@ namespace Demand.Presentation.Controllers
                 };
                 _demandProcessService.AddDemandProcess(demandProcessLastManager);
 
-            }
+                }
             else
             {
                 PersonnelEntity personnel = _personnelService.GetById(10).Data;
@@ -769,26 +772,31 @@ namespace Demand.Presentation.Controllers
             return null;
         }
 
-        private OfferMediaEntity SaveFileAndCreateOfferMedia(IFormFile file, long offerId)
+        private OfferMediaEntity SaveFileAndCreateOfferMedia(string base64FileContent, string fileName, long offerId)
         {
-            if (file != null && file.Length > 0)
+            if (!string.IsNullOrEmpty(base64FileContent) && !string.IsNullOrEmpty(fileName))
             {
                 string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-                //string partToRemove = @"Demand.Presentation";
-                string newPath = uploadsFolder;
-                newPath = newPath.Replace(@"\\", @"\");
-                string uniqueFileName = offerId + "_" + file.FileName;
-                string filePath = Path.Combine(newPath, uniqueFileName);
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                string uniqueFileName = $"{offerId}_{fileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                byte[] fileBytes = Convert.FromBase64String(base64FileContent);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    file.CopyTo(fileStream);
+                    fileStream.Write(fileBytes, 0, fileBytes.Length);
                 }
 
                 return new OfferMediaEntity
                 {
                     OfferId = offerId,
-                    Path = "\\uploads\\" + uniqueFileName
+                    Path = $"\\uploads\\{uniqueFileName}",
+                    FileName = fileName
                 };
             }
 
@@ -815,7 +823,7 @@ namespace Demand.Presentation.Controllers
 
         }
         [HttpPost("UpdateDemand")]
-        public IActionResult UpdateDemand([FromForm] UpdateDemandViewModel updateDemandViewModel)
+        public IActionResult UpdateDemand([FromBody] UpdateDemandViewModel updateDemandViewModel)
         {
             ProviderEntity providerEntity = new ProviderEntity();
             ProviderEntity providerEntity2 = new ProviderEntity();
@@ -869,26 +877,22 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.InstallmentPayment = updateDemandViewModel.InstallmentPayment;
                 
                 var demandOfferAdd = _demandOfferService.Add(demandOfferEntity);
+                if (!string.IsNullOrEmpty(updateDemandViewModel.FileContent) && !string.IsNullOrEmpty(updateDemandViewModel.FileName))
+                {
+                    OfferMediaEntity offerMediaEntity = SaveFileAndCreateOfferMedia(updateDemandViewModel.FileContent, updateDemandViewModel.FileName, demandOfferAdd.Id);
 
-                //if (updateDemandViewModel.Files != null && updateDemandViewModel.Files.Count > 0)
-                //{
+                    if (offerMediaEntity != null)
+                    {
+                        offerMediaEntity.IsDeleted = false;
+                        offerMediaEntity.CreatedDate = DateTime.Now;
+                        offerMediaEntity.UpdatedDate = null;
+                        offerMediaEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                        offerMediaEntity.UpdatedAt = null;
 
-                //    foreach (var file in updateDemandViewModel.Files)
-                //    {
-                //        string fileName = demandOfferAdd.Id + "_" + file.FileName;
-
-                //        OfferMediaEntity offerMediaEntity = SaveFileAndCreateOfferMedia(file, demandOfferAdd.Id);
-                //        offerMediaEntity.Path = offerMediaEntity.Path;
-                //        offerMediaEntity.FileName = file.FileName;
-                //        offerMediaEntity.IsDeleted = false;
-                //        offerMediaEntity.CreatedDate = DateTime.Now;
-                //        offerMediaEntity.UpdatedDate = null;
-                //        offerMediaEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-                //        offerMediaEntity.UpdatedAt = null;
-                //        _offerMediaService.AddOfferMedia(offerMediaEntity);
-
-                //    }
-                //}
+                        // Veritabanına kaydet
+                        _offerMediaService.AddOfferMedia(offerMediaEntity);
+                    }
+                }
                 #region
                 //if (demandOfferAdd.Id.IsNotNull())
                 //{
@@ -1013,7 +1017,6 @@ namespace Demand.Presentation.Controllers
                 {
                     demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
                     demandViewModel.File3Name = demandMediaEntities[2].FileName;
-
                 }
             }
             demandViewModel.DemandOffers = new List<DemandOfferViewModel>();
@@ -1026,6 +1029,12 @@ namespace Demand.Presentation.Controllers
                 demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
                 demandOfferViewModel.ExchangeRate = demandOfferEntity.ExchangeRate;
                 demandOfferViewModel.CurrencyTypeId = demandOfferEntity.CurrencyTypeId;
+                demandOfferViewModel.PaymentType = demandOfferEntity.PaymentType;
+                demandOfferViewModel.InstallmentPayment = demandOfferEntity.InstallmentPayment;
+                demandOfferViewModel.PartialPayment = demandOfferEntity.PartialPayment;
+                demandOfferViewModel.DeadlineDate = demandOfferEntity.DeadlineDate;
+                demandOfferViewModel.MaturityDate = demandOfferEntity.MaturityDate;
+
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))

@@ -361,8 +361,8 @@
                                     <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : 0)">
                                 </div>
                             </div>
-                          
-                             <div class="form-row">
+
+                            <div class="form-row">
                                 <div class="form-group">
                                     <label>Ödeme Türü:</label>
                                     <div style="display: inline-block; margin-left: 10px;">
@@ -378,7 +378,7 @@
                                         <label for="partial1">Parçalı</label>
                                     </div>
                                 </div>
-                            
+
                                 <div class="form-group" id="maturitySelectContainer1" style="display: none;">
                                     <label for="maturitySelect1">Vade Süresi:</label>
                                     <select id="maturitySelect1" name="maturityPeriod">
@@ -389,7 +389,7 @@
                                         <option value="4">90 Gün</option>
                                     </select>
                                 </div>
-                            
+
                                 <div class="form-group" id="partialSelectContainer1" style="display: none;">
                                     <label for="partialSelect1">Parçalı Vade:</label>
                                     <select id="partialSelect1" name="partialPeriod">
@@ -402,8 +402,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="description">Dosya Seç:</label>
-                                <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
+                                <label for="description1">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput1" name="fileInput1" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(1)" />
+                                    <span onclick="triggerFileInput(1)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName1" class="selected-file-name"></div>
                             </div>
 
                             <button onclick="validateAndSubmit(1)" type="button" class="update-button">Kaydet</button>
@@ -536,43 +540,54 @@
                                 </div>
                             </div>
 
-                               <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Ödeme Türü:</label>
-                                        <div style="display: inline-block; margin-left: 10px;">
-                                            <input type="radio" id="cash2" name="paymentType2" value="cash" checked onclick="togglePaymentOptions(2)">
-                                            <label for="cash2">Peşin</label>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 10px;">
-                                            <input type="radio" id="installment2" name="paymentType2" value="installment" onclick="togglePaymentOptions(2)">
-                                            <label for="installment2">Vadeli</label>
-                                        </div>
-                                        <div style="display: inline-block; margin-left: 10px;">
-                                            <input type="radio" id="partial2" name="paymentType2" value="partial" onclick="togglePaymentOptions(2)">
-                                            <label for="partial2">Parça</label>
-                                        </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ödeme Türü:</label>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="cash2" name="paymentType2" value="1" checked onclick="togglePaymentOptions(2)">
+                                        <label for="cash2">Peşin</label>
                                     </div>
-                                    <div class="form-group" id="maturitySelectContainer2" style="display: none;">
-                                        <label for="maturitySelect2">Vade Süresi:</label>
-                                        <select id="maturitySelect2" name="maturityPeriod2">
-                                            <option value="">Seçiniz</option>
-                                            <option value="15">15 Gün</option>
-                                            <option value="30">30 Gün</option>
-                                            <option value="45">45 Gün</option>
-                                            <option value="60">60 Gün</option>
-                                        </select>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="installment2" name="paymentType2" value="2" onclick="togglePaymentOptions(2)">
+                                        <label for="installment2">Vadeli</label>
                                     </div>
-                                    <div class="form-group" id="partialSelectContainer2" style="display: none;">
-                                        <label for="partialSelect2">Parça Numarası:</label>
-                                        <select id="partialSelect2" name="partialPeriod2">
-                                            <option value="">Seçiniz</option>
-                                            <option value="20">%20 Peşin - İşbitimi</option>
-                                            <option value="30">%30 Peşin - İşbitimi</option>
-                                            <option value="50">%50 Peşin - İşbitimi</option>
-                                        </select>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="partial2" name="paymentType2" value="3" onclick="togglePaymentOptions(2)">
+                                        <label for="partial2">Parça</label>
                                     </div>
                                 </div>
-                             <button onclick="validateAndSubmit(2)" type="button" class="update-button">Kaydet</button>
+                                <div class="form-group" id="maturitySelectContainer2" style="display: none;">
+                                    <label for="maturitySelect2">Vade Süresi:</label>
+                                    <select id="maturitySelect2" name="maturityPeriod2">
+                                        <option value="">Seçiniz</option>
+                                        <option value="15">15 Gün</option>
+                                        <option value="30">30 Gün</option>
+                                        <option value="45">45 Gün</option>
+                                        <option value="60">60 Gün</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="partialSelectContainer2" style="display: none;">
+                                    <label for="partialSelect2">Parça Numarası:</label>
+                                    <select id="partialSelect2" name="partialPeriod2">
+                                        <option value="">Seçiniz</option>
+                                        <option value="20">%20 Peşin - İşbitimi</option>
+                                        <option value="30">%30 Peşin - İşbitimi</option>
+                                        <option value="50">%50 Peşin - İşbitimi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="description2">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput2" name="fileInput2" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(2)" />
+                                    <span onclick="triggerFileInput(2)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName2" class="selected-file-name"></div>
+                            </div>
+
+                            <button onclick="validateAndSubmit(2)" type="button" class="update-button">Kaydet</button>
 
                             @if (Model.DemandOffers.Count > 1)
                             {
@@ -699,19 +714,19 @@
                                 </div>
                             </div>
 
-                           <div class="form-row">
+                            <div class="form-row">
                                 <div class="form-group">
                                     <label>Ödeme Türü:</label>
                                     <div style="display: inline-block; margin-left: 10px;">
-                                        <input type="radio" id="cash3" name="paymentType3" value="cash" checked onclick="togglePaymentOptions(3)">
+                                        <input type="radio" id="cash3" name="paymentType3" value="1" checked onclick="togglePaymentOptions(3)">
                                         <label for="cash3">Peşin</label>
                                     </div>
                                     <div style="display: inline-block; margin-left: 10px;">
-                                        <input type="radio" id="installment3" name="paymentType3" value="installment" onclick="togglePaymentOptions(3)">
+                                        <input type="radio" id="installment3" name="paymentType3" value="2" onclick="togglePaymentOptions(3)">
                                         <label for="installment3">Vadeli</label>
                                     </div>
                                     <div style="display: inline-block; margin-left: 10px;">
-                                        <input type="radio" id="partial3" name="paymentType3" value="partial" onclick="togglePaymentOptions(3)">
+                                        <input type="radio" id="partial3" name="paymentType3" value="3" onclick="togglePaymentOptions(3)">
                                         <label for="partial3">Parça</label>
                                     </div>
                                 </div>
@@ -735,8 +750,17 @@
                                     </select>
                                 </div>
                             </div>
-                            @*                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
-                        *@                            <button onclick="validateAndSubmit(3)" type="button" class="update-button">Kaydet</button>
+
+
+                            <div class="form-group">
+                                <label for="description3">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput3" name="fileInput3" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(3)" />
+                                    <span onclick="triggerFileInput(3)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName3" class="selected-file-name"></div>
+                            </div>
+                            <button onclick="validateAndSubmit(3)" type="button" class="update-button">Kaydet</button>
                             @if (Model.DemandOffers.Count > 2)
                             {
                                 <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[2].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
@@ -861,6 +885,41 @@
     .icon .icon-shape.active::after {
         transform: translate(-50%, -50%) rotate(90deg);
         transition: all 0.5s ease;
+    }
+
+    .fancy-file-input {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .fancy-file-input input[type="file"] {
+            display: none;
+        }
+
+        .fancy-file-input:hover {
+            background-color: #0056b3;
+        }
+
+        .fancy-file-input span {
+            display: block;
+            font-size: 16px;
+        }
+
+        .fancy-file-input input[type="file"]:focus + span {
+            outline: none;
+        }
+
+    .fancy-file-input label {
+        font-size: 14px;
+        color: white;
     }
 
     .edit-button {
@@ -1004,6 +1063,12 @@
 
     .form-group.file-group {
         width: calc(33.3333% - 10px);
+    }
+
+    .selected-file-name {
+        margin-left: 10px; /* Sola kaydırmak için */
+        color: white; /* Metni beyaz yapmak için */
+        font-size: 14px; /* İsteğe bağlı, font boyutunu ayarlayabilirsiniz */
     }
 </style>
 @{
@@ -1169,31 +1234,41 @@
         });
     });
 
-  function togglePaymentOptions(group) {
-    var maturitySelectContainer = document.getElementById("maturitySelectContainer" + group);
-    var partialSelectContainer = document.getElementById("partialSelectContainer" + group);
-    var isInstallment = document.getElementById("installment" + group).checked;
-    var isPartial = document.getElementById("partial" + group).checked;
-    var isCash = document.getElementById("cash" + group).checked;
-
-    maturitySelectContainer.style.display = "none";
-    partialSelectContainer.style.display = "none";
-
-    if (isInstallment) {
-        maturitySelectContainer.style.display = "block";
-    } else if (isPartial) {
-        partialSelectContainer.style.display = "block";
+    function triggerFileInput(offerId) {
+        document.getElementById('fileInput' + offerId).click();
     }
 
-    if (isCash) {
-        document.getElementById("maturitySelect" + group).value = "";
-        document.getElementById("partialSelect" + group).value = "";
-    } else if (isInstallment) {
-        document.getElementById("partialSelect" + group).value = "";
-    } else if (isPartial) {
-        document.getElementById("maturitySelect" + group).value = "";
+    function showFileName(offerId) {
+        var fileInput = document.getElementById('fileInput' + offerId);
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : '';
+        document.getElementById('selectedFileName' + offerId).textContent = fileName;
     }
-}
+
+    function togglePaymentOptions(group) {
+        var maturitySelectContainer = document.getElementById("maturitySelectContainer" + group);
+        var partialSelectContainer = document.getElementById("partialSelectContainer" + group);
+        var isInstallment = document.getElementById("installment" + group).checked;
+        var isPartial = document.getElementById("partial" + group).checked;
+        var isCash = document.getElementById("cash" + group).checked;
+
+        maturitySelectContainer.style.display = "none";
+        partialSelectContainer.style.display = "none";
+
+        if (isInstallment) {
+            maturitySelectContainer.style.display = "block";
+        } else if (isPartial) {
+            partialSelectContainer.style.display = "block";
+        }
+
+        if (isCash) {
+            document.getElementById("maturitySelect" + group).value = "";
+            document.getElementById("partialSelect" + group).value = "";
+        } else if (isInstallment) {
+            document.getElementById("partialSelect" + group).value = "";
+        } else if (isPartial) {
+            document.getElementById("maturitySelect" + group).value = "";
+        }
+    }
     function openOfferPage(demandId, offerNumber) {
         window.location.href = '/api/Demands/OfferPage?demandId=' + demandId + '&DemandOfferId=' + offerNumber;
     }
@@ -1243,7 +1318,8 @@
 
 
         if (notRegisteredProvider) {
-            selectedProviderId = null;}
+            selectedProviderId = null;
+        }
 
         return {
             OfferCompanyName: offerCompanyName,
@@ -1258,15 +1334,62 @@
             OfferCompanyId: selectedProviderId,
             deadlineDate: deadlineDate,
             maturityDate: maturityDate,
-            paymentType : paymentType,
-            InstallmentPayment : InstallmentPayment,
-            PartialPayment : PartialPayment
+            paymentType: paymentType,
+            InstallmentPayment: InstallmentPayment,
+            PartialPayment: PartialPayment
         };
-
     }
 
-    
+    // function getFileData() {
+    //     return new Promise(function (resolve, reject) {
+    //         var fileInput = document.getElementById('fileInput');
+    //         if (fileInput.files.length === 0) {
+    //             resolve(null);
+    //             return;
+    //         }
 
+    //         var file = fileInput.files[0];
+    //         var reader = new FileReader();
+
+    //         reader.onload = function (event) {
+    //             var fileContent = event.target.result.split(',')[1];
+    //             resolve(fileContent);
+    //         };
+
+    //         reader.onerror = function (error) {
+    //             reject(error);
+    //         };
+
+    //         reader.readAsDataURL(file);
+    //     });
+    // }
+
+    function getFileData(offerId) {
+        return new Promise(function (resolve, reject) {
+            var fileInput = document.getElementById('fileInput' + offerId);
+            if (fileInput.files.length === 0) {
+                resolve({ fileName: null, fileContent: null });
+                return;
+            }
+
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                var fileContent = event.target.result.split(',')[1];
+                resolve({
+                    fileName: file.name,
+                    fileContent: fileContent
+                });
+            };
+
+            reader.onerror = function (error) {
+                reject(error);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
 
     function validateAndSubmit(offerNumber) {
         var currencyType1 = $('#offerCurrencyType1').val();
@@ -1293,14 +1416,81 @@
     }
 
 
+    // function updateDemand(offerNumber) {
+    //     var demandId = @Model.DemandId;
+    //     var companyId = $('#companyName').val();
+    //     var locationId = $('#location').val();
+    //     var departmentId = $('#department').val();
+    //     var description = $('#description').val();
+
+    //     var offer1Data = getOfferData(offerNumber);
+
+    //     var exchangeRate = '';
+    //     if (offerNumber === 1) {
+    //         exchangeRate = $('#exchangeRate1').val().trim();
+    //     } else if (offerNumber === 2) {
+    //         exchangeRate = $('#exchangeRate2').val().trim();
+    //     } else if (offerNumber === 3) {
+    //         exchangeRate = $('#exchangeRate3').val().trim();
+    //     }
+
+    //     // var fileInputs = document.querySelectorAll('input[type="file"]');
+    //     // for (var i = 0; i < fileInputs.length; i++) {
+    //     //     var fileInput = fileInputs[i];
+    //     //     if (fileInput.files.length > 0) {
+    //     //         for (var j = 0; j < fileInput.files.length; j++) {
+    //     //             formData.append('Files', fileInput.files[j]);
+    //     //             formData.append('FileNames', fileInput.files[j].name);
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     var updateDemandViewModel = {
+    //         DemandId: demandId,
+    //         CompanyId: companyId,
+    //         CompanyLocationId: locationId,
+    //         DepartmentId: departmentId,
+    //         Description: description,
+    //         OfferCompanyName: offer1Data.OfferCompanyName,
+    //         OfferCompanyPhone: offer1Data.OfferCompanyPhone,
+    //         OfferCompanyAddress: offer1Data.OfferCompanyAddress,
+    //         IsProvider1Registered: offer1Data.IsProviderRegistered,
+    //         OfferCurrencyType: offer1Data.OfferCurrencyType,
+    //         OfferAmount: offer1Data.OfferAmount,
+    //         OfferMaterial: offer1Data.OfferMaterial,
+    //         OfferPrice: offer1Data.OfferPrice,
+    //         OfferTotalPrice: offer1Data.OfferTotalPrice,
+    //         OfferCompanyId: offer1Data.OfferCompanyId,
+    //         ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
+    //         deadlineDate: offer1Data.deadlineDate,
+    //         maturityDate: offer1Data.maturityDate,
+    //         paymentType : offer1Data.paymentType !== '' ?offer1Data.paymentType : null ,
+    //         InstallmentPayment : offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null
+    //         PartialPayment : offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null ,
+    //     };
+
+    //     console.log(updateDemandViewModel);
+    //     $.ajax({
+    //         url: '/api/Demands/UpdateDemand',
+    //         type: 'POST',
+    //         contentType: 'application/json',
+    //         data: JSON.stringify(updateDemandViewModel),
+    //         success: function (result) {
+    //             toastr.success("Demand Offer Created", "Success");
+    //             location.reload();
+    //         },
+    //         error: function (error) {
+    //             console.error('Error updating demand:', error);
+    //         }
+    //     });
+    // }
+
     function updateDemand(offerNumber) {
         var demandId = @Model.DemandId;
         var companyId = $('#companyName').val();
         var locationId = $('#location').val();
         var departmentId = $('#department').val();
         var description = $('#description').val();
-
-        var offer1Data = getOfferData(offerNumber);
 
         var exchangeRate = '';
         if (offerNumber === 1) {
@@ -1311,58 +1501,59 @@
             exchangeRate = $('#exchangeRate3').val().trim();
         }
 
-        // var fileInputs = document.querySelectorAll('input[type="file"]');
-        // for (var i = 0; i < fileInputs.length; i++) {
-        //     var fileInput = fileInputs[i];
-        //     if (fileInput.files.length > 0) {
-        //         for (var j = 0; j < fileInput.files.length; j++) {
-        //             formData.append('Files', fileInput.files[j]);
-        //             formData.append('FileNames', fileInput.files[j].name);
-        //         }
-        //     }
-        // }
+        var offer1Data = getOfferData(offerNumber);
 
-        var updateDemandViewModel = {
-            DemandId: demandId,
-            CompanyId: companyId,
-            CompanyLocationId: locationId,
-            DepartmentId: departmentId,
-            Description: description,
-            OfferCompanyName: offer1Data.OfferCompanyName,
-            OfferCompanyPhone: offer1Data.OfferCompanyPhone,
-            OfferCompanyAddress: offer1Data.OfferCompanyAddress,
-            IsProvider1Registered: offer1Data.IsProviderRegistered,
-            OfferCurrencyType: offer1Data.OfferCurrencyType,
-            OfferAmount: offer1Data.OfferAmount,
-            OfferMaterial: offer1Data.OfferMaterial,
-            OfferPrice: offer1Data.OfferPrice,
-            OfferTotalPrice: offer1Data.OfferTotalPrice,
-            OfferCompanyId: offer1Data.OfferCompanyId,
-            ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
-            deadlineDate: offer1Data.deadlineDate,
-            maturityDate: offer1Data.maturityDate,
-            paymentType : offer1Data.paymentType !== '' ?offer1Data.paymentType : null ,
-            InstallmentPayment : offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null
-            PartialPayment : offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null ,
-        };
 
-        console.log(updateDemandViewModel);
-        $.ajax({
-            url: '/api/Demands/UpdateDemand',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(updateDemandViewModel),
-            success: function (result) {
-                toastr.success("Demand Offer Created", "Success");
-                location.reload();
-            },
-            error: function (error) {
-                console.error('Error updating demand:', error);
+        getFileData(offerNumber).then(function (fileData) {
+            offer1Data.fileContent = fileData.fileContent;
+            offer1Data.fileName = fileData.fileName;
+
+            if (fileData.fileContent) {
+                offer1Data.FileContent = fileData.fileContent;
+                offer1Data.FileName = fileData.fileName;
             }
+
+            var updateDemandViewModel = {
+                DemandId: demandId,
+                CompanyId: companyId,
+                CompanyLocationId: locationId,
+                DepartmentId: departmentId,
+                Description: description,
+                OfferCompanyName: offer1Data.OfferCompanyName,
+                OfferCompanyPhone: offer1Data.OfferCompanyPhone,
+                OfferCompanyAddress: offer1Data.OfferCompanyAddress,
+                IsProvider1Registered: offer1Data.IsProviderRegistered,
+                OfferCurrencyType: offer1Data.OfferCurrencyType,
+                OfferAmount: offer1Data.OfferAmount,
+                OfferMaterial: offer1Data.OfferMaterial,
+                OfferPrice: offer1Data.OfferPrice,
+                OfferTotalPrice: offer1Data.OfferTotalPrice,
+                OfferCompanyId: offer1Data.OfferCompanyId,
+                ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
+                deadlineDate: offer1Data.deadlineDate,
+                maturityDate: offer1Data.maturityDate,
+                paymentType: offer1Data.paymentType !== '' ? offer1Data.paymentType : null,
+                InstallmentPayment: offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null,
+                PartialPayment: offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null,
+                FileContent: offer1Data.fileContent,
+                FileName: offer1Data.fileName
+            };
+
+            $.ajax({
+                url: '/api/Demands/UpdateDemand',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(updateDemandViewModel),
+                success: function (response) {
+                    console.log("Dosya ve veriler başarıyla gönderildi.");
+                },
+                error: function (error) {
+                    console.error("Bir hata oluştu:", error);
+                }
+            });
         });
     }
 
-  
 
     function changeStatus(demandId) {
         var demandStatusChangeViewModel = {

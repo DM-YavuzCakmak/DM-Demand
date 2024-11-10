@@ -2,8 +2,8 @@
 
 
 textarea {
-    overflow-y: auto; /* Dikey kaydırma */
-    overflow-x: hidden; /* Yatay kaydırmayı gizle */
+    overflow-y: auto; 
+    overflow-x: hidden;
 }
 
 #logo {

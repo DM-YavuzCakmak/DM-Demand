@@ -33,12 +33,14 @@ namespace Demand.Domain.ViewModels
         public bool IsProvider1Registered { get; set; }
         public bool IsProvider2Registered { get; set; }
         public bool IsProvider3Registered { get; set; }
-        public List<FileUpload>? Files { get; set; }
+        public string? FileName { get; set; }
+        public string? FileContent { get; set; }
     }
 
-    public class FileUpload
-    {
-        public string FileName { get; set; }
-        public string FileData { get; set; }
-    }
+    //public class FileUpload
+    //{
+    //    public string FileName { get; set; }
+    //    public string FileData { get; set; }
+
+    //}
 }

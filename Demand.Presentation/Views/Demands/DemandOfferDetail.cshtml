@@ -99,9 +99,9 @@
             font-size: 18px;
         }
 
-            .decline-button:hover {
-                background-color: #c9302c;
-            }
+        .decline-button:hover {
+            background-color: #c9302c;
+        }
 
         .button-group {
             display: flex;
@@ -541,43 +541,22 @@
                 }
             </div>
 
-
-            <div class="form-row">
-                @if (Model.ProformoFile1Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.ProformoFile1Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.ProformoFile1Name" class="btn btn-primary">Proformo Eki İndir</a>
-                }
-                @if (Model.ProformoFile2Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.ProformoFile2Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.ProformoFile2Name" class="btn btn-primary">Proformo Eki İndir</a>
-                }
-                @if (Model.ProformoFile3Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.ProformoFile3Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.ProformoFile3Name" class="btn btn-primary">Proformo Eki İndir</a>
-                }
-            </div>
-
-
             <div class="pricing-tables">
                 <h2 style="color:white;font-weight:bold;text-align:center">@Model.ConfirmingNote</h2>
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)
                     {
-                                                <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4 col-md-4">
                             <div class="plan">
                                 <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 2 ? "orange" : Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 1 ? "black" :Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 0 ? "black" :  Model.DemandOffers[0].Status == 1 ? "red" : "green");">
                                     <h2>Teklif 1</h2>
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
+@*                                     <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
+ *@                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[0].SupplierName.Length))</li>
+
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -690,7 +669,14 @@
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[0].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile1Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile1Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile1Name" class="btn btn-primary" style="margin-left: 100px;"> Proformo Eki İndir</a>
+                            }
                         </div>
+
                     }
 
                     @if (@Model.DemandOffers.Count > 1)
@@ -702,7 +688,7 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[1].SupplierName.Length))</li>
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -801,7 +787,7 @@
                                     }
                                 </div>
                                 <div class="DateDetail">
-                                    @if (Model.DemandOffers[1].DeadlineDate != null || Model.DemandOffers[1].MaturityDate !=null)
+                                    @if (Model.DemandOffers[1].DeadlineDate != null || Model.DemandOffers[1].MaturityDate != null)
                                     {
                                         <span class="offer-label">Termin Tarihi :@Model.DemandOffers[1].DeadlineDate?.ToString("dd/MM/yyyy") </span>
 
@@ -815,7 +801,14 @@
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[1].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile2Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile2Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile2Name" class="btn btn-primary" style="margin-left: 100px;">Proformo Eki İndir</a>
+                            }
                         </div>
+
                     }
 
                     @if (@Model.DemandOffers.Count > 2)
@@ -828,7 +821,8 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[2].SupplierName.Length))</li>
+
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -937,12 +931,18 @@
                                         <span class="offer-label">Vade Tarihi :@Model.DemandOffers[2].MaturityDate?.ToString("dd/MM/yyyy") </span>
                                     }
                                 </div>
-                                
+
                                 @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[2].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile3Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile3Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile3Name" class="btn btn-primary"  style="margin-left: 100px;">Proformo Eki İndir</a>
+                            }
                         </div>
                     }
                 </div>

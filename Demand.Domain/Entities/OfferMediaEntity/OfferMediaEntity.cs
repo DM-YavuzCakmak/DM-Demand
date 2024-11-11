@@ -15,19 +15,15 @@ namespace Demand.Domain.Entities.OfferMediaEntity
     {
         [Required]
         public long OfferId { get; set; }
-
         [MaxLength]
         public string Path { get; set; }
-
         public string? FileName { get; set; }
-
         public bool IsDeleted { get; set; } = false;
-
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
-
         public long? CreatedAt { get; set; }
         public long? UpdatedAt { get; set; }
+        public long? DemandId { get; set; }
 
         [ForeignKey("OfferId")]
         public virtual DemandOfferEntity.DemandOfferEntity DemandOffer { get; set; }

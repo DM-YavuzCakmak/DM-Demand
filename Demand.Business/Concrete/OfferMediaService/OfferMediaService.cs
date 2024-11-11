@@ -35,7 +35,7 @@ namespace Demand.Business.Concrete.OfferMediaService
 
         public IList<OfferMediaEntity> GetByDemandId(long id)
         {
-            return _offerMediaRepository.GetList(x => x.OfferId == id);
+            return _offerMediaRepository.GetList(x => x.DemandId == id);
         }
     }
 }

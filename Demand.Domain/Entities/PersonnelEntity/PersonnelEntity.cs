@@ -10,6 +10,7 @@ public class PersonnelEntity : BaseEntity
     public string Email { get; set; }
     public string Password { get; set; }
     public long? ParentId { get; set; }
+    public int? DepartmentId { get; set; }
 
     [ForeignKey("ParentId")]
     public virtual PersonnelEntity Parent { get; set; }

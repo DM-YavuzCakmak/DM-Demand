@@ -406,6 +406,7 @@ namespace Demand.Presentation.Controllers
 
             for (int i = 0; i < demandViewModel.ProductName.Count; i++)
             {
+                var type = demandViewModel.Type[i] == "Lütfen seçiniz" ? null : demandViewModel.Type[i];
                 var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
                 var subcategory = demandViewModel.Subcategory[i] == null ? null : demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
@@ -415,15 +416,16 @@ namespace Demand.Presentation.Controllers
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
-                    NebimCategoryId = Convert.ToInt32(category),
-                    NebimSubCategoryId = Convert.ToInt32(subcategory),
-                    Quantity = Convert.ToInt32(quantity),
+                    NebimCategoryId = Convert.ToInt32(category).IsNotNull() && Convert.ToInt32(category) !=0 ? Convert.ToInt32(category): null,
+                    NebimSubCategoryId = Convert.ToInt32(subcategory).IsNotNull() && Convert.ToInt32(subcategory)!=0 ? Convert.ToInt32(subcategory) :null ,
+                    Quantity = Convert.ToInt32(quantity).IsNotNull() && Convert.ToInt32(quantity) != 0 ? Convert.ToInt32(quantity) : null,
                     ProductName = productname,
                     ProductCode = productcode,
                     Unit = unit,
                     IsDeleted = false,
                     CreatedDate = DateTime.Now,
                     UpdatedDate = null,
+                    ProductCategoryId = Convert.ToInt32(type).IsNotNull() && Convert.ToInt32(type)!= 0 ? Convert.ToInt32(type) : null,
                     CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
                     UpdatedAt = null,
                     IsFirst = true,

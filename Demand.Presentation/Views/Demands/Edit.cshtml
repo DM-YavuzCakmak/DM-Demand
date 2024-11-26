@@ -350,7 +350,7 @@
                             <div class="form-row">
 
                                 <div class="form-group">
-                                    <label for="maturityDate1">Vade Tarihi: </label>
+                                    <label for="maturityDate1">Ödeme Tarihi: </label>
                                     <input type="date" id="maturityDate1" name="maturityDate1"
                                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                            value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
@@ -528,7 +528,7 @@
                             <div class="form-row">
 
                                 <div class="form-group">
-                                    <label for="maturityDate2">Vade Tarihi: </label>
+                                    <label for="maturityDate2">Ödeme Tarihi: </label>
                                     <input type="date" id="maturityDate2" name="maturityDate2"
                                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                            value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
@@ -703,7 +703,7 @@
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="maturityDate3">Vade Tarihi: </label>
+                                    <label for="maturityDate3">Ödeme Tarihi: </label>
                                     <input type="date" id="maturityDate3" name="maturityDate3"
                                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                            value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">

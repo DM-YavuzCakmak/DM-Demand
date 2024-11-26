@@ -83,7 +83,7 @@
             border-radius: 10px;
             box-sizing: border-box;
         }
-        
+
 
         #addButton, #removeButton, #sendButton {
             margin-top: 10px;
@@ -98,6 +98,39 @@
         }
 
             #addButton:hover, #removeButton:hover, #sendButton:hover {
+                background-color: #45a049;
+            }
+
+
+        #ExcellButton {
+            margin-top: 10px;
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            #ExcellButton:hover {
+                background-color: #45a049;
+            }
+        #FileButton {
+            display: inline-block;
+            margin-top: 10px;
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            #FileButton:hover {
                 background-color: #45a049;
             }
 
@@ -126,124 +159,124 @@
             <section class="tableBody">
                 <div class="table-container">
 
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>NO</th>
-                            <th>TÜR</th>
-                            <th>KATEGORİ</th>
-                            <th>ALT KATEGORİ</th>
-                            <th>ÜRÜN</th>
-                            <th>ÜRÜN KODU</th>
-                            <th>ÜRÜN ADI</th>
-                            <th>MİKTAR</th>
-                            <th>BİRİM</th>
-                            <th>FİYAT</th>
-                            <th>TOPLAM FİYAT</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var offerRequestViewModel in Model)
-                        {
+                    <table id="dataTable">
+                        <thead>
                             <tr>
-                                <td><input type="hidden" name="requestInfoId[]" class="requestInfoId" value="@offerRequestViewModel.RequestInfoId" /></td>
-                                <td>
-                                    <div class="select-wrapper">
-                                        <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
-                                            @if (Model[0].ProductCategories != null)
+                                <th>NO</th>
+                                <th>TÜR</th>
+                                <th>KATEGORİ</th>
+                                <th>ALT KATEGORİ</th>
+                                <th>ÜRÜN</th>
+                                <th>ÜRÜN KODU</th>
+                                <th>ÜRÜN ADI</th>
+                                <th>MİKTAR</th>
+                                <th>BİRİM</th>
+                                <th>FİYAT</th>
+                                <th>TOPLAM FİYAT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var offerRequestViewModel in Model)
+                            {
+                                <tr>
+                                    <td><input type="hidden" name="requestInfoId[]" class="requestInfoId" value="@offerRequestViewModel.RequestInfoId" /></td>
+                                    <td>
+                                        <div class="select-wrapper">
+                                            <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
+                                                @if (Model[0].ProductCategories != null)
+                                                {
+                                                    <option>Lütfen seçiniz</option>
+                                                    foreach (var productCategory in Model[0].ProductCategories)
+                                                    {
+                                                        if (productCategory.Id == offerRequestViewModel.ProductCategoryId)
+                                                        {
+                                                            <option value="@productCategory.Id" selected>@productCategory.ProductCategoryName </option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@productCategory.Id">@productCategory.ProductCategoryName </option>
+                                                        }
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
+                                            @if (Model[0].NebimCategoryModels != null)
                                             {
                                                 <option>Lütfen seçiniz</option>
-                                                foreach (var productCategory in Model[0].ProductCategories)
+                                                foreach (var product in Model[0].NebimCategoryModels)
                                                 {
-                                                    if (productCategory.Id ==offerRequestViewModel.ProductCategoryId)
+                                                    if (product.ProductHierarchyLevel01Code == offerRequestViewModel.NebimCategoryId.ToString())
                                                     {
-                                                        <option value="@productCategory.Id" selected>@productCategory.ProductCategoryName </option>
+                                                        <option value="@product.ProductHierarchyLevel01Code" selected>@product.ProductHierarchyLevel01Description </option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@productCategory.Id">@productCategory.ProductCategoryName </option>
+                                                        <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description </option>
                                                     }
                                                 }
                                             }
                                         </select>
-                                    </div>
-                                </td>
-                                <td>
-                                    <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
-                                        @if (Model[0].NebimCategoryModels != null)
-                                        {
-                                            <option>Lütfen seçiniz</option>
-                                            foreach (var product in Model[0].NebimCategoryModels)
+                                    </td>
+                                    <td>
+                                        <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
+                                            @if (Model[0].NebimSubCategoryModels != null)
                                             {
-                                                if (product.ProductHierarchyLevel01Code == offerRequestViewModel.NebimCategoryId.ToString())
+                                                <option>Lütfen seçiniz</option>
+                                                foreach (var product in Model[0].NebimSubCategoryModels)
                                                 {
-                                                    <option value="@product.ProductHierarchyLevel01Code" selected>@product.ProductHierarchyLevel01Description </option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description </option>
+                                                    if (product.ProductHierarchyLevel02Code == offerRequestViewModel.NebimSubCategoryId.ToString())
+                                                    {
+                                                        <option value="@product.ProductHierarchyLevel02Code" selected>@product.ProductHierarchyLevel02Description </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@product.ProductHierarchyLevel02Code">@product.ProductHierarchyLevel02Description </option>
+                                                    }
                                                 }
                                             }
-                                        }
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
-                                        @if (Model[0].NebimSubCategoryModels != null)
-                                        {
-                                            <option>Lütfen seçiniz</option>
-                                            foreach (var product in Model[0].NebimSubCategoryModels)
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
+                                            @if (Model[0].NebimProductModels != null)
                                             {
-                                                if (product.ProductHierarchyLevel02Code == offerRequestViewModel.NebimSubCategoryId.ToString())
+                                                <option>Lütfen seçiniz</option>
+                                                foreach (var product in Model[0].NebimProductModels)
                                                 {
-                                                    <option value="@product.ProductHierarchyLevel02Code" selected>@product.ProductHierarchyLevel02Description </option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@product.ProductHierarchyLevel02Code">@product.ProductHierarchyLevel02Description </option>
+                                                    if (product.ProductCode == offerRequestViewModel.ProductCode)
+                                                    {
+                                                        <option value="@product.ProductCode" selected>@product.ProductDescription </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@product.ProductCode">@product.ProductDescription </option>
+                                                    }
                                                 }
                                             }
-                                        }
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
-                                        @if (Model[0].NebimProductModels != null)
-                                        {
-                                            <option>Lütfen seçiniz</option>
-                                            foreach (var product in Model[0].NebimProductModels)
-                                            {
-                                                if (product.ProductCode == offerRequestViewModel.ProductCode)
-                                                {
-                                                    <option value="@product.ProductCode" selected>@product.ProductDescription </option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@product.ProductCode">@product.ProductDescription </option>
-                                                }
-                                            }
-                                        }
-                                    </select>
-                                </td>
-                                <td><input type="text" name="productCode[]" class="productCode" readonly value="@offerRequestViewModel.ProductCode" /></td>
-                                <td><input type="text" name="productName[]" class="productName" readonly value="@offerRequestViewModel.ProductName" /></td>
-                                <td><input type="text" name="quantity[]" class="quantity" readonly value="@offerRequestViewModel.Quantity" /></td>
-                                <td>
-                                    <select name="unit[]" class="unit">
-                                        <option value="@offerRequestViewModel.Unit">@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</option>
-                                    </select>
-                                </td>
-                                @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@
-                                <td><input type="text" name="price[]" class="price" value="@offerRequestViewModel.Price" /></td>
-                                <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice" /></td>
-                                @*                                 <td>@offerRequestViewModel.Currency</td>
-                            *@
-                                <td><input type="text" name="currency[]" class="currency" readonly value="@offerRequestViewModel.Currency" /></td>
-                                <td><input type="hidden" name="offerRequestId[]" value="@(offerRequestViewModel.OfferRequestId ?? 0)" /></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="productCode[]" class="productCode" readonly value="@offerRequestViewModel.ProductCode" /></td>
+                                    <td><input type="text" name="productName[]" class="productName" readonly value="@offerRequestViewModel.ProductName" /></td>
+                                    <td><input type="text" name="quantity[]" class="quantity" readonly value="@offerRequestViewModel.Quantity" /></td>
+                                    <td>
+                                        <select name="unit[]" class="unit">
+                                            <option value="@offerRequestViewModel.Unit">@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</option>
+                                        </select>
+                                    </td>
+                                    @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@
+                                    <td><input type="text" name="price[]" class="price" value="@offerRequestViewModel.Price" /></td>
+                                    <td><input type="text" name="totalPrice[]" class="totalprice" readonly value="@offerRequestViewModel.TotalPrice" /></td>
+                                    @*                                 <td>@offerRequestViewModel.Currency</td>
+                                *@
+                                    <td><input type="text" name="currency[]" class="currency" readonly value="@offerRequestViewModel.Currency" /></td>
+                                    <td><input type="hidden" name="offerRequestId[]" value="@(offerRequestViewModel.OfferRequestId ?? 0)" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
                 <div class="button-group" style=" margin-right:15px; margin-top:15px; text-align: right; margin-bottom:10px;">
                     <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
@@ -251,11 +284,18 @@
                     <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
                 </div>
             </section>
-
         </form>
+        <div class="button-group" style=" margin-right:15px; margin-top:15px; text-align: right; margin-bottom:10px;">
+            <button id="ExcellButton" onclick="exportToExcel()">Excel İndir</button>
+            <input type="file" id="excel-file" style="display: none;" accept=".xls,.xlsx" />
+            <label for="excel-file" id="FileButton">Excelden Yükle</label>
+        </div>
+
     </main>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
     <script src="script.js"></script>
 </body>
 </html>
@@ -275,6 +315,7 @@
         max-height: 480px;
         overflow-y: auto;
     }
+
     #sendButton {
         background-color: #4CAF50;
         color: #fff;
@@ -285,14 +326,14 @@
     }
 
     #siteform {
-        width: 90%; 
-        max-width: 100%; 
-        padding: 20px; 
+        width: 250%;
+        max-width: 100%;
+        padding: 20px;
         box-sizing: border-box;
     }
 
     select.type {
-        width: 130px; 
+        width: 130px;
     }
 </style>
 
@@ -467,16 +508,16 @@
                 input.className = cell;
 
                 if (cell === 'price') {
+                    input.value = '0';
                     input.addEventListener('input', function () {
                         var row = this.closest('tr');
                         var quantity = parseFloat(row.cells[7].childNodes[0].value) || 0;
-                        var price = parseFloat(this.value) || 0;
+                        var price = parseFloat(this.value) || 0
                         var totalPrice = quantity * price;
                         var totalPriceInput = row.cells[10].childNodes[0];
                         totalPriceInput.value = totalPrice.toFixed(2);
                     });
                 }
-
                 newCell.className = "form-group";
                 newCell.appendChild(input);
             }
@@ -568,5 +609,92 @@
             }
         });
     }
+    function exportToExcel() {
+        const table = document.getElementById("dataTable");
+        const rows = table.querySelectorAll("tbody tr");
+        const data = [];
+
+        rows.forEach(row => {
+            const productCode = row.querySelector(".productCode").value.trim();
+            const productName = row.querySelector(".productName").value.trim();
+            const price = row.querySelector(".price").value.trim();
+
+            if (productCode || productName || price) {
+                data.push({
+                    ProductCode: productCode || "",
+                    ProductName: productName || "",
+                    Price: price || ""
+                });
+            }
+        });
+        console.log(data);
+        fetch('/Export/ExportToExcelAjax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error("Excel dosyası oluşturulamadı.");
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "UrunListesi.xlsx";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error(error));
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            rows.forEach(function (row, index) {
+                if (index > 0) {
+                    const productCode = row[0] || "";
+                    const productName = row[1] || "";
+                    const price = row[2] || 0;
+
+                    const rowElement = document.querySelector(`#dataTable tbody tr:nth-child(${index})`);
+                    if (rowElement) {
+                        const priceInput = rowElement.querySelector(".price");
+                        const quantityInput = rowElement.querySelector(".quantity");
+                        const totalPriceInput = rowElement.querySelector(".totalprice");
+
+                        if (priceInput) {
+                            priceInput.value = price;
+                        }
+                        if (quantityInput) {
+                            const quantity = parseFloat(quantityInput.value) || 0;
+                            const totalPrice = quantity * price;
+                            if (totalPriceInput) {
+                                totalPriceInput.value = totalPrice.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            });
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    document.getElementById('excel-file').addEventListener('change', handleFileSelect, false);
+
+
 </script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>

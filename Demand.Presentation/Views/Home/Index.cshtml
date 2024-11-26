@@ -135,6 +135,7 @@
                 <div class="form-group">
                     <label for="location">Lokasyon:</label>
                     <select id="location" name="location" onchange="updateLocationId()">
+
                     </select>
                     <input type="hidden" id="locationId" name="locationId" />
                 </div>
@@ -577,15 +578,6 @@
         resize: none;
     }
 
-    /*     #sendButton {
-                background-color: #4CAF50;
-                color: #fff;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            } */
-
     .form-group {
         width: calc(50% - 10px);
         margin-bottom: 10px;
@@ -617,48 +609,68 @@
     $(document).ready(function () {
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();
+
             $.ajax({
                 url: '/api/CompanyLocations/GetLocations?companyId=' + selectedCompanyId,
                 type: 'GET',
                 success: function (data) {
                     $('#location').empty();
-                    $.each(data.data, function (index, item) {
-                        $('#location').append($('<option>', {
-                            value: item.id,
-                            text: item.name
-                        }));
-                    });
+                    $('#locationUnits').empty();
+                    $('#location').append('<option value="">Lütfen seçiniz</option>');
+                    $('#locationUnits').append('<option value="">Lütfen seçiniz</option>');
+
+                    if (data.data && data.data.length > 0) {
+                        $.each(data.data, function (index, item) {
+                            $('#location').append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+
+                        var firstLocationId = data.data[0].id;
+                        $('#location').val(firstLocationId);
+                        $('#locationId').val(firstLocationId);
+                        fetchLocationUnits(firstLocationId);
+                    }
                 },
                 error: function (error) {
                     console.error('Error fetching locations:', error);
                 }
             });
         });
-
 
         $('#location').change(function () {
             var selectedLocationId = $(this).val();
             console.log("selectedLocationId", selectedLocationId);
+            fetchLocationUnits(selectedLocationId);
+        });
+
+        function fetchLocationUnits(locationId) {
             $.ajax({
-                url: '/api/CompanyLocationUnits/GetLocationUnits?locationId=' + selectedLocationId,
+                url: '/api/CompanyLocationUnits/GetLocationUnits?locationId=' + locationId,
                 type: 'GET',
                 success: function (data) {
                     $('#locationUnits').empty();
-                    $.each(data.data, function (index, item) {
-                        $('#locationUnits').append($('<option>', {
-                            value: item.id,
-                            text: item.name
-                        }));
-                    });
+                    $('#locationUnits').append('<option value="">Lütfen seçiniz</option>');
+
+                    if (data.data && data.data.length > 0) {
+                        $.each(data.data, function (index, item) {
+                            $('#locationUnits').append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        });
+
+                        var firstLocationUnitId = data.data[0].id;
+                        $('#locationUnits').val(firstLocationUnitId);
+                        $('#locationUnitsId').val(firstLocationUnitId);
+                    }
                 },
                 error: function (error) {
-                    console.error('Error fetching locations:', error);
+                    console.error('Error fetching location units:', error);
                 }
             });
-        });
-
-
-
+        }
 
         $('#searchInput').on('input', function () {
             var searchText = $(this).val().toLowerCase();
@@ -673,7 +685,6 @@
                 }
             });
         });
-
 
         var table = $('#demandTable').DataTable({
             "columnDefs": [
@@ -696,9 +707,14 @@
             }
         });
 
+        document.getElementById('requirementDate').addEventListener('keypress', function (e) {
+            e.preventDefault();
+        });
 
-
-
+        function updateLocationId() {
+            var locationId = $('#location').val();
+            $('#locationId').val(locationId);
+        }
     });
 
     document.getElementById('requirementDate').addEventListener('keypress', function (e) {
@@ -772,7 +788,7 @@
         });
     });
     function addRow() {
-        var table = document.getElementById("dataTable");//.getElementsByTagName('tbody')[0];
+        var table = document.getElementById("dataTable");
         var newRow = table.insertRow(table.rows.length);
         var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
 
@@ -982,18 +998,20 @@
 
         for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].getElementsByTagName("td");
+            var type = cells[0].querySelector("select[name='type[]']").value;
             var category = cells[1].querySelector("select[name='category[]']").value;
             var subcategory = cells[2].querySelector("select[name='subcategory[]']").value;
-            if (category.trim() !== "" && subcategory.trim() !== "") {
-                formData.append('Category[]', category);
-                formData.append('Subcategory[]', subcategory);
-            }
+            // if (category.trim() !== "" && subcategory.trim() !== "") {
+            //     formData.append('Category[]', category);
+            //     formData.append('Subcategory[]', subcategory);
+            // }
 
             var productName = cells[5].querySelector("input[name='productName[]']").value;
             var productCode = cells[4].querySelector("input[name='productCode[]']").value;
             var unit = cells[6].querySelector("select[name='unit[]']").value;
             var quantity = cells[7].querySelector("input[name='quantity[]']").value;
-            console.log(category, subcategory, productName, productCode, unit, quantity);
+            console.log(type,category, subcategory, productName, productCode, unit, quantity);
+            formData.append('Type[]', type);
             formData.append('Category[]', category);
             formData.append('Subcategory[]', subcategory);
             formData.append('Unit[]', unit);

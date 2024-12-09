@@ -398,7 +398,8 @@
         var demandId = @Model.DemandId;
         var demandStatusChangeViewModel = {
             DemandId: demandId,
-            Status: 2
+            Status: 2,
+            Description: Description
         };
 
         $.ajax({

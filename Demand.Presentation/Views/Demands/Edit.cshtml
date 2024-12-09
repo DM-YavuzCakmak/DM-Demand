@@ -276,6 +276,13 @@
                 <textarea id="description" name="description">@Model.Description</textarea>
             </div>
         </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <h2 style="color:white">Birim Yöneticisi Not/Gerekçe : @Model.Description</h2>
+            </div>
+        </div>
+
         @if (userId == 10 && Model.isOppenOffer == true)
         {
             <div class="faq_main_container">
@@ -562,7 +569,7 @@
                                     <label for="maturityDate2">Ödeme Tarihi: </label>
                                     <input type="date" id="maturityDate2" name="maturityDate2"
                                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                                           value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
+                                           value="@(Model.DemandOffers.Count >1 && Model.DemandOffers[1].MaturityDate.HasValue ? Model.DemandOffers[1].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
                                 </div>
 
                                 <div class="form-group">
@@ -737,7 +744,7 @@
                                     <label for="maturityDate3">Ödeme Tarihi: </label>
                                     <input type="date" id="maturityDate3" name="maturityDate3"
                                            min="@DateTime.Now.ToString("yyyy-MM-dd")"
-                                           value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
+                                           value="@(Model.DemandOffers.Count >2  && Model.DemandOffers[2].MaturityDate.HasValue ? Model.DemandOffers[2].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
                                 </div>
                                 <div class="form-group">
                                     <label for="offerTotalPrice3">Toplam Fiyat :</label>
@@ -812,11 +819,6 @@
 
         }
     </form>
-    <div class="form-row">
-        <label for="DeclinDescription">Red Gerekçesi Veya Onay Notu (Zorunlu):</label>
-        <textarea id="DeclinDescription" name="DeclinDescription" placeholder="Lütfen Bu Alanı Doldurun."></textarea>
-        <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-    </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="script.js"></script>
@@ -1583,6 +1585,10 @@
                 data: JSON.stringify(updateDemandViewModel),
                 success: function (response) {
                     console.log("Dosya ve veriler başarıyla gönderildi.");
+                    toastr.success("Demand Offer Created", "Success");
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
                 },
                 error: function (error) {
                     console.error("Bir hata oluştu:", error);
@@ -1607,6 +1613,8 @@
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
                 window.location.href = '/Home/Index';
+                toastr.error("Bilgileri Kontrol Edin.", "Error");
+
 
 
             },

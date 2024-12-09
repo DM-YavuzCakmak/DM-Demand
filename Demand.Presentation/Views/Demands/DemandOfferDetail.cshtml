@@ -508,9 +508,22 @@
             </div>
 
         </div>
-        @if (Model.DemandOffers.Count > 0)
+   @*      @if (Model.DemandOffers.Count > 0)
         {
             @if (Model.Status == 0 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) && (Model.DemandOffers[0].UnitManager == 2 || Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
+            {
+                <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
+                    Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
+                </p>
+            }
+        } *@
+
+        @if (Model.DemandOffers.Count > 0)
+        {
+            bool hasStatusZero = Model.DemandOffers.Any(o => o.Status == 0);
+            bool hasUnitManagerTwo = Model.DemandOffers.Any(o => o.UnitManager == 2);
+
+            @if (Model.Status == 0 && hasStatusZero && hasUnitManagerTwo)
             {
                 <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
                     Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
@@ -542,7 +555,7 @@
             </div>
 
             <div class="pricing-tables">
-                <h2 style="color:white;font-weight:bold;text-align:center">@Model.ConfirmingNote</h2>
+                <h2 style="color:white;font-weight:bold;text-align:center">Birim Yöneticisi Notu: @Model.ConfirmingNote</h2>
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)
@@ -1027,15 +1040,14 @@
     function changeStatus(DemandId, DemandOfferId) {
         var demandId = @Model.DemandId;
         var demandOfferId = DemandOfferId;
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        var declineDescription = document.getElementById("declineDescription").value;
 
-        console.log(demandOfferId);
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         var demandStatusChangeViewModel = {
             DemandId: demandId,
             DemandOfferId: demandOfferId,
-            Status: 2
+            Status: 2,
+            Description: declineDescription
         };
 
         $.ajax({

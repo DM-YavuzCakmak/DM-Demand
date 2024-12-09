@@ -94,7 +94,7 @@ namespace Demand.Presentation.Controllers
 
                 if (personnel.DepartmentId == (int)DepartmentEnum.Mimari)
                 {
-                    DemandList = _demandService.GetList((x => x.DepartmentId == (int)DepartmentEnum.Mimari || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                    DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
                 else
                 {
@@ -111,6 +111,12 @@ namespace Demand.Presentation.Controllers
                         whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
                         whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
                     }
+
+                    if ((userId == 10 && personnel.DepartmentId == (int)DepartmentEnum.Mimari) ||whoseTurnProcess.IsNull() || whoseTurnPersonnel.Id != userId)
+                    {
+                        continue;
+                    }
+
                     List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == demand.Id).Data.ToList();
 
                     DemandViewModel viewModel = new DemandViewModel
@@ -121,8 +127,7 @@ namespace Demand.Presentation.Controllers
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
                         WhoseTurn = whoseTurn,
-                        isDemandOffer = demandOffers.Count > 0 ? true : false,
-
+                        isDemandOffer = demandOffers.Count > 0 ? true : false
                     };
                     if (personnelResult.IsNotNull())
                     {

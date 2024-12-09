@@ -105,14 +105,21 @@ namespace Demand.Presentation.Controllers
                     PersonnelEntity whoseTurnPersonnel = new PersonnelEntity();
                     IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
 
-                    DemandProcessEntity whoseTurnProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
-                    if (whoseTurnProcess.IsNotNull())
+                    List<DemandProcessEntity> whoseTurnProcessList = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.ToList();
+                    if (whoseTurnProcessList.IsNotNullOrEmpty())
                     {
-                        whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
-                        whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                        DemandProcessEntity whoseTurnProcess = whoseTurnProcessList.FirstOrDefault();
+                        if (whoseTurnProcess.IsNotNull())
+                        {
+                            whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
+                            whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                        }
                     }
+                    if (userId == 10 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+                    {
 
-                    if ((userId == 10 && personnel.DepartmentId == (int)DepartmentEnum.Mimari) ||whoseTurnProcess.IsNull() || whoseTurnPersonnel.Id != userId)
+                    }
+                    else if (demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null)
                     {
                         continue;
                     }

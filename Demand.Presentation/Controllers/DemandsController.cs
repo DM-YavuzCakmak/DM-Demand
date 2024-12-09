@@ -43,6 +43,7 @@ using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -106,6 +107,7 @@ namespace Demand.Presentation.Controllers
             #endregion
             List<DemandOfferViewModel> demandOfferViewModels = new List<DemandOfferViewModel>();
             List<RequestInfoViewModel> requestInfoViewModels = new List<RequestInfoViewModel>();
+            DemandProcessEntity demandProcess = new DemandProcessEntity();
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
@@ -119,7 +121,15 @@ namespace Demand.Presentation.Controllers
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             List<OfferRequestEntity> offerRequests = _offerRequestService.GetList(x => x.RequestInfoId == requestInfos[0].Id).Data.ToList();
             ViewBag.OfferRequest = offerRequests;
-            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0).Data.FirstOrDefault();
+            if (demand.Status == (int)DemandStatusEnum.decline)
+            {
+                demandProcess = _demandProcessService.GetList(x =>x.DemandId == id && x.Status==1).Data.FirstOrDefault();
+            }
+            else
+            {
+                 demandProcess = _demandProcessService.GetList(x => x.Status == 0 && x.DemandId == id).Data.FirstOrDefault();
+            }
+            bool isWhoPersonnel = demandProcess.ManagerId == userId ? true : false;
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -139,7 +149,9 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isApprovedActive = demandProcess.IsNotNull() && demandProcess.ManagerId == userId ? true : false,
+                isWhoPersonnel = isWhoPersonnel,
+                ProcessDescription = demandProcess.IsNotNull() ? demandProcess.Desciription :"" ,
+                isApprovedActive = demandProcess.IsNotNull() && demand.Status!= (int)DemandStatusEnum.decline && isWhoPersonnel != false ? true : false,
             };
             foreach (var requestInfo in requestInfos)
             {
@@ -980,7 +992,7 @@ namespace Demand.Presentation.Controllers
                     CompanyName = company.Name,
                     DepartmentName = department.Name,
                     ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
-                    isApprovedActive = isApprovedActiveProcess.IsNotNull() && isApprovedActiveProcess.ManagerId == userId ? true : false
+                    isApprovedActive = isApprovedActiveProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isApprovedActiveProcess.ManagerId == userId ? true : false
 
                 };
                 if (requestInfos.IsNotNullOrEmpty())

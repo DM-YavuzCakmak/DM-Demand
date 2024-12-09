@@ -103,11 +103,13 @@ namespace Demand.Presentation.Controllers
                 foreach (var demand in DemandList)
                 {
                     PersonnelEntity whoseTurnPersonnel = new PersonnelEntity();
+                    IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
+
                     DemandProcessEntity whoseTurnProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
                     if (whoseTurnProcess.IsNotNull())
                     {
                         whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
-                        whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : null;
+                        whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
                     }
                     List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == demand.Id).Data.ToList();
 
@@ -122,7 +124,6 @@ namespace Demand.Presentation.Controllers
                         isDemandOffer = demandOffers.Count > 0 ? true : false,
 
                     };
-                    IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
                     if (personnelResult.IsNotNull())
                     {
                         viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;

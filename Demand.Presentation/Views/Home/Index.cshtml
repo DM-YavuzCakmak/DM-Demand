@@ -20,7 +20,7 @@
     <link href="~/css/index.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <title>DEM MUSEUMS</title>
-</head>
+</head> 
 
 <body>
     <div class="header">
@@ -200,77 +200,11 @@
                         <th>Adet</th>
                     </tr>
                 </thead>
-                    @* <tbody>
-                <tr>
-                <td>
-                <div class="select-wrapper">
-                <select name="type[]" class="type" onchange="disableFields(this.parentNode.parentNode.parentNode)">
-                @if (ViewBag.ProductCategories != null)
-                {
-                <option>Lütfen seçiniz</option>
-                foreach (var productCategory in ViewBag.ProductCategories)
-                {
-                <option value="@productCategory.Id">@productCategory.ProductCategoryName</option>
-                }
-                }
-                </select>
-                </div>
-                </td>
-                <td>
-                <div class="select-wrapper">
-                <select name="category[]" class="category" onchange="updateSubcategories(this.parentNode.parentNode.parentNode)">
-                @if (Model[0].NebimCategoryModels != null)
-                {
-                <option>Lütfen seçiniz</option>
-                foreach (var product in Model[0].NebimCategoryModels)
-                {
-                <option value="@product.ProductHierarchyLevel01Code">@product.ProductHierarchyLevel01Description</option>
-                }
-                }
-                </select>
-                </div>
-                </td>
-                <td>
-                <div class="select-wrapper">
-                <select name="subcategory[]" class="subcategory" onchange="updateProduct(this.parentNode.parentNode.parentNode)">
-                </select>
-
-                </div>
-                </td>
-                <td class="form-group">
-                <div class="select-wrapper">
-                <select name="product[]" class="product" onchange="updateProductCode(this.parentNode.parentNode.parentNode)">
-                </select>
-                </div>
-                </td>
-                <td class="form-group">
-                <input type="text" name="productCode[]" class="productCode" />
-                </td>
-                <td class="form-group">
-                <input type="text" name="productName[]" class="productName" />
-                </td>
-                <td>
-                <div class="select-wrapper">
-                <select name="unit[]" class="unit">
-                <option value="1">Adet</option>
-                <option value="2">Metre</option>
-                </select>
-                </div>
-                </td>
-                <td class="form-group">
-                <input type="text" name="quantity[]" class="quantity" />
-                </td>
-                </tr>
-                </tbody> *@
             </table>
             <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
             <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
             <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
 
-
-                    @*     <div class="button-group">
-            <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
-            </div> *@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -995,6 +929,12 @@
 
         var table = document.getElementById("dataTable");
         var rows = table.getElementsByTagName("tr");
+
+        if (rows.length <= 1) {
+            toastr.error("En az bir veri satırı eklenmelidir.", "Hata");
+            return; 
+        }
+
 
         for (var i = 1; i < rows.length; i++) {
             var cells = rows[i].getElementsByTagName("td");

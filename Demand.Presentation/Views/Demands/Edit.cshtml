@@ -165,6 +165,37 @@
                 background-color: #45a049;
             }
 
+        #DeclinDescription {
+            height: 250px;
+            width: 740px;
+            resize: none;
+            background-color: lightgray;
+            overflow-y: auto;
+            pointer-events: none;
+        }
+
+        #DeclinDescription {
+            width: calc(50% - 10px);
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #DeclinDescription {
+            height: 55px;
+            width: 100%;
+            resize: none;
+            margin-top: 10px;
+        }
+
+        #DeclinDescription {
+            height: 250px;
+            width: 740px;
+            resize: none;
+            background-color: lightgray;
+            overflow-y: auto;
+            pointer-events: none;
+        }
+
     </style>
 </head>
 
@@ -777,9 +808,15 @@
 
                 </div>
             }
+           
 
         }
     </form>
+    <div class="form-row">
+        <label for="DeclinDescription">Red Gerekçesi Veya Onay Notu (Zorunlu):</label>
+        <textarea id="DeclinDescription" name="DeclinDescription" placeholder="Lütfen Bu Alanı Doldurun."></textarea>
+        <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="script.js"></script>

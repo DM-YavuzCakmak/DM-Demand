@@ -21,6 +21,7 @@ namespace Demand.Domain.ViewModels
         public string? LocationName { get; set; }
         public DateTime DemandDate { get; set; }
         public string?  WhoseTurn { get; set; }
+        public bool? isWhoPersonnel { get; set; }
         public int? Status{ get; set; }
         public long? CompanyLocationId { get; set; }
         public long? LocationUnitId { get; set; }
@@ -109,6 +110,7 @@ namespace Demand.Domain.ViewModels
         public string? PartialPaymentText { get; set; }
         public int? InstallmentPayment { get; set; }
         public string? InstallmentPaymentText { get; set; }
+        public string? ProcessDescription { get; set; }
 
 
 

@@ -648,7 +648,7 @@ namespace Demand.Presentation.Controllers
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebine girilen teklifler birim yöneticisi tarafından değelendirilmiştir. Aşağıdaki linkten talep içerisindeki teklifleri değerlendirerek onay vermenizi rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                      "Saygılarımızla.";
-                        EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
+                            EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onayınızı Bekleyen Satın Alma Talebi", emailBody);
 
                         if (demandStatusChangeViewModel.DemandOfferId != null)
                         {
@@ -705,12 +705,20 @@ namespace Demand.Presentation.Controllers
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onaylanan Satın Alma Talebi", emailBody);
 
                     /*Finans Mail*/
+                    PersonnelEntity ApprovedDemandPerson = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
                     demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
-                    emailBody = $"Merhabalar Sayın  Okan KÜÇÜK   ,<br/><br/>" /*+ personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +*/+
-                               demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                    emailBody = $"Merhabalar,<br/><br/>"+
+                               ApprovedDemandPerson.FirstName + " " + ApprovedDemandPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                     "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com" }, "Onaylanan Satın Alma Talebi", emailBody);
+                    if (ApprovedDemandPerson.Id==12)
+                    {
+                        EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com", "yusuf.aslan@demmuseums.com", "eda.bildiricioglu@demmuseums.com" }, "Onaylanan Satın Alma Talebi", emailBody);
+                    }
+                    else
+                    {
+                        EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com", "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr" }, "Onaylanan Satın Alma Talebi", emailBody);
+                    }
                     _demandService.Update(demandEntity);
                 }
             }

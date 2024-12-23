@@ -94,11 +94,11 @@ namespace Demand.Presentation.Controllers
 
                 if (personnel.DepartmentId == (int)DepartmentEnum.Mimari)
                 {
-                    DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                    DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari && !x.IsDeleted).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
                 else
                 {
-                    DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
                 foreach (var demand in DemandList)
                 {

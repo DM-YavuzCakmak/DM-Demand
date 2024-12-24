@@ -28,7 +28,7 @@ namespace Demand.Domain.ViewModels
         public long? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public string? CompanyName { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public DateTime? RequirementDate { get; set; }
         public bool? IsDeleted { get; set; } = false;
         public DateTime? CreatedDate { get; set; }

@@ -306,7 +306,7 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isOppenOffer = demandProcess.ManagerId == 10 ? true : false
+                isOppenOffer = demandProcess.IsNotNull() && demandProcess.ManagerId == 10 ? true : false
             };
             if (requestInfos.IsNotNullOrEmpty())
             {

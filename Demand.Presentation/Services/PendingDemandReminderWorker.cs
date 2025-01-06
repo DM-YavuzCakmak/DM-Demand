@@ -43,7 +43,7 @@ public class PendingDemandReminderWorker : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var client = scope.ServiceProvider.GetRequiredService<HttpClient>();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:44306/api/DemandReminder/ReminderDemand");
+            var request = new HttpRequestMessage(HttpMethod.Get, "http://172.30.44.13:5734/api/DemandReminder/ReminderDemand");
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 

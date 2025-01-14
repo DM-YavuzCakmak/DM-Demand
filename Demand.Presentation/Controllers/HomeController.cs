@@ -82,8 +82,8 @@ namespace Demand.Presentation.Controllers
             List<DemandProcessEntity> creatorDemandProcesses = _demandProcessService.GetList(x => x.CreatedAt == userId).Data.ToList();
 
             PersonnelEntity personnel = _personnelService.GetById(userId).Data;
-            PersonnelRoleEntity personnelRole = _personnelRoleService.GetList(x => x.PersonnelId == personnel.Id).Data.FirstOrDefault();
-            if (personnelRole.IsNotNull() && personnelRole.RoleId != (int)PersonnelRoleEnum.HeadOfManager)
+            List<PersonnelRoleEntity> personnelRoles = _personnelRoleService.GetList(x => x.PersonnelId == personnel.Id).Data.ToList();
+            if (personnelRoles.IsNotNull() && !personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.HeadOfManager))
             {
                 PersonnelEntity personManager = _personnelService.GetById((int)personnel.ParentId).Data;
             }
@@ -95,6 +95,10 @@ namespace Demand.Presentation.Controllers
                 if (personnel.DepartmentId == (int)DepartmentEnum.Mimari)
                 {
                     DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari && !x.IsDeleted).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                }
+                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement))
+                {
+                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || x.Status == (int)DemandStatusEnum.approved || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
                 else
                 {
@@ -112,14 +116,23 @@ namespace Demand.Presentation.Controllers
                         if (whoseTurnProcess.IsNotNull())
                         {
                             whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
-                            whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != 1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
+                            whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != (int)DemandStatusEnum.approved
+                                ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName
+                                :"TAMAMLANDI" ; 
                         }
                     }
+                    else
+                    {
+                        whoseTurn = demand.Status != (int)DemandStatusEnum.approved
+                            ? personnelResult.Data.FirstName + " " + personnelResult.Data.LastName
+                            : "TAMAMLANDI"; 
+                    }
+
                     if (userId == 10 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
                     {
 
                     }
-                    else if (demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null)
+                    else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null) && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement))
                     {
                         continue;
                     }
@@ -229,8 +242,6 @@ namespace Demand.Presentation.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-
-            // HTTP 400 - Bad Request durumu ve özel mesaj
             return StatusCode(400, new { success = false, message = "Kullanıcı adı veya şifre hatalı." });
         }
 

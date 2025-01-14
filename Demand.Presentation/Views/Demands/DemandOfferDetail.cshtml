@@ -441,6 +441,10 @@
                 background-color: #45a049;
             }
 
+        #dataTable {
+            background-color: white; 
+        }
+
     </style>
 </head>
 <body>
@@ -958,6 +962,33 @@
                             }
                         </div>
                     }
+                    @if (Model.Status == (int)DemandStatusEnum.approved)
+                    {
+                        <div class="row">
+                            <table id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>Personel Adı Soyadı</th>
+                                        <th>Tarih</th>
+                                        <th>Açıklama</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.DemandData as List<DemandHistoryViewModel>)
+                                    {
+                                        <tr>
+                                            <td>@item.PersonnelFullName</td>
+                                            <td>@item.Date?.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@item.Stage</td>
+                                            <td>@item.Status</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    
                 </div>
             </div>
             @if (Model.isApprovedActive == true)

@@ -16,6 +16,7 @@ namespace Demand.Domain.Enums
         PazarlamaManager = 6,
         HediyelikveGiftShopManager = 7,
         HeadOfManager = 8,
-        InsanKaynaklarıManager = 9
+        InsanKaynaklarıManager = 9,
+        FinanceManagement = 10
     }
 }

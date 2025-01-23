@@ -718,7 +718,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else
                     {
-                        EmailHelper.SendEmail(new List<string> { "samet.bas@demmuseums.com"/*, "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr"*/ }, "Onaylanan Satın Alma Talebi", emailBody);
+                        EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com", "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr" }, "Onaylanan Satın Alma Talebi", emailBody);
                     }
                     _demandService.Update(demandEntity);
                 }

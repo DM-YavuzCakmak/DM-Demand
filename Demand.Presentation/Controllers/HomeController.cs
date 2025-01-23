@@ -5,6 +5,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Concrete.DemandService;
@@ -20,7 +21,9 @@ using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.PersonnelRole;
 using Demand.Domain.Entities.ProductCategoryEntity;
+using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Presentation.Models;
@@ -41,12 +44,14 @@ namespace Demand.Presentation.Controllers
         private readonly ICompanyLocationService _companyLocationService;
         private readonly ICompanyService _companyService;
         private readonly IDepartmentService _departmentService;
-        private readonly IDemandProcessService _demandProcessService; 
+        private readonly IDemandProcessService _demandProcessService;
         private readonly IProductCategoryService _productCategoryService;
         private readonly IDemandOfferService _demandOfferService;
+        private readonly IPersonnelRoleService _personnelRoleService;
 
 
-        public HomeController(ILogger<HomeController> logger, IDemandService demandService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, ICompanyService companyService, IDepartmentService departmentService, IDemandProcessService demandProcessService, IProductCategoryService productCategoryService, IDemandOfferService demandOfferService)
+
+        public HomeController(ILogger<HomeController> logger, IDemandService demandService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, ICompanyService companyService, IDepartmentService departmentService, IDemandProcessService demandProcessService, IProductCategoryService productCategoryService, IDemandOfferService demandOfferService, IPersonnelRoleService personnelRoleService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -57,9 +62,10 @@ namespace Demand.Presentation.Controllers
             _demandProcessService = demandProcessService;
             _productCategoryService = productCategoryService;
             _demandOfferService = demandOfferService;
+            _personnelRoleService = personnelRoleService;
         }
         [UserToken]
-        public IActionResult Index ()
+        public IActionResult Index()
         {
             string whoseTurn = "";
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -75,18 +81,60 @@ namespace Demand.Presentation.Controllers
             List<DemandProcessEntity> demandProcesses = _demandProcessService.GetList(x => x.ManagerId == userId).Data.ToList();
             List<DemandProcessEntity> creatorDemandProcesses = _demandProcessService.GetList(x => x.CreatedAt == userId).Data.ToList();
 
-            if (demandProcesses.Count > 0 || userId == 10 || creatorDemandProcesses.Count > 0)
+            PersonnelEntity personnel = _personnelService.GetById(userId).Data;
+            List<PersonnelRoleEntity> personnelRoles = _personnelRoleService.GetList(x => x.PersonnelId == personnel.Id).Data.ToList();
+            if (personnelRoles.IsNotNull() && !personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.HeadOfManager))
             {
-                List<DemandEntity> DemandList = _demandService.GetList((x => x.CreatedAt == userId || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.ToList();
+                PersonnelEntity personManager = _personnelService.GetById((int)personnel.ParentId).Data;
+            }
+
+            if (demandProcesses.Count > 0 || userId == 10 || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+            {
+                List<DemandEntity> DemandList = new List<DemandEntity>();
+
+                if (personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+                {
+                    DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari && !x.IsDeleted).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                }
+                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement || x.RoleId== (int)PersonnelRoleEnum.HeadOfManager))
+                {
+                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || x.Status == (int)DemandStatusEnum.approved || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                }
+                else
+                {
+                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || userId == 10 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                }
                 foreach (var demand in DemandList)
                 {
-
                     PersonnelEntity whoseTurnPersonnel = new PersonnelEntity();
-                    DemandProcessEntity whoseTurnProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
-                    if (whoseTurnProcess.IsNotNull())
+                    IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
+
+                    List<DemandProcessEntity> whoseTurnProcessList = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.ToList();
+                    if (whoseTurnProcessList.IsNotNullOrEmpty())
                     {
-                        whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
-                         whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status !=1 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName : null;
+                        DemandProcessEntity whoseTurnProcess = whoseTurnProcessList.FirstOrDefault();
+                        if (whoseTurnProcess.IsNotNull())
+                        {
+                            whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
+                            whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != (int)DemandStatusEnum.approved
+                                ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName
+                                :"TAMAMLANDI" ; 
+                        }
+                    }
+                    else
+                    {
+                        whoseTurn = demand.Status != (int)DemandStatusEnum.approved
+                            ? personnelResult.Data.FirstName + " " + personnelResult.Data.LastName
+                            : "TAMAMLANDI"; 
+                    }
+
+                    if (userId == 10 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+                    {
+
+                    }
+                    else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null) && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement))
+                    {
+                        continue;
                     }
 
                     List<DemandOfferEntity> demandOffers = _demandOfferService.GetList(x => x.DemandId == demand.Id).Data.ToList();
@@ -99,10 +147,8 @@ namespace Demand.Presentation.Controllers
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
                         WhoseTurn = whoseTurn,
-                        isDemandOffer = demandOffers.Count>0 ? true : false,
-                        
+                        isDemandOffer = demandOffers.Count > 0 ? true : false
                     };
-                    IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
                     if (personnelResult.IsNotNull())
                     {
                         viewModel.DemanderName = personnelResult.Data.FirstName + " " + personnelResult.Data.LastName;
@@ -114,7 +160,7 @@ namespace Demand.Presentation.Controllers
                     }
                     demandViewModels.Add(viewModel);
                 }
-               
+
             }
             if (demandViewModels.Count == 0)
             {
@@ -163,7 +209,6 @@ namespace Demand.Presentation.Controllers
                 }
                 demandViewModels.Add(viewModel);
             }
-
             List<Company> companies = _companyService.GetList().Data.ToList();
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
@@ -197,8 +242,6 @@ namespace Demand.Presentation.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
-
-            // HTTP 400 - Bad Request durumu ve özel mesaj
             return StatusCode(400, new { success = false, message = "Kullanıcı adı veya şifre hatalı." });
         }
 

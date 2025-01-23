@@ -1,5 +1,11 @@
 ﻿
 
+
+textarea {
+    overflow-y: auto; 
+    overflow-x: hidden;
+}
+
 #logo {
     position: absolute;
     top: 20px;

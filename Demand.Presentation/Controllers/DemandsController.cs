@@ -6,6 +6,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.OfferMediaService;
 using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
@@ -27,6 +28,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.OfferMediaEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
@@ -34,12 +36,15 @@ using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.Entities.ProviderEntity;
 using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
+using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -70,8 +75,9 @@ namespace Demand.Presentation.Controllers
         private readonly IPersonnelRoleService _personnelRoleService;
         private readonly IRoleService _roleService;
         private readonly IProductCategoryService _productCategoryService;
+        private readonly IOfferMediaService _offerMediaService;
 
-        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService, IProductCategoryService productCategoryService)
+        public DemandsController(ILogger<HomeController> logger, IDemandService demandService, IDemandMediaService demandMediaService, IWebHostEnvironment webHostEnvironment, IDemandProcessService demandProcessService, ICompanyService companyService, IDepartmentService departmentService, IPersonnelService personnelService, ICompanyLocationService companyLocationService, IRequestInfoService requestInfoService, ICurrencyTypeService currencyTypeService, IDemandOfferService demandOfferService, IProviderService providerService, IOfferRequestService offerRequestService, IPersonnelRoleService personnelRoleService, IRoleService roleService, IProductCategoryService productCategoryService, IOfferMediaService offerMediaService)
         {
             _logger = logger;
             _demandService = demandService;
@@ -90,6 +96,7 @@ namespace Demand.Presentation.Controllers
             _personnelRoleService = personnelRoleService;
             _roleService = roleService;
             _productCategoryService = productCategoryService;
+            _offerMediaService = offerMediaService;
         }
 
         public IActionResult Detail(long id)
@@ -101,6 +108,7 @@ namespace Demand.Presentation.Controllers
             #endregion
             List<DemandOfferViewModel> demandOfferViewModels = new List<DemandOfferViewModel>();
             List<RequestInfoViewModel> requestInfoViewModels = new List<RequestInfoViewModel>();
+            DemandProcessEntity demandProcess = new DemandProcessEntity();
             DemandEntity demand = _demandService.GetById(id).Data;
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
@@ -114,7 +122,15 @@ namespace Demand.Presentation.Controllers
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             List<OfferRequestEntity> offerRequests = _offerRequestService.GetList(x => x.RequestInfoId == requestInfos[0].Id).Data.ToList();
             ViewBag.OfferRequest = offerRequests;
-            DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0).Data.FirstOrDefault();
+            if (demand.Status == (int)DemandStatusEnum.decline)
+            {
+                demandProcess = _demandProcessService.GetList(x => x.DemandId == id && x.Status == 1).Data.FirstOrDefault();
+            }
+            else
+            {
+                demandProcess = _demandProcessService.GetList(x => x.Status == 0 && x.DemandId == id).Data.FirstOrDefault();
+            }
+            bool isWhoPersonnel = demandProcess.ManagerId == userId ? true : false;
             DemandViewModel demandViewModel = new DemandViewModel
             {
                 CompanyId = company.Id,
@@ -134,7 +150,9 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isApprovedActive = demandProcess.IsNotNull() && demandProcess.ManagerId == userId ? true : false,
+                isWhoPersonnel = isWhoPersonnel,
+                ProcessDescription = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
+                isApprovedActive = demandProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isWhoPersonnel != false ? true : false,
             };
             foreach (var requestInfo in requestInfos)
             {
@@ -289,7 +307,7 @@ namespace Demand.Presentation.Controllers
                 UpdatedDate = demand.UpdatedDate,
                 CompanyName = company.Name,
                 DepartmentName = department.Name,
-                isOppenOffer = demandProcess.ManagerId == 10 ? true : false
+                isOppenOffer = demandProcess.IsNotNull() && demandProcess.ManagerId == 10 ? true : false
             };
             if (requestInfos.IsNotNullOrEmpty())
             {
@@ -323,6 +341,16 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
                 if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierAdress))
                     demandOfferViewModel.SupplierAdress = demandOfferEntity.SupplierAdress;
+                if (demandOfferEntity.DeadlineDate.IsNotNull())
+                {
+                    demandOfferViewModel.DeadlineDate = demandOfferEntity.DeadlineDate;
+
+                }
+                if (demandOfferEntity.MaturityDate.IsNotNull())
+                {
+                    demandOfferViewModel.MaturityDate = demandOfferEntity.MaturityDate;
+
+                }
 
                 ProviderEntity providerEntity = new ProviderEntity();
                 if (providerEntities != null && providerEntities.Any())
@@ -375,6 +403,7 @@ namespace Demand.Presentation.Controllers
             var demandEntity = new DemandEntity
             {
                 CompanyLocationId = (long)demandViewModel.CompanyLocationId,
+                LocationUnitId = (long)demandViewModel.LocationUnitId,
                 DemandTitle = demandViewModel.DemandTitle,
                 DepartmentId = (long)demandViewModel.DepartmentId,
                 Status = 0,
@@ -390,6 +419,7 @@ namespace Demand.Presentation.Controllers
 
             for (int i = 0; i < demandViewModel.ProductName.Count; i++)
             {
+                var type = demandViewModel.Type[i] == "Lütfen seçiniz" ? null : demandViewModel.Type[i];
                 var category = demandViewModel.Category[i] == "Lütfen seçiniz" ? null : demandViewModel.Category[i];
                 var subcategory = demandViewModel.Subcategory[i] == null ? null : demandViewModel.Subcategory[i];
                 var unit = demandViewModel.Unit[i];
@@ -399,15 +429,16 @@ namespace Demand.Presentation.Controllers
                 var requestInfo = new RequestInfoEntity
                 {
                     DemandId = addedDemand.Id,
-                    NebimCategoryId = Convert.ToInt32(category),
-                    NebimSubCategoryId = Convert.ToInt32(subcategory),
-                    Quantity = Convert.ToInt32(quantity),
+                    NebimCategoryId = Convert.ToInt32(category).IsNotNull() && Convert.ToInt32(category) != 0 ? Convert.ToInt32(category) : null,
+                    NebimSubCategoryId = Convert.ToInt32(subcategory).IsNotNull() && Convert.ToInt32(subcategory) != 0 ? Convert.ToInt32(subcategory) : null,
+                    Quantity = Convert.ToInt32(quantity).IsNotNull() && Convert.ToInt32(quantity) != 0 ? Convert.ToInt32(quantity) : null,
                     ProductName = productname,
                     ProductCode = productcode,
                     Unit = unit,
                     IsDeleted = false,
                     CreatedDate = DateTime.Now,
                     UpdatedDate = null,
+                    ProductCategoryId = Convert.ToInt32(type).IsNotNull() && Convert.ToInt32(type) != 0 ? Convert.ToInt32(type) : null,
                     CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
                     UpdatedAt = null,
                     IsFirst = true,
@@ -466,7 +497,7 @@ namespace Demand.Presentation.Controllers
                     {
                         if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
                         {
-                            string demandLink = "http://172.30.44.13:5734/api/Demands?id=" + demandProcessEntity.DemandId;
+                            string demandLink = "https://portal.demmuseums.com/api/Demands?id=" + demandProcessEntity.DemandId;
                             var emailBody = $"Merhabalar Sayın {parentPersonnel.FirstName} {parentPersonnel.LastName},<br/><br/>" +
                                             $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
                                             $"Talep URL : <a href='{demandLink}'> TALEP GÖRÜNTÜLE </a> <br/><br/>" +
@@ -475,12 +506,13 @@ namespace Demand.Presentation.Controllers
                         }
                     }
 
-                    if (parentPersonnel.ParentId != null)
-                        parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
-                    else
-                        break;
+                    //if (parentPersonnel.ParentId != null)
+                    //    parentPersonnel = _personnelService.GetById((long)parentPersonnel.ParentId).Data;
+                    //else
+                    //    break;
+                    break;
                 }
-                RoleEntity roleEntity = _roleService.GetById(3).Data;
+                RoleEntity roleEntity = _roleService.GetById((int)PersonnelRoleEnum.SatınAlmaManager).Data;
                 List<PersonnelRoleEntity> personnelRole = _personnelRoleService.GetList(x => x.RoleId == roleEntity.Id).Data.ToList();
                 PersonnelEntity personnelForSales = _personnelService.GetById(personnelRole[0].PersonnelId).Data;
 
@@ -520,10 +552,11 @@ namespace Demand.Presentation.Controllers
                 _demandProcessService.AddDemandProcess(demandProcessFirstApprovedManager);
 
                 i++;
+
                 DemandProcessEntity demandProcessLastManager = new DemandProcessEntity
                 {
                     DemandId = addedDemand.Id,
-                    ManagerId = parentPersonnel.Id,
+                    ManagerId = (int)FirstApprovedPersonnel.ParentId,
                     IsDeleted = false,
                     HierarchyOrder = i,
                     Desciription = string.Empty,
@@ -540,7 +573,7 @@ namespace Demand.Presentation.Controllers
             {
                 PersonnelEntity personnel = _personnelService.GetById(10).Data;
 
-                string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + addedDemand.Id;
+                string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + addedDemand.Id;
                 var emailBody = $"Merhabalar Sayın {personnel.FirstName} {personnel.LastName},<br/><br/>" +
                      $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol etmenizi rica ederiz.<br/><br/>" +
                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -602,7 +635,7 @@ namespace Demand.Presentation.Controllers
                     if (nextDemandProcessEntity.ManagerId == 10)
                     {
 
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmış ve onaylanmıştır. Lütfen teklif ve diğer detay bilgileri doldurmanızı rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -611,7 +644,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else if (personnelRole != null && personnelRole.RoleId != 8)
                     {
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebine girilen teklifler birim yöneticisi tarafından değelendirilmiştir. Aşağıdaki linkten talep içerisindeki teklifleri değerlendirerek onay vermenizi rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -632,7 +665,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else
                     {
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -666,19 +699,27 @@ namespace Demand.Presentation.Controllers
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
                     string demandLink = "";
                     var emailBody = "";
-                    demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                    demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
                     emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                     "Saygılarımızla.";
                     EmailHelper.SendEmail(new List<string> { personnel.Email }, "Onaylanan Satın Alma Talebi", emailBody);
 
                     /*Finans Mail*/
+                    PersonnelEntity ApprovedDemandPerson = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
-                    demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
-                    emailBody = $"Merhabalar Sayın  Okan KÜÇÜK   ,<br/><br/>" /*+ personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +*/+
-                               demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+                    demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
+                    emailBody = $"Merhabalar,<br/><br/>" +
+                               ApprovedDemandPerson.FirstName + " " + ApprovedDemandPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                     "Saygılarımızla.";
-                    EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com" }, "Onaylanan Satın Alma Talebi", emailBody);
+                    if (ApprovedDemandPerson.Id == 12)
+                    {
+                        EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com", "yusuf.aslan@demmuseums.com", "eda.bildiricioglu@demmuseums.com" }, "Onaylanan Satın Alma Talebi", emailBody);
+                    }
+                    else
+                    {
+                        EmailHelper.SendEmail(new List<string> { "samet.bas@demmuseums.com"/*, "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr"*/ }, "Onaylanan Satın Alma Talebi", emailBody);
+                    }
                     _demandService.Update(demandEntity);
                 }
             }
@@ -754,6 +795,37 @@ namespace Demand.Presentation.Controllers
             return null;
         }
 
+        private OfferMediaEntity SaveFileAndCreateOfferMedia(string base64FileContent, string fileName, long offerId)
+        {
+            if (!string.IsNullOrEmpty(base64FileContent) && !string.IsNullOrEmpty(fileName))
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                string uniqueFileName = $"{offerId}_{fileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                byte[] fileBytes = Convert.FromBase64String(base64FileContent);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    fileStream.Write(fileBytes, 0, fileBytes.Length);
+                }
+
+                return new OfferMediaEntity
+                {
+                    OfferId = offerId,
+                    Path = $"\\uploads\\{uniqueFileName}",
+                    FileName = fileName
+                };
+            }
+
+            return null;
+        }
+
         private string RemovePathPart(string originalPath, string partToRemove)
         {
             int index = originalPath.IndexOf(partToRemove, StringComparison.OrdinalIgnoreCase);
@@ -821,7 +893,29 @@ namespace Demand.Presentation.Controllers
                 demandOfferEntity.UpdatedDate = null;
                 demandOfferEntity.ExchangeRate = updateDemandViewModel.ExchangeRate;
                 demandOfferEntity.UnitManager = 0;
+                demandOfferEntity.DeadlineDate = updateDemandViewModel.DeadlineDate;
+                demandOfferEntity.MaturityDate = updateDemandViewModel.MaturityDate;
+                demandOfferEntity.PaymentType = updateDemandViewModel.PaymentType;
+                demandOfferEntity.PartialPayment = updateDemandViewModel.PartialPayment;
+                demandOfferEntity.InstallmentPayment = updateDemandViewModel.InstallmentPayment;
+
                 var demandOfferAdd = _demandOfferService.Add(demandOfferEntity);
+                if (!string.IsNullOrEmpty(updateDemandViewModel.FileContent) && !string.IsNullOrEmpty(updateDemandViewModel.FileName))
+                {
+                    OfferMediaEntity offerMediaEntity = SaveFileAndCreateOfferMedia(updateDemandViewModel.FileContent, updateDemandViewModel.FileName, demandOfferAdd.Id);
+
+                    if (offerMediaEntity != null)
+                    {
+                        offerMediaEntity.IsDeleted = false;
+                        offerMediaEntity.CreatedDate = DateTime.Now;
+                        offerMediaEntity.UpdatedDate = null;
+                        offerMediaEntity.CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                        offerMediaEntity.UpdatedAt = null;
+                        offerMediaEntity.DemandId = updateDemandViewModel.DemandId;
+
+                        _offerMediaService.AddOfferMedia(offerMediaEntity);
+                    }
+                }
                 #region
                 //if (demandOfferAdd.Id.IsNotNull())
                 //{
@@ -841,6 +935,7 @@ namespace Demand.Presentation.Controllers
                 #endregion
             }
             #endregion
+
 
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
@@ -862,8 +957,6 @@ namespace Demand.Presentation.Controllers
         {
             try
             {
-
-
                 #region UserIdentity
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claims = claimsIdentity.Claims;
@@ -874,6 +967,7 @@ namespace Demand.Presentation.Controllers
 
                 DemandEntity demand = _demandService.GetById(DemandId).Data;
                 List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(DemandId).ToList();
+                List<OfferMediaEntity> offerMediaEntities = _offerMediaService.GetByDemandId(DemandId).ToList();
                 CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
                 Company company = _companyService.GetById(companyLocation.CompanyId).Data;
                 PersonnelEntity personnel = _personnelService.GetById(demand.CreatedAt).Data;
@@ -884,6 +978,8 @@ namespace Demand.Presentation.Controllers
                 supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
                 List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
                 DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
+                List<DemandProcessEntity> demandProcessHistory = _demandProcessService.GetList(x => x.DemandId == demand.Id).Data.ToList();
+
                 DemandProcessEntity isApprovedActiveProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0 && x.DemandId == demand.Id).Data.FirstOrDefault();
 
 
@@ -907,7 +1003,7 @@ namespace Demand.Presentation.Controllers
                     CompanyName = company.Name,
                     DepartmentName = department.Name,
                     ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
-                    isApprovedActive = isApprovedActiveProcess.IsNotNull() && isApprovedActiveProcess.ManagerId == userId ? true : false
+                    isApprovedActive = isApprovedActiveProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isApprovedActiveProcess.ManagerId == userId ? true : false
 
                 };
                 if (requestInfos.IsNotNullOrEmpty())
@@ -945,9 +1041,27 @@ namespace Demand.Presentation.Controllers
                     {
                         demandViewModel.File3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[2].Path);
                         demandViewModel.File3Name = demandMediaEntities[2].FileName;
-
                     }
                 }
+
+                if (offerMediaEntities.IsNotNullOrEmpty())
+                {
+                    demandViewModel.ProformoFile1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + offerMediaEntities[0].Path);
+                    demandViewModel.ProformoFile1Name = offerMediaEntities[0].FileName;
+
+                    if (offerMediaEntities.Count > 1)
+                    {
+                        demandViewModel.ProformoFile2Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + offerMediaEntities[1].Path);
+                        demandViewModel.ProformoFile2Name = offerMediaEntities[1].FileName;
+
+                    }
+                    if (offerMediaEntities.Count > 2)
+                    {
+                        demandViewModel.ProformoFile3Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + offerMediaEntities[2].Path);
+                        demandViewModel.ProformoFile3Name = offerMediaEntities[2].FileName;
+                    }
+                }
+
                 demandViewModel.DemandOffers = new List<DemandOfferViewModel>();
                 foreach (var demandOfferEntity in demandOfferEntities.OrderBy(x => x.Id).ToList())
                 {
@@ -958,6 +1072,12 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
                     demandOfferViewModel.ExchangeRate = demandOfferEntity.ExchangeRate;
                     demandOfferViewModel.CurrencyTypeId = demandOfferEntity.CurrencyTypeId;
+                    demandOfferViewModel.PaymentType = demandOfferEntity.PaymentType;
+                    demandOfferViewModel.InstallmentPayment = demandOfferEntity.InstallmentPayment;
+                    demandOfferViewModel.PartialPayment = demandOfferEntity.PartialPayment;
+                    demandOfferViewModel.DeadlineDate = demandOfferEntity.DeadlineDate;
+                    demandOfferViewModel.MaturityDate = demandOfferEntity.MaturityDate;
+
                     if (demandOfferEntity.SupplierId.HasValue)
                         demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
                     if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
@@ -1009,6 +1129,78 @@ namespace Demand.Presentation.Controllers
                     demandOfferViewModel.RequestInfoViewModels = offerRequestViewModels;
                     demandViewModel.DemandOffers.Add(demandOfferViewModel);
                 }
+                List<DemandHistoryViewModel> demandHistoryList = new List<DemandHistoryViewModel>();
+
+                #region Normal Yazım
+                //demandHistoryList.Add(new DemandHistoryViewModel
+                //{
+                //    PersonnelFullName = $"{personnel.FirstName} {personnel.LastName}",
+                //    Date = demand.CreatedDate,
+                //    Status = demand.Status
+                //});
+
+                //foreach (var process in demandProcessHistory)
+                //{
+                //    var historypersonnel = _personnelService.GetById(process.ManagerId).Data;
+
+                //    if (historypersonnel != null) 
+                //    {
+                //        demandHistoryList.Add(new DemandHistoryViewModel
+                //        {
+                //            PersonnelFullName = $"{historypersonnel.FirstName} {historypersonnel.LastName}",
+                //            Date = process.UpdatedDate,
+                //            Status = process.Status
+                //        });
+                //    }
+                //}    
+                //ViewBag.DemandData = demandHistoryList;
+
+                #endregion
+                if (demand.Status == (int)DemandStatusEnum.approved)
+                {
+                    ViewBag.DemandData = new List<DemandHistoryViewModel>
+                    {
+                        new DemandHistoryViewModel
+                        {
+                            PersonnelFullName = personnel.FirstName + " " + personnel.LastName,
+                            Date = demand.CreatedDate,
+                            Status = GetStatusMessage(demand.Status),
+                            Stage = "TALEP OLUŞTURULDU."
+                        },
+                         demandProcessHistory.Count > 0 ? new DemandHistoryViewModel
+                        {
+                            PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[0].ManagerId),
+                            Date = demandProcessHistory[0].UpdatedDate.Value.IsNotNull() ? demandProcessHistory[0].UpdatedDate : null,
+                            Status = GetStatusMessage(demandProcessHistory[0].Status),
+                            Stage = demandProcessHistory[0].UpdatedDate.Value.IsNotNull() ? "BİRİM YÖNETİCİSİ ONAYI." : ""
+
+                        }:null,
+                       demandProcessHistory.Count > 1 ? new DemandHistoryViewModel
+                        {
+                            PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[1].ManagerId),
+                            Date = demandProcessHistory[1].UpdatedDate,
+                            Status = GetStatusMessage(demandProcessHistory[1].Status),
+                            Stage = demandProcessHistory[1].UpdatedDate.Value.IsNotNull() ? "TEKLİF TOPLAMA." : ""
+
+                        } : null,
+                        demandProcessHistory.Count > 2 ? new DemandHistoryViewModel
+                        {
+                            PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[2].ManagerId),
+                            Date = demandProcessHistory[2].UpdatedDate,
+                            Status = GetStatusMessage(demandProcessHistory[2].Status),
+                            Stage = demandProcessHistory[2].UpdatedDate.Value.IsNotNull() ? "BİRİM YÖNETİCİSİ TEKLİF TAVSİYESİ." : ""
+                        } : null,
+                        demandProcessHistory.Count > 3 ? new DemandHistoryViewModel
+                        {
+                            PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[3].ManagerId),
+                            Date = demandProcessHistory[3].UpdatedDate,
+                            Status = GetStatusMessage(demandProcessHistory[3].Status),
+                            Stage = demandProcessHistory[3].UpdatedDate.Value.IsNotNull() ? "YÖNETİM KURULU ONAYI." : ""
+                        } : null
+                    };
+                }
+
+
                 List<CurrencyTypeEntity> currencyTypes = _currencyTypeService.GetAll().Data.ToList();
                 ViewBag.CurrencyTypes = currencyTypes;
                 List<CompanyLocation> locations = _companyLocationService.GetAll().Data.ToList();
@@ -1180,6 +1372,27 @@ namespace Demand.Presentation.Controllers
             }
 
             return Ok();
+        }
+        private string GetStatusMessage(int status)
+        {
+            DemandStatusEnum statusEnum = (DemandStatusEnum)status;
+
+            switch (statusEnum)
+            {
+                case DemandStatusEnum.approved:
+                    return "ONAYLANDI ✓";
+                case DemandStatusEnum.pending:
+                    return "BEKLEMEDE !";
+                case DemandStatusEnum.decline:
+                    return "REDDEDİLDİ X ";
+                default:
+                    return "BİLİNMİYOR";
+            }
+        }
+        private string GetPersonnelFullName(int managerId)
+        {
+            var historypersonnel = _personnelService.GetById(managerId).Data;
+            return historypersonnel != null ? historypersonnel.FirstName + " " + historypersonnel.LastName : "Bilinmiyor";
         }
     }
 }

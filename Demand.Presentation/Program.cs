@@ -1,6 +1,7 @@
 using Demand.Business.Abstract.ApprovedSupplierService;
 using Demand.Business.Abstract.AuthorizationService;
 using Demand.Business.Abstract.CompanyLocation;
+using Demand.Business.Abstract.CompanyLocationUnitsService;
 using Demand.Business.Abstract.CompanyService;
 using Demand.Business.Abstract.CurrencyTypeService;
 using Demand.Business.Abstract.DemandMediaService;
@@ -8,6 +9,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.OfferMediaService;
 using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
@@ -18,6 +20,7 @@ using Demand.Business.Abstract.RoleService;
 using Demand.Business.Concrete.ApprovedSupplierService;
 using Demand.Business.Concrete.AuthorizationService;
 using Demand.Business.Concrete.CompanyLocation;
+using Demand.Business.Concrete.CompanyLocationUnitsService;
 using Demand.Business.Concrete.CompanyService;
 using Demand.Business.Concrete.CurrencyTypeService;
 using Demand.Business.Concrete.DemandMediaService;
@@ -25,6 +28,7 @@ using Demand.Business.Concrete.DemandOfferService;
 using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Business.Concrete.DepartmentService;
+using Demand.Business.Concrete.OfferMediaService;
 using Demand.Business.Concrete.OfferRequestService;
 using Demand.Business.Concrete.PersonnelRoleService;
 using Demand.Business.Concrete.PersonnelService;
@@ -34,6 +38,7 @@ using Demand.Business.Concrete.RequestInfo;
 using Demand.Business.Concrete.RoleService;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Infrastructure.DataAccess.Abstract.ApprovedSuplier;
+using Demand.Infrastructure.DataAccess.Abstract.CompanyLocationUnits;
 using Demand.Infrastructure.DataAccess.Abstract.CurrencyType;
 using Demand.Infrastructure.DataAccess.Abstract.DemandMedia;
 using Demand.Infrastructure.DataAccess.Abstract.DemandOffer;
@@ -42,6 +47,7 @@ using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
 using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
+using Demand.Infrastructure.DataAccess.Abstract.OfferMedia;
 using Demand.Infrastructure.DataAccess.Abstract.OfferRequest;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
@@ -51,6 +57,7 @@ using Demand.Infrastructure.DataAccess.Abstract.RequestInfo;
 using Demand.Infrastructure.DataAccess.Abstract.Role;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.ApprovedSupplier;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationRepository;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyLocationUnits;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CompanyRepository;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.CurrencyType;
@@ -59,6 +66,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandOffer;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandProcess;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferRequest;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.PersonnelRole;
@@ -92,6 +100,11 @@ builder.Services.AddScoped<ICompanyLocationRepository, CompanyLocationRepository
 builder.Services.AddScoped<ICompanyLocationService, CompanyLocationService>();
 #endregion
 
+#region CompanyLocation
+builder.Services.AddScoped<ICompanyLocationUnitsRepository, CompanyLocationUnitsRepository>();
+builder.Services.AddScoped<ICompanyLocationUnitsService, CompanyLocationUnitsService>();
+#endregion
+
 #region Demand
 builder.Services.AddScoped<IDemandRepository, DemandRepository>();
 builder.Services.AddScoped<IDemandService, DemandService>();
@@ -111,6 +124,11 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 #region DemandMedia
 builder.Services.AddScoped<IDemandMediaRepository, DemandMediaRepository>();
 builder.Services.AddScoped<IDemandMediaService, DemandMediaService>();
+#endregion
+
+#region OfferMedia
+builder.Services.AddScoped<IOfferMediaRepository, OfferMediaRepository>();
+builder.Services.AddScoped<IOfferMediaService, OfferMediaService>();
 #endregion
 
 #region DemanProcess

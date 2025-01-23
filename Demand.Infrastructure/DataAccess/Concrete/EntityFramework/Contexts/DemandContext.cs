@@ -1,12 +1,14 @@
 ﻿using Demand.Domain.Entities.ApprovedSupplierEntity;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
+using Demand.Domain.Entities.CompanyLocationUnitsEntity;
 using Demand.Domain.Entities.CurrencyTypeEntity;
 using Demand.Domain.Entities.Demand;
 using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.OfferMediaEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.Entities.PersonnelRole;
@@ -39,6 +41,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<CompanyLocation> CompanyLocations { get; set; }
         public virtual DbSet<DemandEntity> Demands { get; set; }
         public virtual DbSet<DemandMediaEntity> DemandMedias { get; set; }
+        public virtual DbSet<OfferMediaEntity> OfferMedias { get; set; }
         public virtual DbSet<DemandProcessEntity> DemandProcesses { get; set; }
         public virtual DbSet<DepartmentEntity> Departments { get; set; }
         public virtual DbSet<PersonnelRoleEntity> PersonnelRoles { get; set; }
@@ -50,6 +53,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ApprovedSupplierEntity> ApprovedSuppliers { get; set; }
         public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
+        public virtual DbSet<CompanyLocationUnitsEntity>  CompanyLocationUnits{ get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

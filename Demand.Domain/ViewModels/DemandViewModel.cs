@@ -21,8 +21,10 @@ namespace Demand.Domain.ViewModels
         public string? LocationName { get; set; }
         public DateTime DemandDate { get; set; }
         public string?  WhoseTurn { get; set; }
+        public bool? isWhoPersonnel { get; set; }
         public int? Status{ get; set; }
         public long? CompanyLocationId { get; set; }
+        public long? LocationUnitId { get; set; }
         public long? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public string? CompanyName { get; set; }
@@ -84,7 +86,6 @@ namespace Demand.Domain.ViewModels
         #endregion
         public List<RequestInfoViewModel>? requestInfoViewModels { get; set; }
         public List<IFormFile>? Files { get; set; }
-        public string[]? FileNames { get; set; }
         public string?  File1Name{ get; set; }
         public string?  File2Name{ get; set; }
         public string?  File3Name{ get; set; }
@@ -94,6 +95,25 @@ namespace Demand.Domain.ViewModels
         public decimal? ExchangeRate{ get; set; }
         public bool? isOppenOffer { get; set; } = false;
         public bool? isDemandOffer { get; set; } = false;
+
+        public List<IFormFile>? ProformoFiles { get; set; }
+        public string? ProformoFile1Name { get; set; }
+        public string? ProformoFile2Name { get; set; }
+        public string? ProformoFile3Name { get; set; }
+
+        public byte[]? ProformoFile1Path { get; set; }
+        public byte[]? ProformoFile2Path { get; set; }
+        public byte[]? ProformoFile3Path { get; set; }
+        public int? PaymentType { get; set; }
+        public string? PaymentTypeText { get; set; }
+        public int? PartialPayment  { get; set; }
+        public string? PartialPaymentText { get; set; }
+        public int? InstallmentPayment { get; set; }
+        public string? InstallmentPaymentText { get; set; }
+        public string? ProcessDescription { get; set; }
+
+
+
     }
 
     public class DemandOfferViewModel
@@ -115,6 +135,14 @@ namespace Demand.Domain.ViewModels
         public string? SupplierAdress { get; set; }
         public decimal?  ExchangeRate { get; set; }
         public int UnitManager { get; set; }
+        public DateTime?  DeadlineDate{ get; set; }
+        public DateTime? MaturityDate { get; set; }
+        public int? PaymentType { get; set; }
+        public int? InstallmentPayment { get; set; }
+        public int? PartialPayment { get; set; }
+
+        public List<IFormFile>? Files { get; set; }
+        public string? File1Name { get; set; }
 
 
         public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }

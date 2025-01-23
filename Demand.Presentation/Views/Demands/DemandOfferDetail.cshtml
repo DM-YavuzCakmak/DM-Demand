@@ -1,4 +1,5 @@
-﻿@using Demand.Domain.ViewModels
+﻿@using Demand.Domain.Enums
+@using Demand.Domain.ViewModels
 @using System.Security.Claims
 @using Newtonsoft.Json
 @model DemandViewModel
@@ -71,15 +72,15 @@
 
 
         .price {
-            height: 100px; /* Sabit yükseklik */
+            height: 100px;
             display: flex;
-            justify-content: center; /* Yatay merkezleme */
-            align-items: center; /* Dikey merkezleme */
+            justify-content: center;
+            align-items: center;
         }
 
         .currency-value {
-            font-size: 24px; /* Tüm para birimleri için aynı font büyüklüğü */
-            margin: 0; /* Boşlukları sıfırla */
+            font-size: 24px;
+            margin: 0;
         }
 
         .decline-button {
@@ -94,11 +95,13 @@
             margin-right: 10px;
         }
 
+        .offer-label {
+            font-size: 18px;
+        }
 
-
-            .decline-button:hover {
-                background-color: #c9302c;
-            }
+        .decline-button:hover {
+            background-color: #c9302c;
+        }
 
         .button-group {
             display: flex;
@@ -438,6 +441,10 @@
                 background-color: #45a049;
             }
 
+        #dataTable {
+            background-color: white; 
+        }
+
     </style>
 </head>
 <body>
@@ -505,10 +512,22 @@
             </div>
 
         </div>
+   @*      @if (Model.DemandOffers.Count > 0)
+        {
+            @if (Model.Status == 0 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) && (Model.DemandOffers[0].UnitManager == 2 || Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
+            {
+                <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
+                    Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
+                </p>
+            }
+        } *@
+
         @if (Model.DemandOffers.Count > 0)
         {
-            @if (Model.Status == 0 && Model.DemandOffers.Count >= 3 && (Model.DemandOffers[0].Status == 0 || Model.DemandOffers[1].Status == 0 || Model.DemandOffers[2].Status == 0) &&(Model.DemandOffers[0].UnitManager == 2 ||
-           Model.DemandOffers[1].UnitManager == 2 || Model.DemandOffers[2].UnitManager == 2))
+            bool hasStatusZero = Model.DemandOffers.Any(o => o.Status == 0);
+            bool hasUnitManagerTwo = Model.DemandOffers.Any(o => o.UnitManager == 2);
+
+            @if (Model.Status == 0 && hasStatusZero && hasUnitManagerTwo)
             {
                 <p style="text-align:center; color:white; font-weight:bold; font-size:20px;">
                     Birim Yöneticisi Tarafından Tavsiye Edilen Teklif Turuncu Olarak İşaretlenmiştir.
@@ -538,13 +557,13 @@
                     <a href="@pdfSrc" download="@Model.File3Name" class="btn btn-primary">Dosya Eki İndir</a>
                 }
             </div>
+
             <div class="pricing-tables">
-                <h2 style="color:white;font-weight:bold;text-align:center">@Model.ConfirmingNote</h2>
+                <h2 style="color:white;font-weight:bold;text-align:center">Birim Yöneticisi Notu: @Model.ConfirmingNote</h2>
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)
                     {
-                        <!-- Teklif 1 -->
                         <div class="col-sm-4 col-md-4">
                             <div class="plan">
                                 <div class="head" style="background:@(Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 2 ? "orange" : Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 1 ? "black" :Model.DemandOffers[0].Status == 0 && Model.DemandOffers[0].UnitManager == 0 ? "black" :  Model.DemandOffers[0].Status == 1 ? "red" : "green");">
@@ -552,7 +571,9 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
+@*                                     <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
+ *@                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[0].SupplierName.Length))</li>
+
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -601,12 +622,78 @@
                                     }
                                 </div>
 
+                                <div class="paymentDetail">
+                                    @if (Model.DemandOffers[0].PaymentType != null && Model.DemandOffers[0].PaymentType == (int)PaymentTypeEnum.Cash)
+                                    {
+                                        <span class="offer-label">NAKİT</span>
+                                    }
+                                    @if (Model.DemandOffers[0].PaymentType != null && Model.DemandOffers[0].PaymentType == (int)PaymentTypeEnum.Installment)
+                                    {
+                                        <span class="offer-label">TAKSİT</span>
+
+                                        @if (Model.DemandOffers[0].InstallmentPayment != null)
+                                        {
+                                            @switch ((InstallmentPaymentEnum)Model.DemandOffers[0].InstallmentPayment)
+                                            {
+                                                case InstallmentPaymentEnum.Installment15Day:
+                                                    <span class="offer-label">- 15 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment30Day:
+                                                    <span class="offer-label">- 30 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment45Day:
+                                                    <span class="offer-label">- 45 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment60Day:
+                                                    <span class="offer-label">- 60 Gün Vadeli</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    @if (Model.DemandOffers[0].PaymentType != null && Model.DemandOffers[0].PaymentType == (int)PaymentTypeEnum.Partial)
+                                    {
+                                        <span class="offer-label">PARÇALI</span>
+
+                                        @if (Model.DemandOffers[0].PartialPayment != null)
+                                        {
+                                            @switch ((PartialPaymentEnum)Model.DemandOffers[0].PartialPayment)
+                                            {
+                                                case PartialPaymentEnum.Cash20:
+                                                    <span class="offer-label">- %20 Peşin-İş bitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash30:
+                                                    <span class="offer-label">- %30 Peşin-İşbitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash50:
+                                                    <span class="offer-label">- %50 Peşin-İşbitimi</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                </div>
+                                <div class="DateDetail">
+                                    @if (Model.DemandOffers[0].DeadlineDate != null || Model.DemandOffers[0].MaturityDate != null)
+                                    {
+                                        <span class="offer-label">Termin Tarihi :@Model.DemandOffers[0].DeadlineDate?.ToString("dd/MM/yyyy")</span>
+
+                                        <br />
+                                        <span class="offer-label">Vade Tarihi :@Model.DemandOffers[0].MaturityDate?.ToString("dd/MM/yyyy")</span>
+                                    }
+                                </div>
+
                                 @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[0].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile1Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile1Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile1Name" class="btn btn-primary" style="margin-left: 100px;"> Proformo Eki İndir</a>
+                            }
                         </div>
+
                     }
 
                     @if (@Model.DemandOffers.Count > 1)
@@ -618,7 +705,7 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[1].SupplierName.Length))</li>
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -667,12 +754,78 @@
                                     }
                                 </div>
 
+                                <div class="paymentDetail">
+                                    @if (Model.DemandOffers[1].PaymentType != null && Model.DemandOffers[1].PaymentType == (int)PaymentTypeEnum.Cash)
+                                    {
+                                        <span class="offer-label">NAKİT</span>
+                                    }
+                                    @if (Model.DemandOffers[1].PaymentType != null && Model.DemandOffers[1].PaymentType == (int)PaymentTypeEnum.Installment)
+                                    {
+                                        <span class="offer-label">TAKSİT</span>
+
+                                        @if (Model.DemandOffers[1].InstallmentPayment != null)
+                                        {
+                                            @switch ((InstallmentPaymentEnum)Model.DemandOffers[1].InstallmentPayment)
+                                            {
+                                                case InstallmentPaymentEnum.Installment15Day:
+                                                    <span class="offer-label">- 15 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment30Day:
+                                                    <span class="offer-label">- 30 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment45Day:
+                                                    <span class="offer-label">- 45 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment60Day:
+                                                    <span class="offer-label">- 60 Gün Vadeli</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    @if (Model.DemandOffers[1].PaymentType != null && Model.DemandOffers[1].PaymentType == (int)PaymentTypeEnum.Partial)
+                                    {
+                                        <span class="offer-label">PARÇALI</span>
+
+                                        @if (Model.DemandOffers[1].PartialPayment != null)
+                                        {
+                                            @switch ((PartialPaymentEnum)Model.DemandOffers[1].PartialPayment)
+                                            {
+                                                case PartialPaymentEnum.Cash20:
+                                                    <span class="offer-label">- %20 Peşin-İş bitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash30:
+                                                    <span class="offer-label">- %30 Peşin-İşbitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash50:
+                                                    <span class="offer-label">- %50 Peşin-İşbitimi</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                </div>
+                                <div class="DateDetail">
+                                    @if (Model.DemandOffers[1].DeadlineDate != null || Model.DemandOffers[1].MaturityDate != null)
+                                    {
+                                        <span class="offer-label">Termin Tarihi :@Model.DemandOffers[1].DeadlineDate?.ToString("dd/MM/yyyy") </span>
+
+                                        <br />
+                                        <span class="offer-label">Vade Tarihi :@Model.DemandOffers[1].MaturityDate?.ToString("dd/MM/yyyy") </span>
+                                    }
+                                </div>
+
                                 @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[1].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile2Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile2Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile2Name" class="btn btn-primary" style="margin-left: 100px;">Proformo Eki İndir</a>
+                            }
                         </div>
+
                     }
 
                     @if (@Model.DemandOffers.Count > 2)
@@ -685,7 +838,8 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[2].SupplierName.Length))</li>
+
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -734,13 +888,107 @@
                                         <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice €</h1>
                                     }
                                 </div>
+
+                                <div class="paymentDetail">
+                                    @if (Model.DemandOffers[2].PaymentType != null && Model.DemandOffers[2].PaymentType == (int)PaymentTypeEnum.Cash)
+                                    {
+                                        <span class="offer-label">NAKİT</span>
+                                    }
+                                    @if (Model.DemandOffers[2].PaymentType != null && Model.DemandOffers[2].PaymentType == (int)PaymentTypeEnum.Installment)
+                                    {
+                                        <span class="offer-label">TAKSİT</span>
+
+                                        @if (Model.DemandOffers[2].InstallmentPayment != null)
+                                        {
+                                            @switch ((InstallmentPaymentEnum)Model.DemandOffers[2].InstallmentPayment)
+                                            {
+                                                case InstallmentPaymentEnum.Installment15Day:
+                                                    <span class="offer-label">- 15 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment30Day:
+                                                    <span class="offer-label">- 30 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment45Day:
+                                                    <span class="offer-label">- 45 Gün Vadeli</span>
+                                                    break;
+                                                case InstallmentPaymentEnum.Installment60Day:
+                                                    <span class="offer-label">- 60 Gün Vadeli</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    @if (Model.DemandOffers[2].PaymentType != null && Model.DemandOffers[2].PaymentType == (int)PaymentTypeEnum.Partial)
+                                    {
+                                        <span class="offer-label">PARÇALI</span>
+
+                                        @if (Model.DemandOffers[2].PartialPayment != null)
+                                        {
+                                            @switch ((PartialPaymentEnum)Model.DemandOffers[2].PartialPayment)
+                                            {
+                                                case PartialPaymentEnum.Cash20:
+                                                    <span class="offer-label">- %20 Peşin-İş bitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash30:
+                                                    <span class="offer-label">- %30 Peşin-İşbitimi</span>
+                                                    break;
+                                                case PartialPaymentEnum.Cash50:
+                                                    <span class="offer-label">- %50 Peşin-İşbitimi</span>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                </div>
+
+                                <div class="DateDetail">
+                                    @if (Model.DemandOffers[2].DeadlineDate != null || Model.DemandOffers[2].MaturityDate != null)
+                                    {
+                                        <span class="offer-label">Termin Tarihi :@Model.DemandOffers[2].DeadlineDate?.ToString("dd/MM/yyyy") </span>
+
+                                        <br />
+                                        <span class="offer-label">Vade Tarihi :@Model.DemandOffers[2].MaturityDate?.ToString("dd/MM/yyyy") </span>
+                                    }
+                                </div>
+
                                 @if (Model.Status == 0 && userId != 10)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[2].DemandOfferId)">Teklifi Seç</button>
                                 }
                             </div>
+                            @if (Model.ProformoFile3Path != null)
+                            {
+                                var base64 = Convert.ToBase64String(Model.ProformoFile3Path);
+                                var pdfSrc = $"data:application/pdf;base64,{base64}";
+                                <a href="@pdfSrc" download="@Model.ProformoFile3Name" class="btn btn-primary"  style="margin-left: 100px;">Proformo Eki İndir</a>
+                            }
                         </div>
                     }
+                    @if (Model.Status == (int)DemandStatusEnum.approved)
+                    {
+                        <div class="row">
+                            <table id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>Personel Adı Soyadı</th>
+                                        <th>Tarih</th>
+                                        <th>Açıklama</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.DemandData as List<DemandHistoryViewModel>)
+                                    {
+                                        <tr>
+                                            <td>@item.PersonnelFullName</td>
+                                            <td>@item.Date?.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@item.Stage</td>
+                                            <td>@item.Status</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    
                 </div>
             </div>
             @if (Model.isApprovedActive == true)
@@ -823,15 +1071,14 @@
     function changeStatus(DemandId, DemandOfferId) {
         var demandId = @Model.DemandId;
         var demandOfferId = DemandOfferId;
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        var declineDescription = document.getElementById("declineDescription").value;
 
-        console.log(demandOfferId);
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         var demandStatusChangeViewModel = {
             DemandId: demandId,
             DemandOfferId: demandOfferId,
-            Status: 2
+            Status: 2,
+            Description: declineDescription
         };
 
         $.ajax({

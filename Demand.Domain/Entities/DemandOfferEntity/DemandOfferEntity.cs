@@ -15,6 +15,11 @@ namespace Demand.Domain.Entities.DemandOfferEntity
         public decimal? TotalPrice { get; set; }
         public int? Status { get; set; }
         public int? UnitManager { get; set; }
+        public DateTime? DeadlineDate { get; set; }
+        public DateTime? MaturityDate { get; set; }
+        public int? PaymentType { get; set; }
+        public int? InstallmentPayment { get; set; }
+        public int? PartialPayment { get; set; }
 
         public string? SupplierName { get; set; }
         public string? SupplierPhone { get; set; }

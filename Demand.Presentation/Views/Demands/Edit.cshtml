@@ -165,6 +165,37 @@
                 background-color: #45a049;
             }
 
+        #DeclinDescription {
+            height: 250px;
+            width: 740px;
+            resize: none;
+            background-color: lightgray;
+            overflow-y: auto;
+            pointer-events: none;
+        }
+
+        #DeclinDescription {
+            width: calc(50% - 10px);
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        #DeclinDescription {
+            height: 55px;
+            width: 100%;
+            resize: none;
+            margin-top: 10px;
+        }
+
+        #DeclinDescription {
+            height: 250px;
+            width: 740px;
+            resize: none;
+            background-color: lightgray;
+            overflow-y: auto;
+            pointer-events: none;
+        }
+
     </style>
 </head>
 
@@ -245,7 +276,14 @@
                 <textarea id="description" name="description">@Model.Description</textarea>
             </div>
         </div>
-        @if (userId == 10 && Model.isOppenOffer ==true)
+
+        <div class="form-row">
+            <div class="form-group">
+                <h2 style="color:white">Birim Yöneticisi Not/Gerekçe : @Model.Description</h2>
+            </div>
+        </div>
+
+        @if (userId == 10 && Model.isOppenOffer == true)
         {
             <div class="faq_main_container">
                 <div class="faq_container">
@@ -308,7 +346,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerCompanyAddress1">Firma Address:</label>
+                                    <label for="offerCompanyAddress1">Firma Adres:</label>
                                     @if (Model.DemandOffers.Count != 0 && @Model?.DemandOffers?[0].SupplierAdress != null)
                                     {
                                         <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1" value="@Model?.DemandOffers?[0].SupplierAdress">
@@ -318,11 +356,17 @@
                                         <input type="text" id="offerCompanyAddress1" name="offerCompanyAddress1">
                                     }
                                 </div>
+                                <div class="form-group">
+                                    <label for="deadlineDate1">Termin Tarihi: </label>
+                                    <input type="date" id="deadlineDate1" name="deadlineDate1"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].DeadlineDate.HasValue ? Model.DemandOffers[0].DeadlineDate.Value.ToString("yyyy-MM-dd") : "")">
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCurrencyType1">Para Birimi:</label>
-                                    <select id="offerCurrencyType1" name="offerCurrencyType1" style="width:130px">
+                                    <select id="offerCurrencyType1" name="offerCurrencyType1">
                                         @foreach (var currencyType in ViewBag.CurrencyTypes)
                                         {
                                             if (Model.CurrencyTypeId == currencyType.Id)
@@ -338,17 +382,73 @@
                                 </div>
                                 <div class="form-group" id="exchangeRateTextbox1" style="display: none;">
                                     <label for="exchangeRate1">Dolar/Euro Kuru:</label>
-                                    <input type="text" id="exchangeRate1" name="exchangeRate1" style="width: 100px;">
+                                    <input type="text" id="exchangeRate1" name="exchangeRate1">
                                 </div>
                             </div>
                             <div class="form-row">
+
+                                <div class="form-group">
+                                    <label for="maturityDate1">Ödeme Tarihi: </label>
+                                    <input type="date" id="maturityDate1" name="maturityDate1"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count != 0 && Model.DemandOffers[0].MaturityDate.HasValue ? Model.DemandOffers[0].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
+                                </div>
+
                                 <div class="form-group">
                                     <label for="offerTotalPrice1">Toplam Fiyat :</label>
-                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : 0)" >
+                                    <input type="text" id="offerTotalPrice1" name="offerTotalPrice1" readonly value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].TotalPrice : 0)">
                                 </div>
                             </div>
-@*                             <button onclick="updateDemand(1)" type="button" class="update-button">Kaydet</button>
- *@                            <button onclick="validateAndSubmit(1)" type="button" class="update-button">Kaydet</button>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ödeme Türü:</label>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="cash1" name="paymentType1" value="1" checked onclick="togglePaymentOptions(1)">
+                                        <label for="cash1">Peşin</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="installment1" name="paymentType1" value="2" onclick="togglePaymentOptions(1)">
+                                        <label for="installment1">Vadeli</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="partial1" name="paymentType1" value="3" onclick="togglePaymentOptions(1)">
+                                        <label for="partial1">Parçalı</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="maturitySelectContainer1" style="display: none;">
+                                    <label for="maturitySelect1">Vade Süresi:</label>
+                                    <select id="maturitySelect1" name="maturityPeriod">
+                                        <option value="">Seçiniz</option>
+                                        <option value="1">15 Gün</option>
+                                        <option value="2">30 Gün</option>
+                                        <option value="3">60 Gün</option>
+                                        <option value="4">90 Gün</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="partialSelectContainer1" style="display: none;">
+                                    <label for="partialSelect1">Parçalı Vade:</label>
+                                    <select id="partialSelect1" name="partialPeriod">
+                                        <option value="">Seçiniz</option>
+                                        <option value="1">%20 Peşin - İşbitimi</option>
+                                        <option value="2">%30 Peşin - İşbitimi</option>
+                                        <option value="3">%50 Peşin - İşbitimi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description1">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput1" name="fileInput1" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(1)" />
+                                    <span onclick="triggerFileInput(1)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName1" class="selected-file-name"></div>
+                            </div>
+
+                            <button onclick="validateAndSubmit(1)" type="button" class="update-button">Kaydet</button>
 
                             @if (Model.DemandOffers.Count > 0)
                             {
@@ -429,11 +529,21 @@
                                         <input type="text" id="offerCompanyAddress2" name="offerCompanyAddress2">
                                     }
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="deadlineDate2">Termin Tarihi: </label>
+                                    <input type="date" id="deadlineDate2" name="deadlineDate2"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count > 1 && Model.DemandOffers[1].DeadlineDate.HasValue
+                                            ? Model.DemandOffers[1].DeadlineDate.Value.ToString("yyyy-MM-dd")
+                                            : DateTime.Now.ToString("yyyy-MM-dd"))">
+                                </div>
+
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCurrencyType2">Para Birimi:</label>
-                                    <select id="offerCurrencyType2" name="offerCurrencyType2" style="width:130px">
+                                    <select id="offerCurrencyType2" name="offerCurrencyType2">
                                         @foreach (var currencyType in ViewBag.CurrencyTypes)
                                         {
                                             if (Model.CurrencyTypeId == currencyType.Id)
@@ -449,18 +559,73 @@
                                 </div>
                                 <div class="form-group" id="exchangeRateTextbox2" style="display: none;">
                                     <label for="exchangeRate2">Dolar/Euro Kuru:</label>
-                                    <input type="text" id="exchangeRate2" name="exchangeRate2" style="width: 100px;">
+                                    <input type="text" id="exchangeRate2" name="exchangeRate2">
                                 </div>
                             </div>
 
                             <div class="form-row">
+
+                                <div class="form-group">
+                                    <label for="maturityDate2">Ödeme Tarihi: </label>
+                                    <input type="date" id="maturityDate2" name="maturityDate2"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count >1 && Model.DemandOffers[1].MaturityDate.HasValue ? Model.DemandOffers[1].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
+                                </div>
+
                                 <div class="form-group">
                                     <label for="offerTotalPrice2">Toplam Fiyat :</label>
                                     <input type="text" id="offerTotalPrice2" readonly name="offerTotalPrice2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].TotalPrice : 0)">
                                 </div>
                             </div>
-@*                             <button onclick="updateDemand(2)" type="button" class="update-button">Kaydet</button>
- *@                                                        <button onclick="validateAndSubmit(2)" type="button" class="update-button">Kaydet</button>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ödeme Türü:</label>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="cash2" name="paymentType2" value="1" checked onclick="togglePaymentOptions(2)">
+                                        <label for="cash2">Peşin</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="installment2" name="paymentType2" value="2" onclick="togglePaymentOptions(2)">
+                                        <label for="installment2">Vadeli</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="partial2" name="paymentType2" value="3" onclick="togglePaymentOptions(2)">
+                                        <label for="partial2">Parça</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="maturitySelectContainer2" style="display: none;">
+                                    <label for="maturitySelect2">Vade Süresi:</label>
+                                    <select id="maturitySelect2" name="maturityPeriod2">
+                                        <option value="">Seçiniz</option>
+                                        <option value="15">15 Gün</option>
+                                        <option value="30">30 Gün</option>
+                                        <option value="45">45 Gün</option>
+                                        <option value="60">60 Gün</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="partialSelectContainer2" style="display: none;">
+                                    <label for="partialSelect2">Parça Numarası:</label>
+                                    <select id="partialSelect2" name="partialPeriod2">
+                                        <option value="">Seçiniz</option>
+                                        <option value="20">%20 Peşin - İşbitimi</option>
+                                        <option value="30">%30 Peşin - İşbitimi</option>
+                                        <option value="50">%50 Peşin - İşbitimi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="description2">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput2" name="fileInput2" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(2)" />
+                                    <span onclick="triggerFileInput(2)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName2" class="selected-file-name"></div>
+                            </div>
+
+                            <button onclick="validateAndSubmit(2)" type="button" class="update-button">Kaydet</button>
 
                             @if (Model.DemandOffers.Count > 1)
                             {
@@ -542,11 +707,19 @@
                                         <input type="text" id="offerCompanyAddress3" name="offerCompanyAddress3">
                                     }
                                 </div>
+                                <div class="form-group">
+                                    <label for="deadlineDate3">Termin Tarihi: </label>
+                                    <input type="date" id="deadlineDate3" name="deadlineDate3"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count > 2 && Model.DemandOffers[2].DeadlineDate.HasValue
+                                            ? Model.DemandOffers[2].DeadlineDate.Value.ToString("yyyy-MM-dd")
+                                            : DateTime.Now.ToString("yyyy-MM-dd"))">
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="offerCurrencyType3">Para Birimi:</label>
-                                    <select id="offerCurrencyType3" name="offerCurrencyType3" style="width:130px">
+                                    <select id="offerCurrencyType3" name="offerCurrencyType3">
                                         @foreach (var currencyType in ViewBag.CurrencyTypes)
                                         {
                                             if (Model.CurrencyTypeId == currencyType.Id)
@@ -562,35 +735,88 @@
                                 </div>
                                 <div class="form-group" id="exchangeRateTextbox3" style="display: none;">
                                     <label for="exchangeRate3">Dolar/Euro Kuru:</label>
-                                    <input type="text" id="exchangeRate3" name="exchangeRate3" style="width: 100px;">
+                                    <input type="text" id="exchangeRate3" name="exchangeRate3">
                                 </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="offerTotalPrice3">Toplam Fiyat:</label>
+                                    <label for="maturityDate3">Ödeme Tarihi: </label>
+                                    <input type="date" id="maturityDate3" name="maturityDate3"
+                                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                           value="@(Model.DemandOffers.Count >2  && Model.DemandOffers[2].MaturityDate.HasValue ? Model.DemandOffers[2].MaturityDate.Value.ToString("yyyy-MM-dd") : "")">
+                                </div>
+                                <div class="form-group">
+                                    <label for="offerTotalPrice3">Toplam Fiyat :</label>
                                     <input type="text" id="offerTotalPrice3" readonly name="offerTotalPrice3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].TotalPrice : 0)">
                                 </div>
                             </div>
-@*                             <button onclick="updateDemand(3)" type="button" class="update-button">Kaydet</button>
- *@                            <button onclick="validateAndSubmit(3)" type="button" class="update-button">Kaydet</button>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ödeme Türü:</label>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="cash3" name="paymentType3" value="1" checked onclick="togglePaymentOptions(3)">
+                                        <label for="cash3">Peşin</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="installment3" name="paymentType3" value="2" onclick="togglePaymentOptions(3)">
+                                        <label for="installment3">Vadeli</label>
+                                    </div>
+                                    <div style="display: inline-block; margin-left: 10px;">
+                                        <input type="radio" id="partial3" name="paymentType3" value="3" onclick="togglePaymentOptions(3)">
+                                        <label for="partial3">Parça</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="maturitySelectContainer3" style="display: none;">
+                                    <label for="maturitySelect3">Vade Süresi:</label>
+                                    <select id="maturitySelect3" name="maturityPeriod3">
+                                        <option value="">Seçiniz</option>
+                                        <option value="15">15 Gün</option>
+                                        <option value="30">30 Gün</option>
+                                        <option value="45">45 Gün</option>
+                                        <option value="60">60 Gün</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="partialSelectContainer3" style="display: none;">
+                                    <label for="partialSelect3">Parçalı Vade:</label>
+                                    <select id="partialSelect3" name="partialPeriod3">
+                                        <option value="">Seçiniz</option>
+                                        <option value="20">%20 Peşin - Ödemem</option>
+                                        <option value="30">%30 Peşin - Ödemem</option>
+                                        <option value="50">%50 Peşin - Ödemem</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="description3">Dosya Seç:</label>
+                                <div class="fancy-file-input">
+                                    <input type="file" id="fileInput3" name="fileInput3" multiple accept=".png, .jpeg, .pdf" onchange="showFileName(3)" />
+                                    <span onclick="triggerFileInput(3)">Dosya Seçin</span>
+                                </div>
+                                <div id="selectedFileName3" class="selected-file-name"></div>
+                            </div>
+                            <button onclick="validateAndSubmit(3)" type="button" class="update-button">Kaydet</button>
                             @if (Model.DemandOffers.Count > 2)
                             {
                                 <a href="@Url.Action("OfferPage", "Demands", new { DemandId = @Model.DemandId, DemandOfferId = @Model?.DemandOffers?[2].DemandOfferId })" class="edit-button">Teklif Detay Giriş</a>
                             }
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
-        @if (ViewBag.OfferRequest !=null)
+            @if (ViewBag.OfferRequest != null)
             {
                 <div class="button-group">
-            <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Teklifleri Gönder</button>
-           
-            </div>
+                    <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Teklifleri Gönder</button>
+
+                </div>
             }
-        
+           
+
         }
     </form>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -700,6 +926,41 @@
         transition: all 0.5s ease;
     }
 
+    .fancy-file-input {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .fancy-file-input input[type="file"] {
+            display: none;
+        }
+
+        .fancy-file-input:hover {
+            background-color: #0056b3;
+        }
+
+        .fancy-file-input span {
+            display: block;
+            font-size: 16px;
+        }
+
+        .fancy-file-input input[type="file"]:focus + span {
+            outline: none;
+        }
+
+    .fancy-file-input label {
+        font-size: 14px;
+        color: white;
+    }
+
     .edit-button {
         background-color: #ff9933;
         color: #fff;
@@ -767,6 +1028,87 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+        color: #333;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    .file-group input[type="file"] {
+        display: none;
+    }
+
+    .file-group label {
+        background-color: #27ae60;
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+        .file-group label:hover {
+            background-color: #218c53;
+        }
+
+    .file-group .file-name {
+        margin-top: 10px;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    .file-group input[type="file"]:focus + label,
+    .file-group input[type="file"]:not(:focus) + label {
+        background-color: #27ae60;
+    }
+
+        .file-group input[type="file"]:focus + label:hover,
+        .file-group input[type="file"]:not(:focus) + label:hover {
+            background-color: #218c53;
+        }
+
+    .file-group input[type="file"] {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+
+        .file-group input[type="file"]:focus + label .file-name,
+        .file-group input[type="file"]:not(:focus) + label .file-name {
+            display: inline-block;
+        }
+
+        .file-group input[type="file"]:focus + label:before,
+        .file-group input[type="file"]:not(:focus) + label:before {
+            content: "Select File";
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+    .form-group.file-group {
+        width: calc(33.3333% - 10px);
+    }
+
+    .selected-file-name {
+        margin-left: 10px; /* Sola kaydırmak için */
+        color: white; /* Metni beyaz yapmak için */
+        font-size: 14px; /* İsteğe bağlı, font boyutunu ayarlayabilirsiniz */
+    }
 </style>
 @{
     var jsonProviders = JsonConvert.SerializeObject(ViewBag.Providers);
@@ -931,7 +1273,41 @@
         });
     });
 
+    function triggerFileInput(offerId) {
+        document.getElementById('fileInput' + offerId).click();
+    }
 
+    function showFileName(offerId) {
+        var fileInput = document.getElementById('fileInput' + offerId);
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : '';
+        document.getElementById('selectedFileName' + offerId).textContent = fileName;
+    }
+
+    function togglePaymentOptions(group) {
+        var maturitySelectContainer = document.getElementById("maturitySelectContainer" + group);
+        var partialSelectContainer = document.getElementById("partialSelectContainer" + group);
+        var isInstallment = document.getElementById("installment" + group).checked;
+        var isPartial = document.getElementById("partial" + group).checked;
+        var isCash = document.getElementById("cash" + group).checked;
+
+        maturitySelectContainer.style.display = "none";
+        partialSelectContainer.style.display = "none";
+
+        if (isInstallment) {
+            maturitySelectContainer.style.display = "block";
+        } else if (isPartial) {
+            partialSelectContainer.style.display = "block";
+        }
+
+        if (isCash) {
+            document.getElementById("maturitySelect" + group).value = "";
+            document.getElementById("partialSelect" + group).value = "";
+        } else if (isInstallment) {
+            document.getElementById("partialSelect" + group).value = "";
+        } else if (isPartial) {
+            document.getElementById("maturitySelect" + group).value = "";
+        }
+    }
     function openOfferPage(demandId, offerNumber) {
         window.location.href = '/api/Demands/OfferPage?demandId=' + demandId + '&DemandOfferId=' + offerNumber;
     }
@@ -972,6 +1348,13 @@
         var offerTotalPrice = $(`#offerTotalPrice${offerNumber}`).val();
         var notRegisteredProvider = $(`#notRegisteredProvider${offerNumber}`).prop('checked');
         var selectedProviderId = $(`#provider${offerNumber}`).val();
+        var deadlineDate = $(`#deadlineDate${offerNumber}`).val();
+        var maturityDate = $(`#maturityDate${offerNumber}`).val();
+        var paymentType = $(`input[name='paymentType${offerNumber}']:checked`).val();
+        var InstallmentPayment = $(`#maturitySelect${offerNumber}`).val();
+        var PartialPayment = $(`#partialSelect${offerNumber}`).val();
+
+
 
         if (notRegisteredProvider) {
             selectedProviderId = null;
@@ -987,11 +1370,65 @@
             OfferMaterial: offerMaterial,
             OfferPrice: offerPrice,
             OfferTotalPrice: offerTotalPrice,
-            OfferCompanyId: selectedProviderId
+            OfferCompanyId: selectedProviderId,
+            deadlineDate: deadlineDate,
+            maturityDate: maturityDate,
+            paymentType: paymentType,
+            InstallmentPayment: InstallmentPayment,
+            PartialPayment: PartialPayment
         };
     }
 
+    // function getFileData() {
+    //     return new Promise(function (resolve, reject) {
+    //         var fileInput = document.getElementById('fileInput');
+    //         if (fileInput.files.length === 0) {
+    //             resolve(null);
+    //             return;
+    //         }
 
+    //         var file = fileInput.files[0];
+    //         var reader = new FileReader();
+
+    //         reader.onload = function (event) {
+    //             var fileContent = event.target.result.split(',')[1];
+    //             resolve(fileContent);
+    //         };
+
+    //         reader.onerror = function (error) {
+    //             reject(error);
+    //         };
+
+    //         reader.readAsDataURL(file);
+    //     });
+    // }
+
+    function getFileData(offerId) {
+        return new Promise(function (resolve, reject) {
+            var fileInput = document.getElementById('fileInput' + offerId);
+            if (fileInput.files.length === 0) {
+                resolve({ fileName: null, fileContent: null });
+                return;
+            }
+
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                var fileContent = event.target.result.split(',')[1];
+                resolve({
+                    fileName: file.name,
+                    fileContent: fileContent
+                });
+            };
+
+            reader.onerror = function (error) {
+                reject(error);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
 
     function validateAndSubmit(offerNumber) {
         var currencyType1 = $('#offerCurrencyType1').val();
@@ -1001,7 +1438,6 @@
         var currencyType3 = $('#offerCurrencyType3').val();
         var exchangeRate3 = $('#exchangeRate3').val();
 
-        // Türk Lirası dışındaki para birimleri için kur bilgisi kontrolü
         if ((currencyType1 == '2' || currencyType1 == '3') && exchangeRate1.trim() === '') {
             toastr.error("Türk Lirası dışındaki para birimleri için kur bilgisi girilmelidir.", "Error");
             return false;
@@ -1019,14 +1455,81 @@
     }
 
 
+    // function updateDemand(offerNumber) {
+    //     var demandId = @Model.DemandId;
+    //     var companyId = $('#companyName').val();
+    //     var locationId = $('#location').val();
+    //     var departmentId = $('#department').val();
+    //     var description = $('#description').val();
+
+    //     var offer1Data = getOfferData(offerNumber);
+
+    //     var exchangeRate = '';
+    //     if (offerNumber === 1) {
+    //         exchangeRate = $('#exchangeRate1').val().trim();
+    //     } else if (offerNumber === 2) {
+    //         exchangeRate = $('#exchangeRate2').val().trim();
+    //     } else if (offerNumber === 3) {
+    //         exchangeRate = $('#exchangeRate3').val().trim();
+    //     }
+
+    //     // var fileInputs = document.querySelectorAll('input[type="file"]');
+    //     // for (var i = 0; i < fileInputs.length; i++) {
+    //     //     var fileInput = fileInputs[i];
+    //     //     if (fileInput.files.length > 0) {
+    //     //         for (var j = 0; j < fileInput.files.length; j++) {
+    //     //             formData.append('Files', fileInput.files[j]);
+    //     //             formData.append('FileNames', fileInput.files[j].name);
+    //     //         }
+    //     //     }
+    //     // }
+
+    //     var updateDemandViewModel = {
+    //         DemandId: demandId,
+    //         CompanyId: companyId,
+    //         CompanyLocationId: locationId,
+    //         DepartmentId: departmentId,
+    //         Description: description,
+    //         OfferCompanyName: offer1Data.OfferCompanyName,
+    //         OfferCompanyPhone: offer1Data.OfferCompanyPhone,
+    //         OfferCompanyAddress: offer1Data.OfferCompanyAddress,
+    //         IsProvider1Registered: offer1Data.IsProviderRegistered,
+    //         OfferCurrencyType: offer1Data.OfferCurrencyType,
+    //         OfferAmount: offer1Data.OfferAmount,
+    //         OfferMaterial: offer1Data.OfferMaterial,
+    //         OfferPrice: offer1Data.OfferPrice,
+    //         OfferTotalPrice: offer1Data.OfferTotalPrice,
+    //         OfferCompanyId: offer1Data.OfferCompanyId,
+    //         ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
+    //         deadlineDate: offer1Data.deadlineDate,
+    //         maturityDate: offer1Data.maturityDate,
+    //         paymentType : offer1Data.paymentType !== '' ?offer1Data.paymentType : null ,
+    //         InstallmentPayment : offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null
+    //         PartialPayment : offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null ,
+    //     };
+
+    //     console.log(updateDemandViewModel);
+    //     $.ajax({
+    //         url: '/api/Demands/UpdateDemand',
+    //         type: 'POST',
+    //         contentType: 'application/json',
+    //         data: JSON.stringify(updateDemandViewModel),
+    //         success: function (result) {
+    //             toastr.success("Demand Offer Created", "Success");
+    //             location.reload();
+    //         },
+    //         error: function (error) {
+    //             console.error('Error updating demand:', error);
+    //         }
+    //     });
+    // }
+
     function updateDemand(offerNumber) {
         var demandId = @Model.DemandId;
         var companyId = $('#companyName').val();
         var locationId = $('#location').val();
         var departmentId = $('#department').val();
         var description = $('#description').val();
-
-        var offer1Data = getOfferData(offerNumber);
 
         var exchangeRate = '';
         if (offerNumber === 1) {
@@ -1037,43 +1540,63 @@
             exchangeRate = $('#exchangeRate3').val().trim();
         }
 
-        var updateDemandViewModel = {
-            DemandId: demandId,
-            CompanyId: companyId,
-            CompanyLocationId: locationId,
-            DepartmentId: departmentId,
-            Description: description,
+        var offer1Data = getOfferData(offerNumber);
 
-            OfferCompanyName: offer1Data.OfferCompanyName,
-            OfferCompanyPhone: offer1Data.OfferCompanyPhone,
-            OfferCompanyAddress: offer1Data.OfferCompanyAddress,
-            IsProvider1Registered: offer1Data.IsProviderRegistered,
-            OfferCurrencyType: offer1Data.OfferCurrencyType,
-            OfferAmount: offer1Data.OfferAmount,
-            OfferMaterial: offer1Data.OfferMaterial,
-            OfferPrice: offer1Data.OfferPrice,
-            OfferTotalPrice: offer1Data.OfferTotalPrice,
-            OfferCompanyId: offer1Data.OfferCompanyId,
 
-            // Eğer exchangeRate boş değilse, model'e ekleyin
-            ExchangeRate: exchangeRate !== '' ? exchangeRate : null
-        };
+        getFileData(offerNumber).then(function (fileData) {
+            offer1Data.fileContent = fileData.fileContent;
+            offer1Data.fileName = fileData.fileName;
 
-        console.log(updateDemandViewModel);
-        $.ajax({
-            url: '/api/Demands/UpdateDemand',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(updateDemandViewModel),
-            success: function (result) {
-                toastr.success("Demand Offer Created", "Success");
-                location.reload();
-            },
-            error: function (error) {
-                console.error('Error updating demand:', error);
+            if (fileData.fileContent) {
+                offer1Data.FileContent = fileData.fileContent;
+                offer1Data.FileName = fileData.fileName;
             }
+
+            var updateDemandViewModel = {
+                DemandId: demandId,
+                CompanyId: companyId,
+                CompanyLocationId: locationId,
+                DepartmentId: departmentId,
+                Description: description,
+                OfferCompanyName: offer1Data.OfferCompanyName,
+                OfferCompanyPhone: offer1Data.OfferCompanyPhone,
+                OfferCompanyAddress: offer1Data.OfferCompanyAddress,
+                IsProvider1Registered: offer1Data.IsProviderRegistered,
+                OfferCurrencyType: offer1Data.OfferCurrencyType,
+                OfferAmount: offer1Data.OfferAmount,
+                OfferMaterial: offer1Data.OfferMaterial,
+                OfferPrice: offer1Data.OfferPrice,
+                OfferTotalPrice: offer1Data.OfferTotalPrice,
+                OfferCompanyId: offer1Data.OfferCompanyId,
+                ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
+                deadlineDate: offer1Data.deadlineDate,
+                maturityDate: offer1Data.maturityDate,
+                paymentType: offer1Data.paymentType !== '' ? offer1Data.paymentType : null,
+                InstallmentPayment: offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null,
+                PartialPayment: offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null,
+                FileContent: offer1Data.fileContent,
+                FileName: offer1Data.fileName
+            };
+
+            $.ajax({
+                url: '/api/Demands/UpdateDemand',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(updateDemandViewModel),
+                success: function (response) {
+                    console.log("Dosya ve veriler başarıyla gönderildi.");
+                    toastr.success("Demand Offer Created", "Success");
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function (error) {
+                    console.error("Bir hata oluştu:", error);
+                }
+            });
         });
     }
+
 
     function changeStatus(demandId) {
         var demandStatusChangeViewModel = {
@@ -1090,6 +1613,8 @@
                 console.log(statusResult);
                 toastr.success("Status Changed", "Success");
                 window.location.href = '/Home/Index';
+                toastr.error("Bilgileri Kontrol Edin.", "Error");
+
 
 
             },

@@ -96,7 +96,7 @@ namespace Demand.Presentation.Controllers
                 {
                     DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari && !x.IsDeleted).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
-                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement))
+                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement || x.RoleId== (int)PersonnelRoleEnum.HeadOfManager))
                 {
                     DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || x.Status == (int)DemandStatusEnum.approved || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }

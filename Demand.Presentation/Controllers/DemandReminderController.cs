@@ -74,20 +74,20 @@ namespace Demand.Presentation.Controllers
                         {
                             if (demandOffer.IsNotNull())
                             {
-                                demandLink = $"http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId={demandId}";
+                                demandLink = $"https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId={demandId}";
                             }
                             else
                             {
-                                demandLink = $"http://172.30.44.13:5734/api/Demands?id={demandId}";
+                                demandLink = $"https://portal.demmuseums.com/api/Demands?id={demandId}";
                             }
                         }
                         else if (personnelRole.RoleId == (int)PersonnelRoleEnum.SatınAlmaManager)
                         {
-                            demandLink = $"http://172.30.44.13:5734/api/Demands/Edit/{demandId}";
+                            demandLink = $"https://portal.demmuseums.com/api/Demands/Edit/{demandId}";
                         }
                         else if (personnelRole.RoleId == (int)PersonnelRoleEnum.HeadOfManager)
                         {   
-                            demandLink = $"http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId={demandId}";
+                            demandLink = $"https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId={demandId}";
                         }
                         emailBody += $"<a href='{demandLink}'>Talep {demandId} Detayları</a><br/>";
                     }

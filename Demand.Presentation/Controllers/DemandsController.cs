@@ -497,7 +497,7 @@ namespace Demand.Presentation.Controllers
                     {
                         if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
                         {
-                            string demandLink = "http://172.30.44.13:5734/api/Demands?id=" + demandProcessEntity.DemandId;
+                            string demandLink = "https://portal.demmuseums.com/api/Demands?id=" + demandProcessEntity.DemandId;
                             var emailBody = $"Merhabalar Sayın {parentPersonnel.FirstName} {parentPersonnel.LastName},<br/><br/>" +
                                             $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
                                             $"Talep URL : <a href='{demandLink}'> TALEP GÖRÜNTÜLE </a> <br/><br/>" +
@@ -573,7 +573,7 @@ namespace Demand.Presentation.Controllers
             {
                 PersonnelEntity personnel = _personnelService.GetById(10).Data;
 
-                string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + addedDemand.Id;
+                string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + addedDemand.Id;
                 var emailBody = $"Merhabalar Sayın {personnel.FirstName} {personnel.LastName},<br/><br/>" +
                      $"{personnelEntity.FirstName} {personnelEntity.LastName} tarafından, {demandEntity.DemandTitle} başlıklı, {demandEntity.Id} numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol etmenizi rica ederiz.<br/><br/>" +
                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -635,7 +635,7 @@ namespace Demand.Presentation.Controllers
                     if (nextDemandProcessEntity.ManagerId == 10)
                     {
 
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmış ve onaylanmıştır. Lütfen teklif ve diğer detay bilgileri doldurmanızı rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -644,7 +644,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else if (personnelRole != null && personnelRole.RoleId != 8)
                     {
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebine girilen teklifler birim yöneticisi tarafından değelendirilmiştir. Aşağıdaki linkten talep içerisindeki teklifleri değerlendirerek onay vermenizi rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -665,7 +665,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else
                     {
-                        string demandLink = "http://172.30.44.13:5734/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
+                        string demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                         var emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                     demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi açılmıştır. Aşağıdaki linkten talebi kontrol ederek onay vermenizi rica ederiz.<br/><br/>" +
                                      $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -699,7 +699,7 @@ namespace Demand.Presentation.Controllers
                     PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
                     string demandLink = "";
                     var emailBody = "";
-                    demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                    demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
                     emailBody = $"Merhabalar Sayın " + personnel.FirstName + " " + personnel.LastName + ",<br/><br/>" +
                                demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                     "Saygılarımızla.";
@@ -708,7 +708,7 @@ namespace Demand.Presentation.Controllers
                     /*Finans Mail*/
                     PersonnelEntity ApprovedDemandPerson = _personnelService.GetById(long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value)).Data;
 
-                    demandLink = "http://172.30.44.13:5734/api/Demands/Edit/" + demandProcessEntity.DemandId;
+                    demandLink = "https://portal.demmuseums.com/api/Demands/DemandOfferDetail?DemandId=" + demandProcessEntity.DemandId;
                     emailBody = $"Merhabalar,<br/><br/>" +
                                ApprovedDemandPerson.FirstName + " " + ApprovedDemandPerson.LastName + " tarafından," + demandEntity.DemandTitle + " başlıklı," + demandEntity.Id + " numaralı satın alma talebi onaylanmıştır.Bilginize sunarız.<br/><br/>" + $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
                     "Saygılarımızla.";
@@ -718,7 +718,7 @@ namespace Demand.Presentation.Controllers
                     }
                     else
                     {
-                        EmailHelper.SendEmail(new List<string> { "okan.kucuk@demmuseums.com", "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr" }, "Onaylanan Satın Alma Talebi", emailBody);
+                        EmailHelper.SendEmail(new List<string> { "samet.bas@demmuseums.com"/*, "yusuf.aslan@demmuseums.com", "murat.aydin@astel.com.tr"*/ }, "Onaylanan Satın Alma Talebi", emailBody);
                     }
                     _demandService.Update(demandEntity);
                 }

@@ -34,7 +34,7 @@ public class AuthorizationsController : Controller
             return Json(new { success = false, message = "Hatalı email veya kullanıcı bulunamadı." });
         }
 
-        #region HashingCheck
+         #region HashingCheck
         Microsoft.AspNetCore.Identity.PasswordHasher<PersonnelEntity> passwordHasher = new();
         var resultant = passwordHasher.VerifyHashedPassword(dataResult.Data, dataResult.Data.Password, loginViewModel.Password);
         #endregion

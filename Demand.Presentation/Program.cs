@@ -87,6 +87,9 @@ builder.Services.AddDbContext<DemandContext>(options =>
 });
 #endregion
 
+builder.Services.AddHostedService<PendingDemandReminderWorker>();
+
+
 #region Injection
 builder.Services.AddHttpClient();
 

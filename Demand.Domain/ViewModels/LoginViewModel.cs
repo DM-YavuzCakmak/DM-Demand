@@ -13,5 +13,7 @@ namespace Demand.Domain.ViewModels
         public string Password { get; set; }
 
         public string? Result{ get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }

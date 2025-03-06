@@ -48,7 +48,8 @@
 
         var data = {
             UserEmail: userEmail,
-            Password: password
+            Password: password,
+            ReturnUrl: "@(ViewBag.ReturnUrl)"
         };
 
         $.ajax({
@@ -59,7 +60,7 @@
             dataType: 'json',
             success: function (result) {
                 if (result.success) {
-                    window.location.href = '/Home/Index';
+                    window.location.href = result.returnUrl
                 } else {
                     showErrorPopup(result.message);
                 }

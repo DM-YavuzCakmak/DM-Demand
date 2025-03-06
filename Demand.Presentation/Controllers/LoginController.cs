@@ -21,9 +21,8 @@ namespace Demand.Presentation.Controllers
         {
             return View();
         }
-
         [HttpPost]
-        public IActionResult Login([FromBody] LoginViewModel model)
+        public IActionResult Login([FromBody] LoginViewModel model, string returnUrl = null)
         {
             var result = _personnelService.GetByEmail(model.UserEmail);
 
@@ -33,7 +32,13 @@ namespace Demand.Presentation.Controllers
 
                 if (personnel != null && personnel.Password == model.Password)
                 {
-                    return Json(new { success = true });
+                    HttpContext.Session.SetString("UserEmail", personnel.Email);
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Json(new { success = true, returnUrl = returnUrl });
+                    }
+                    return Json(new { success = true, returnUrl = Url.Action("Index", "Home") });
                 }
             }
             return Json(new { success = false, message = "Kullanıcı adı veya şifre hatalı." });

@@ -16,7 +16,9 @@ namespace Demand.Core.Attribute
 
             if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
             {
-                context.Result = new RedirectToActionResult("Login", "Home", null);
+                context.Result = new RedirectToActionResult("Login", "Home", new { returnUrl = context.HttpContext.Request.Path.Value + context.HttpContext.Request.QueryString.Value });
+
+                //context.Result = new RedirectToRouteResult(new Microsoft.AspNetCore.Routing.RouteValueDictionary(new { controller = "Home", action = "Login" }));
             }
 
             base.OnActionExecuting(context);

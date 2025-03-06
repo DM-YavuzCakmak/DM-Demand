@@ -223,8 +223,9 @@ namespace Demand.Presentation.Controllers
         {
             return View();
         }
-        public IActionResult Login()
-        {
+        public IActionResult Login([FromQuery]string returnUrl = null)
+         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 

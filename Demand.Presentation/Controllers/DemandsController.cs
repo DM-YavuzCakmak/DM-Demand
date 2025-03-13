@@ -1394,5 +1394,38 @@ namespace Demand.Presentation.Controllers
             var historypersonnel = _personnelService.GetById(managerId).Data;
             return historypersonnel != null ? historypersonnel.FirstName + " " + historypersonnel.LastName : "Bilinmiyor";
         }
+
+
+        [HttpPut("declineChangeStatus")]
+        public IActionResult declineChangeStatus([FromBody] DemandStatusChangeViewModel demandStatusChangeViewModel)
+        {
+            #region UserIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claims = claimsIdentity.Claims;
+            #endregion
+
+            DemandProcessEntity demandProcessEntity = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.FirstOrDefault();
+
+
+            demandProcessEntity.Status = (int)demandStatusChangeViewModel.Status;
+            demandProcessEntity.Desciription = string.Empty;
+            demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+            demandProcessEntity.UpdatedDate = DateTime.Now;
+            _demandProcessService.UpdateDemandProcess(demandProcessEntity);
+
+            PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
+            DemandEntity demand = _demandService.GetById(demandProcessEntity.DemandId).Data;
+
+            #region mailSend
+            string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
+            var emailBody = $"Merhabalar Sayın " + demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + ",<br/><br/>" +
+                        demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafınızdan açılan," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi Satın Alma Birimi Tarafından <b> '"+ demandStatusChangeViewModel.Description + "'</b> gerekçesi ile geri döndürülmüştür. Lütfen talebin detaylarına ve geri döndürme sebebine uygun olarak talebinizi güncelleyiniz.<br/><br/>" +
+                         $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
+         "Saygılarımızla.";
+            EmailHelper.SendEmail(new List<string> { demandOpenPerson.Email }, "Geri Dönen Satın Alma Talebi", emailBody);
+            #endregion
+
+            return Ok(demandProcessEntity);
+        }
     }
 }

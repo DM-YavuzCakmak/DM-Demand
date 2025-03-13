@@ -112,6 +112,21 @@
                 background-color: #4cae4c;
             }
 
+
+        .decline-button {
+            background-color: red;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .decline-button:hover {
+            background-color: red;
+            }
         #description {
             height: 125px;
             width: 100%;
@@ -165,36 +180,6 @@
                 background-color: #45a049;
             }
 
-        #DeclinDescription {
-            height: 250px;
-            width: 740px;
-            resize: none;
-            background-color: lightgray;
-            overflow-y: auto;
-            pointer-events: none;
-        }
-
-        #DeclinDescription {
-            width: calc(50% - 10px);
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        #DeclinDescription {
-            height: 55px;
-            width: 100%;
-            resize: none;
-            margin-top: 10px;
-        }
-
-        #DeclinDescription {
-            height: 250px;
-            width: 740px;
-            resize: none;
-            background-color: lightgray;
-            overflow-y: auto;
-            pointer-events: none;
-        }
 
     </style>
 </head>
@@ -807,6 +792,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="button-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" id="descriptionInput" placeholder="Açıklama giriniz..."
+                       style="padding: 8px; border: 1px solid #ccc; border-radius: 8px; outline: none; width: 550px;">
+                <button onclick="declineChangeStatus(@Model.DemandId)" type="button" class="decline-button">Geri Döndür</button>
             </div>
             @if (ViewBag.OfferRequest != null)
             {
@@ -1625,5 +1615,40 @@
             }
         });
     }
+
+
+    function declineChangeStatus(demandId) {
+
+            var description = document.getElementById("descriptionInput").value; 
+
+        var demandStatusChangeViewModel = {
+            DemandId: demandId,
+            Status: 0,
+             Description: description
+        };
+
+        $.ajax({
+            url: '/api/Demands/declineChangeStatus',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(demandStatusChangeViewModel),
+            success: function (statusResult) {
+                console.log(statusResult);
+                toastr.success("Status Changed", "Success");
+                window.location.href = '/Home/Index';
+                toastr.error("Bilgileri Kontrol Edin.", "Error");
+
+
+
+            },
+            error: function (error) {
+                console.error('Talep durumu değiştirme hatası:', error);
+                toastr.error("Unexpected Error", "Error");
+
+            }
+        });
+    }
+
+
 </script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>

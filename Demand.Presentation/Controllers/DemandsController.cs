@@ -479,6 +479,22 @@ namespace Demand.Presentation.Controllers
                 while (parentPersonnel != null)
                 {
                     i++;
+                    DemandProcessEntity demandProcessEntityPersonnel = new DemandProcessEntity
+                    {
+                        DemandId = addedDemand.Id,
+                        ManagerId = personnelEntity.Id,
+                        IsDeleted = false,
+                        HierarchyOrder = i,
+                        Desciription = string.Empty,
+                        Status = 2,
+                        CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                        CreatedDate = DateTime.Now,
+                        UpdatedAt = null,
+                        UpdatedDate = null,
+                    };
+                    _demandProcessService.AddDemandProcess(demandProcessEntityPersonnel);
+
+                    i++;
                     DemandProcessEntity demandProcessEntity = new DemandProcessEntity
                     {
                         DemandId = addedDemand.Id,
@@ -493,7 +509,7 @@ namespace Demand.Presentation.Controllers
                         UpdatedDate = null,
                     };
                     _demandProcessService.AddDemandProcess(demandProcessEntity);
-                    if (i == 1)
+                    if (i == 2)
                     {
                         if (!string.IsNullOrWhiteSpace(parentPersonnel.Email))
                         {
@@ -1404,20 +1420,23 @@ namespace Demand.Presentation.Controllers
             var claims = claimsIdentity.Claims;
             #endregion
 
-            DemandProcessEntity demandProcessEntity = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.FirstOrDefault();
+            List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
 
+            foreach (var demandProcessEntity in demandProcessEntities)
+            {
+                demandProcessEntity.Status = (int)demandStatusChangeViewModel.Status;
+                demandProcessEntity.Desciription = string.Empty;
+                demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+                demandProcessEntity.UpdatedDate = DateTime.Now;
+                _demandProcessService.UpdateDemandProcess(demandProcessEntity);
+            }
+            
 
-            demandProcessEntity.Status = (int)demandStatusChangeViewModel.Status;
-            demandProcessEntity.Desciription = string.Empty;
-            demandProcessEntity.UpdatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
-            demandProcessEntity.UpdatedDate = DateTime.Now;
-            _demandProcessService.UpdateDemandProcess(demandProcessEntity);
-
-            PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntity.CreatedAt).Data;
-            DemandEntity demand = _demandService.GetById(demandProcessEntity.DemandId).Data;
+            PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntities.First().CreatedAt).Data;
+            DemandEntity demand = _demandService.GetById(demandProcessEntities.First().DemandId).Data;
 
             #region mailSend
-            string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntity.DemandId;
+            string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntities.First().DemandId;
             var emailBody = $"Merhabalar Sayın " + demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + ",<br/><br/>" +
                         demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafınızdan açılan," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi Satın Alma Birimi Tarafından <b> '"+ demandStatusChangeViewModel.Description + "'</b> gerekçesi ile geri döndürülmüştür. Lütfen talebin detaylarına ve geri döndürme sebebine uygun olarak talebinizi güncelleyiniz.<br/><br/>" +
                          $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
@@ -1425,7 +1444,7 @@ namespace Demand.Presentation.Controllers
             EmailHelper.SendEmail(new List<string> { demandOpenPerson.Email }, "Geri Dönen Satın Alma Talebi", emailBody);
             #endregion
 
-            return Ok(demandProcessEntity);
+            return Ok();
         }
     }
 }

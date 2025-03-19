@@ -88,7 +88,7 @@ namespace Demand.Presentation.Controllers
                 PersonnelEntity personManager = _personnelService.GetById((int)personnel.ParentId).Data;
             }
 
-            if (demandProcesses.Count > 0 || userId == 10 || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+            if (demandProcesses.Count > 0 || userId == 10 || personnelRoles.Any(x=> x.RoleId == (int)PersonnelRoleEnum.FinanceManagement) || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
             {
                 List<DemandEntity> DemandList = new List<DemandEntity>();
 

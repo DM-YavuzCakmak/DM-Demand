@@ -132,7 +132,9 @@ namespace Demand.Presentation.Controllers
                     {
 
                     }
-                    else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null) && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement))
+                    else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null)
+      && (!personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement)
+      && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HeadOfManager)))
                     {
                         continue;
                     }

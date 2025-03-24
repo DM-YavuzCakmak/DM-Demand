@@ -179,12 +179,32 @@
             #addButton:hover, #removeButton:hover {
                 background-color: #45a049;
             }
-
+             .header {
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
 
     </style>
 </head>
 
 <body>
+    <div class="header">
+        <div class="logo">
+            <a href="@Url.Action("Index", "Home")">
+                <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+
     <div>
         <h2 style="color:white">TEKLİF GİRİŞİ</h2>
     </div>
@@ -1260,6 +1280,10 @@
                     console.error('Error fetching locations:', error);
                 }
             });
+        });
+
+          $("#logo").click(function () {
+            window.location.href = "@Url.Action("Index", "Home")";
         });
     });
 

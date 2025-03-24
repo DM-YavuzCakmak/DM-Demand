@@ -150,9 +150,30 @@
             padding: 5px;
         }
 
+        .header {
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
     </style>
 </head>
 <body>
+    <div class="header">
+        <div class="logo">
+            <a href="@Url.Action("Index", "Home")">
+                <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
     <main class="table" id="demandTable">
         <h2 style="text-align: center; color: white;">TEKLİF GİRİŞİ</h2>
         <form id="siteform" enctype="multipart/form-data">
@@ -338,6 +359,12 @@
 </style>
 
 <script>
+         $(document).ready(function () {
+        $("#logo").click(function () {
+            window.location.href = "@Url.Action("Index", "Home")";
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.price').forEach(function (priceInput) {
             priceInput.addEventListener('input', function () {

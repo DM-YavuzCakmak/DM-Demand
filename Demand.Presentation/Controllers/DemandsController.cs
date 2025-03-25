@@ -1318,12 +1318,16 @@ namespace Demand.Presentation.Controllers
                         var category = demandViewModel.Category[i];
                         var subcategory = demandViewModel.Subcategory[i];
                         var productcode = demandViewModel.ProductCode[i];
+                        if (long.Parse(type) != 1)
+                        {
+
+                        }
                         var requestInfo = new RequestInfoEntity
                         {
                             DemandId = demandViewModel.DemandId.Value,
-                            ProductCategoryId = Convert.ToInt32(type),
-                            NebimCategoryId = Convert.ToInt32(category),
-                            NebimSubCategoryId = Convert.ToInt32(subcategory),
+                            ProductCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull()? Convert.ToInt32(type) : null,
+                            NebimCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ? Convert.ToInt32(category) : null,
+                            NebimSubCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ?  Convert.ToInt32(subcategory) : null,
                             Quantity = Convert.ToInt32(quantity),
                             ProductName = productname,
                             ProductCode = productcode,

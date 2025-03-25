@@ -280,8 +280,8 @@
                                         </select>
                                     </td>
                                     <td><input type="text" name="productCode[]" class="productCode" readonly value="@offerRequestViewModel.ProductCode" /></td>
-                                    <td><input type="text" name="productName[]" class="productName" readonly value="@offerRequestViewModel.ProductName" /></td>
-                                    <td><input type="text" name="quantity[]" class="quantity" readonly value="@offerRequestViewModel.Quantity" /></td>
+                                    <td><input type="text" name="productName[]" class="productName"  value="@offerRequestViewModel.ProductName" /></td>
+                                    <td><input type="text" name="quantity[]" class="quantity"  value="@offerRequestViewModel.Quantity" /></td>
                                     <td>
                                         <select name="unit[]" class="unit">
                                             <option value="@offerRequestViewModel.Unit">@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</option>

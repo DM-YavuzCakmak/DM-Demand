@@ -39,6 +39,7 @@ using Demand.Domain.Entities.Role;
 using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
@@ -1304,6 +1305,10 @@ namespace Demand.Presentation.Controllers
             {
                 for (int i = 0; i < demandViewModel.ProductName.Count(); i++)
                 {
+                    var unit = demandViewModel.Unit[i];
+                    var quantity = demandViewModel.Quantity[i];
+                    var productname = demandViewModel.ProductName[i];
+
                     var requestInfoId = demandViewModel.RequestInfoId[i];
                     if (requestInfoId != null && long.Parse(requestInfoId) > 0)
                     { }
@@ -1312,9 +1317,6 @@ namespace Demand.Presentation.Controllers
                         var type = demandViewModel.Type[i];
                         var category = demandViewModel.Category[i];
                         var subcategory = demandViewModel.Subcategory[i];
-                        var unit = demandViewModel.Unit[i];
-                        var quantity = demandViewModel.Quantity[i];
-                        var productname = demandViewModel.ProductName[i];
                         var productcode = demandViewModel.ProductCode[i];
                         var requestInfo = new RequestInfoEntity
                         {
@@ -1338,6 +1340,16 @@ namespace Demand.Presentation.Controllers
 
                         requestInfoId = requestInfoAdd.Id.ToString();
                     }
+                    RequestInfoEntity existingRequestInfo = _requestInfoService.GetById(long.Parse(requestInfoId)).Data;
+
+                    if (long.Parse(requestInfoId) > 0 && existingRequestInfo.IsNotNull())
+                    {
+
+                        existingRequestInfo.ProductName = productname;
+                            existingRequestInfo.Quantity = Convert.ToInt32(quantity);
+                            existingRequestInfo.Unit = unit;
+                        _requestInfoService.Update(existingRequestInfo);
+                    }
                     var totalPrice = demandViewModel.TotalPrice[i];
                     var price = demandViewModel.Price[i];
 
@@ -1359,11 +1371,12 @@ namespace Demand.Presentation.Controllers
                     if (offerRequestId > 0)
                     {
                         offerRequest.Id = offerRequestId;
-
+                        //offerRequest.UnitPrice = demandViewModel.Unit[i]; 
                         var offerRequestAdd = _offerRequestService.Update(offerRequest);
                     }
                     else
                     {
+
                         var offerRequestAdd = _offerRequestService.Add(offerRequest);
                     }
                 }

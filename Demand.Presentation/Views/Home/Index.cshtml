@@ -405,11 +405,11 @@
                                             <td>@demand.WhoseTurn</td>
 
                                             <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 65) && demand.Status == 0)
+                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                 {
                                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                                 }
-                                                @if (userId == 12 || userId == 10 || userId == 65 || @demand.isDemandOffer == true)
+                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
                                                 {
                                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 
@@ -465,11 +465,11 @@
                                             <td>@demand.WhoseTurn</td>
 
                                             <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 65) && demand.Status == 0)
+                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                 {
                                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                                 }
-                                                @if (userId == 12 || userId == 10 || userId == 65 || @demand.isDemandOffer == true)
+                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
                                                 {
                                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 
@@ -525,11 +525,11 @@
                                             <td>@demand.WhoseTurn</td>
 
                                             <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 65) && demand.Status == 0)
+                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                 {
                                                     <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                                 }
-                                                @if (userId == 12 || userId == 10 || userId == 65 || @demand.isDemandOffer == true)
+                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
                                                 {
                                                     <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
 

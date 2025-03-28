@@ -88,7 +88,7 @@ namespace Demand.Presentation.Controllers
                 PersonnelEntity personManager = _personnelService.GetById((int)personnel.ParentId).Data;
             }
 
-            if (demandProcesses.Count > 0 || userId == 10 || userId == 65 || personnelRoles.Any(x=> x.RoleId == (int)PersonnelRoleEnum.FinanceManagement) || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+            if (demandProcesses.Count > 0 || userId == 10 || userId == 57 || personnelRoles.Any(x=> x.RoleId == (int)PersonnelRoleEnum.FinanceManagement) || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
             {
                 List<DemandEntity> DemandList = new List<DemandEntity>();
 
@@ -102,7 +102,7 @@ namespace Demand.Presentation.Controllers
                 }
                 else
                 {
-                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || userId == 10 || userId == 65 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
+                    DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || userId == 10 || userId == 57 || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
                 foreach (var demand in DemandList)
                 {
@@ -128,7 +128,7 @@ namespace Demand.Presentation.Controllers
                             : "TAMAMLANDI"; 
                     }
 
-                    if (userId == 10 || userId == 65 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+                    if (userId == 10 || userId == 57 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
                     {
 
                     }

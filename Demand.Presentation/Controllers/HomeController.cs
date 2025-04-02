@@ -108,8 +108,11 @@ namespace Demand.Presentation.Controllers
                 {
                     PersonnelEntity whoseTurnPersonnel = new PersonnelEntity();
                     IDataResult<PersonnelEntity> personnelResult = _personnelService.GetById(demand.CreatedAt);
-
                     List<DemandProcessEntity> whoseTurnProcessList = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.ToList();
+                    DemandProcessEntity Yk = _demandProcessService.GetList(x => x.DemandId == demand.Id).Data.OrderByDescending(x => x.Id)
+                          .FirstOrDefault();
+                    PersonnelEntity DemandYk = _personnelService.GetById(Yk.ManagerId).Data;
+
                     if (whoseTurnProcessList.IsNotNullOrEmpty())
                     {
                         DemandProcessEntity whoseTurnProcess = whoseTurnProcessList.FirstOrDefault();
@@ -149,6 +152,7 @@ namespace Demand.Presentation.Controllers
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
                         WhoseTurn = whoseTurn,
+                        Yk= DemandYk.FirstName + DemandYk.LastName,
                         isDemandOffer = demandOffers.Count > 0 ? true : false
                     };
                     if (personnelResult.IsNotNull())

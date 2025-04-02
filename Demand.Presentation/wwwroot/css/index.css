@@ -260,12 +260,11 @@ thead th.active, tbody td.active {
     .edit-button {
         padding: 10px 20px;
         font-size: 14px;
-        width: 100%; /* Butonu tam genişlikte yapar */
-        box-sizing: border-box; /* Butonun kenar boşlukları dahil tüm genişliği kapsaması için */
+        width: 100%; 
+        box-sizing: border-box;
     }
 }
 
-/* Orta ekranlar için */
 @media (min-width: 601px) and (max-width: 1024px) {
     .edit-button {
         padding: 10px 20px;
@@ -273,7 +272,6 @@ thead th.active, tbody td.active {
     }
 }
 
-/* Büyük ekranlar için */
 @media (min-width: 1025px) {
     .edit-button {
         padding: 8px 15px;
@@ -285,12 +283,11 @@ thead th.active, tbody td.active {
     .view-button {
         padding: 10px 20px;
         font-size: 14px;
-        width: 100%; /* Butonu tam genişlikte yapar */
-        box-sizing: border-box; /* Butonun kenar boşlukları dahil tüm genişliği kapsaması için */
+        width: 100%;
+        box-sizing: border-box; 
     }
 }
 
-/* Orta ekranlar için */
 @media (min-width: 601px) and (max-width: 1024px) {
     .view-button {
         padding: 10px 20px;
@@ -298,7 +295,6 @@ thead th.active, tbody td.active {
     }
 }
 
-/* Büyük ekranlar için */
 @media (min-width: 1025px) {
     .view-button {
         padding: 8px 15px;

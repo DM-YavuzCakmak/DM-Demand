@@ -336,11 +336,6 @@
             <p>
                 @{
                     string CustomName = $"{userName} {userLastName}";
-
-                    if (userId == 26)
-                    {
-                        CustomName = $"Hoşgeldin Gün Işığım 💜  {userName} {userLastName}";
-                    }
                 }
 
                 @CustomName
@@ -378,6 +373,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
                             </thead>
@@ -403,6 +399,7 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
+                                            <td>@demand.Yk</td>
 
                                             <td>
                                                 @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
@@ -438,6 +435,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
                             </thead>
@@ -463,6 +461,8 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
+                                            <td>@demand.Yk</td>
+
 
                                             <td>
                                                 @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
@@ -498,6 +498,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
                             </thead>
@@ -523,7 +524,7 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
-
+                                            <td>@demand.Yk</td>
                                             <td>
                                                 @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                 {

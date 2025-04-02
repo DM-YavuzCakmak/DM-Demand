@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; /* Flex yönünü dikey yapar */
+    flex-direction: column;
     min-height: 100vh;
     font-family: 'Jost', sans-serif;
     background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
@@ -32,27 +32,27 @@ label {
 }
 
 input {
-    width: 80%; /* Genişletildi */
-    height: 25px; /* Yüksekliği biraz artırıldı */
+    width: 80%; 
+    height: 25px; 
     background: #e0dede;
     justify-content: center;
     display: flex;
     margin: 20px auto;
-    padding: 15px; /* Padding artırıldı */
+    padding: 15px;
     border: none;
     outline: none;
     border-radius: 5px;
 }
 
 button {
-    width: 80%; /* Genişletildi */
-    height: 50px; /* Yüksekliği biraz artırıldı */
+    width: 80%;
+    height: 50px; 
     margin: 10px auto;
     justify-content: center;
     display: block;
     color: #fff;
     background: #573b8a;
-    font-size: 1.2em; /* Font boyutu artırıldı */
+    font-size: 1.2em; 
     font-weight: bold;
     margin-top: 20px;
     outline: none;
@@ -72,8 +72,8 @@ button {
 }
 
 .logo {
-    margin-bottom: 20px; /* Form ile logo arasındaki boşluk */
-    text-align: center; /* Ortalamak için */
+    margin-bottom: 20px; 
+    text-align: center; 
 }
 
     .logo img {
@@ -81,8 +81,8 @@ button {
     }
 
 .main {
-    width: 400px; /* Genişletildi */
-    height: 450px; /* Yüksekliği artırıldı */
+    width: 400px;
+    height: 450px; 
     background: red;
     overflow: hidden;
     background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/cover;
@@ -95,8 +95,8 @@ button {
 }
 
 .login {
-    width: 100%; /* Tam genişlikte */
-    height: 100%; /* Tam yükseklikte */
+    width: 100%; 
+    height: 100%;
     background: #eee;
     border-radius: 60% / 10%;
     transform: translateY(-50px);

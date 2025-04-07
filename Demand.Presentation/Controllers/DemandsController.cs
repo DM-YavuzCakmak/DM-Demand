@@ -40,6 +40,7 @@ using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Kep.Helpers.Extensions;
 using Microsoft.AspNetCore.Http.Connections;
@@ -615,11 +616,25 @@ namespace Demand.Presentation.Controllers
             #region UserIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claims = claimsIdentity.Claims;
+            long UserId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
             #endregion
+            PersonnelEntity personnel1 = _personnelService.GetById(UserId).Data;
+            PersonnelRoleEntity personnelRole1 = _personnelRoleService.GetList(x => x.PersonnelId == personnel1.Id).Data.FirstOrDefault();
 
             List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
 
-            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == 10 && x.Status == 0);
+
+            DemandProcessEntity? demandProcessEntity;
+            if (personnelRole1.RoleId == (int)PersonnelRoleEnum.SatınAlmaManager)
+            {
+                demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == 10 && x.Status == 0);
+            }
+            else
+            { 
+                 demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == UserId && x.Status == 0);
+            }
+               
+
             if (demandProcessEntity == null)
             {
                 return BadRequest("Talebe Ait Durum Değiştirme Yetkiniz Bulunmamaktadır.");

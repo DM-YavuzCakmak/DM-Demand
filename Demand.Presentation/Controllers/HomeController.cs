@@ -88,7 +88,7 @@ namespace Demand.Presentation.Controllers
                 PersonnelEntity personManager = _personnelService.GetById((int)personnel.ParentId).Data;
             }
 
-            if (demandProcesses.Count > 0 || userId == 10 || userId == 57 || personnelRoles.Any(x=> x.RoleId == (int)PersonnelRoleEnum.FinanceManagement) || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
+            if (demandProcesses.Count > 0 || userId == 10 || userId == 57 || personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement) || creatorDemandProcesses.Count > 0 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
             {
                 List<DemandEntity> DemandList = new List<DemandEntity>();
 
@@ -96,7 +96,7 @@ namespace Demand.Presentation.Controllers
                 {
                     DemandList = _demandService.GetList(x => x.DepartmentId == (int)DepartmentEnum.Mimari && !x.IsDeleted).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
-                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement || x.RoleId== (int)PersonnelRoleEnum.HeadOfManager))
+                else if (personnelRoles.Any(x => x.RoleId == (int)PersonnelRoleEnum.FinanceManagement || x.RoleId == (int)PersonnelRoleEnum.HeadOfManager))
                 {
                     DemandList = _demandService.GetList(x => !x.IsDeleted && (x.CreatedAt == userId || x.Status == (int)DemandStatusEnum.approved || demandProcesses.Select(d => d.DemandId).Contains(x.Id))).Data.OrderByDescending(t => t.CreatedDate).ToList();
                 }
@@ -121,14 +121,14 @@ namespace Demand.Presentation.Controllers
                             whoseTurnPersonnel = _personnelService.GetById(whoseTurnProcess.ManagerId).Data;
                             whoseTurn = whoseTurnPersonnel.IsNotNull() && demand.Status != (int)DemandStatusEnum.approved
                                 ? whoseTurnPersonnel.FirstName + " " + whoseTurnPersonnel.LastName
-                                :"TAMAMLANDI" ; 
+                                : "TAMAMLANDI";
                         }
                     }
                     else
                     {
                         whoseTurn = demand.Status != (int)DemandStatusEnum.approved
                             ? personnelResult.Data.FirstName + " " + personnelResult.Data.LastName
-                            : "TAMAMLANDI"; 
+                            : "TAMAMLANDI";
                     }
 
                     if (userId == 10 || userId == 57 || personnel.DepartmentId == (int)DepartmentEnum.Mimari)
@@ -136,8 +136,8 @@ namespace Demand.Presentation.Controllers
 
                     }
                     else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null)
-      && (!personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement)
-      && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HeadOfManager)))
+                                && (!personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HeadOfManager) && !personnelRoles.Any(role => role.RoleId == null)))
                     {
                         continue;
                     }
@@ -152,7 +152,7 @@ namespace Demand.Presentation.Controllers
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
                         WhoseTurn = whoseTurn,
-                        Yk= DemandYk.FirstName + DemandYk.LastName,
+                        Yk = DemandYk.FirstName + DemandYk.LastName,
                         isDemandOffer = demandOffers.Count > 0 ? true : false
                     };
                     if (personnelResult.IsNotNull())
@@ -229,8 +229,8 @@ namespace Demand.Presentation.Controllers
         {
             return View();
         }
-        public IActionResult Login([FromQuery]string returnUrl = null)
-         {
+        public IActionResult Login([FromQuery] string returnUrl = null)
+        {
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }

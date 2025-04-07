@@ -619,7 +619,7 @@ namespace Demand.Presentation.Controllers
 
             List<DemandProcessEntity> demandProcessEntities = _demandProcessService.GetList(x => x.DemandId == demandStatusChangeViewModel.DemandId).Data.ToList();
 
-            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value) && x.Status == 0);
+            DemandProcessEntity? demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == 10 && x.Status == 0);
             if (demandProcessEntity == null)
             {
                 return BadRequest("Talebe Ait Durum Değiştirme Yetkiniz Bulunmamaktadır.");

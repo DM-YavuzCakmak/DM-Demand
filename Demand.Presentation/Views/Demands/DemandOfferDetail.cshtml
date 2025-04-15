@@ -1020,9 +1020,10 @@
                             <textarea id="declineDescription" name="declineDescription" placeholder="Gerekçe veya Not"></textarea>
                         </div>
                         <div class="button-group">
-                            <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-                            @if (Model.DemandOffers.Count <= 0)
+                            
+                            @if (Model.DemandOffers.Count < 0)
                             {
+                                <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
                                 <button onclick="changeStatus(@Model.DemandId)" type="button" class="update-button">Onayla ve Teklife Gönder</button>
                             }
                         </div>

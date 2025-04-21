@@ -373,6 +373,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
@@ -399,6 +400,7 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
+                                            <td>@demand.AprrovedDate</td>
                                             <td>@demand.Yk</td>
 
                                             <td>
@@ -435,6 +437,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
@@ -461,6 +464,7 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
+                                            <td>@demand.AprrovedDate</td>
                                             <td>@demand.Yk</td>
 
 
@@ -498,6 +502,7 @@
                                     <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
@@ -524,6 +529,7 @@
                                                 </td>
                                             }
                                             <td>@demand.WhoseTurn</td>
+                                            <td>@demand.AprrovedDate</td>
                                             <td>@demand.Yk</td>
                                             <td>
                                                 @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)

@@ -20,6 +20,7 @@ namespace Demand.Domain.ViewModels
         public string? DemanderName { get; set; }
         public string? LocationName { get; set; }
         public DateTime DemandDate { get; set; }
+        public string? AprrovedDate { get; set; }
         public string?  WhoseTurn { get; set; }
         public string?  Yk { get; set; }
         public bool? isWhoPersonnel { get; set; }

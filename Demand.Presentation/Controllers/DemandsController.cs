@@ -492,7 +492,7 @@ namespace Demand.Presentation.Controllers
                         CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
                         CreatedDate = DateTime.Now,
                         UpdatedAt = null,
-                        UpdatedDate = null,
+                        UpdatedDate = DateTime.Now,
                     };
                     _demandProcessService.AddDemandProcess(demandProcessEntityPersonnel);
 

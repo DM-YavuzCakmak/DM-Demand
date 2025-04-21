@@ -152,7 +152,8 @@ namespace Demand.Presentation.Controllers
                         DemandTitle = demand.DemandTitle,
                         CreatedAt = demand.CreatedAt,
                         WhoseTurn = whoseTurn,
-                        Yk = DemandYk.FirstName + DemandYk.LastName,
+                        AprrovedDate = Yk.UpdatedDate.IsNotNull() ? Yk.UpdatedDate.Value.ToString("dd/MM/yyyy") : "TAMAMLANMADI",
+                        Yk = DemandYk.FirstName + " " + DemandYk.LastName,
                         isDemandOffer = demandOffers.Count > 0 ? true : false
                     };
                     if (personnelResult.IsNotNull())

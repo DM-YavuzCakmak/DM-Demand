@@ -137,7 +137,16 @@ namespace Demand.Presentation.Controllers
                     }
                     else if ((demand.CreatedAt != userId && whoseTurnProcessList.Find(x => x.ManagerId == userId) == null)
                                 && (!personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.FinanceManagement)
-                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HeadOfManager) && !personnelRoles.Any(role => role.RoleId == null)))
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HeadOfManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.ITManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.InsanKaynaklarıManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.OperasyonManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.HediyelikveGiftShopManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.MimariManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.SatınAlmaManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.PazarlamaManager)
+                                && !personnelRoles.Any(role => role.RoleId == (int)PersonnelRoleEnum.MuhasebeManager)
+                                && !personnelRoles.Any(role => role.RoleId == null)))
                     {
                         continue;
                     }

@@ -74,8 +74,13 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.ProductCategory;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Provider;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.RequestInfo;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Role;
+using Demand.Presentation.Services;
+using Demand.Presentation.Utilities.Token;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -88,6 +93,33 @@ builder.Services.AddDbContext<DemandContext>(options =>
 #endregion
 
 builder.Services.AddHostedService<PendingDemandReminderWorker>();
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new Exception("JWT Key eksik"))),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddScoped<EMailService>();
+builder.Services.AddScoped<TokenService>();
 
 
 #region Injection

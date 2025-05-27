@@ -202,27 +202,29 @@ var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddJwtBearer(options =>
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.LoginPath = "/Home/Login";
+    options.AccessDeniedPath = "/Home/Login";
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new Exception("JWT Key eksik"))),
-
-            ClockSkew = TimeSpan.Zero
-        };
-    })
-.AddCookie(o => { });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new Exception("JWT Key eksik"))),
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 builder.Services.AddAuthorization();
 

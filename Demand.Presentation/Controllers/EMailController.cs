@@ -1,6 +1,6 @@
 ﻿using Demand.Domain.Entities.FormDataEntity;
 using Demand.Presentation.Services;
-using Demand.Presentation.Utilities.Token;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ namespace Demand.Presentation.Controllers
             _emailService = emailService;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] FormData formData)
         {

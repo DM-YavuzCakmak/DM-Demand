@@ -10,16 +10,14 @@ namespace Demand.Presentation.Controllers
     [ApiController]
     public class EMailController : ControllerBase
     {
-        private readonly TokenService _tokenService;
         private readonly EMailService _emailService;
 
-        public EMailController(EMailService emailService, TokenService tokenService)
+        public EMailController(EMailService emailService)
         {
             _emailService = emailService;
-            _tokenService = tokenService;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail([FromBody] FormData formData)
         {

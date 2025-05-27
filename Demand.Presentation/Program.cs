@@ -94,34 +94,6 @@ builder.Services.AddDbContext<DemandContext>(options =>
 
 builder.Services.AddHostedService<PendingDemandReminderWorker>();
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new Exception("JWT Key eksik"))),
-
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-builder.Services.AddAuthorization();
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddScoped<EMailService>();
-builder.Services.AddScoped<TokenService>();
-
-
 #region Injection
 builder.Services.AddHttpClient();
 
@@ -220,10 +192,39 @@ builder.Services.AddScoped<IPersonnelRoleRepository, PersonnelRoleRepository>();
 builder.Services.AddScoped<IPersonnelRoleService, PersonnelRoleService>();
 #endregion
 
+
+builder.Services.AddScoped<EMailService>();
+builder.Services.AddScoped<TokenService>();
+
 #endregion
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(o =>{});
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new Exception("JWT Key eksik"))),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    })
+.AddCookie(o => { });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -236,11 +237,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

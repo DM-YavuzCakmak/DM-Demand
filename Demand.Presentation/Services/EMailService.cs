@@ -1,4 +1,4 @@
-﻿using Demand.Core.Utilities.Email;
+﻿using Demand.Presentation.Utilities.Email;
 using Demand.Domain.Entities.FormDataEntity;
 
 namespace Demand.Presentation.Services

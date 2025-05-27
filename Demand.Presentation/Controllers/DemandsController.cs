@@ -1058,7 +1058,7 @@ namespace Demand.Presentation.Controllers
 
                     }
                 }
-                if (demandMediaEntities.IsNotNullOrEmpty())
+                    if (demandMediaEntities.IsNotNullOrEmpty())
                 {
                     demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
                     demandViewModel.File1Name = demandMediaEntities[0].FileName;

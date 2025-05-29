@@ -32,7 +32,7 @@ namespace Demand.Presentation.Services
                 await Task.Run(() =>
                 {
                     EmailHelper.SendEmail(
-                        new List<string> { formData.Email /*"samet.bas@demmuseums.com" */},
+                        new List<string> { "contact@demmuseums.com" /*formData.Email*/ /*"samet.bas@demmuseums.com" */},
                         $"Contact Form: {formData.Subject}",
                         body
                     );

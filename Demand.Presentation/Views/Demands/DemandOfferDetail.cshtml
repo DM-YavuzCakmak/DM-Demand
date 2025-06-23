@@ -700,7 +700,7 @@
                                     }
                                 </div>
 
-                                @if (Model.Status == 0 && userId != 10)
+                                @if (Model.Status == 0 && userId != 10 && userId != 57)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[0].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -832,7 +832,7 @@
                                     }
                                 </div>
 
-                                @if (Model.Status == 0 && userId != 10)
+                                @if (Model.Status == 0 && userId != 10 && userId != 57)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[1].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -968,7 +968,7 @@
                                     }
                                 </div>
 
-                                @if (Model.Status == 0 && userId != 10)
+                                @if (Model.Status == 0 && userId != 10 && userId != 57)
                                 {
                                     <button type="button" class="btn btn-success" onclick="changeStatus(@Model.DemandId, @Model.DemandOffers[2].DemandOfferId)">Teklifi Seç</button>
                                 }
@@ -1012,7 +1012,7 @@
             </div>
             @if (Model.isApprovedActive == true)
             {
-                @if (Model.Status == 0 && userId != 10)
+                @if (Model.Status == 0 && userId != 10 && userId != 57)
                 {
                     <div class="row">
                         <div class="form-group">

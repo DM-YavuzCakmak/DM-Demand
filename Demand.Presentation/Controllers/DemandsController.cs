@@ -112,6 +112,10 @@ namespace Demand.Presentation.Controllers
             List<RequestInfoViewModel> requestInfoViewModels = new List<RequestInfoViewModel>();
             DemandProcessEntity demandProcess = new DemandProcessEntity();
             DemandEntity demand = _demandService.GetById(id).Data;
+            if (demand == null)
+            {
+                return View("NotFound");
+            }
             List<DemandMediaEntity> demandMediaEntities = _demandMediaService.GetByDemandId(id).ToList();
             CompanyLocation companyLocation = _companyLocationService.GetById(demand.CompanyLocationId).Data;
             Company company = _companyService.GetById(companyLocation.CompanyId).Data;

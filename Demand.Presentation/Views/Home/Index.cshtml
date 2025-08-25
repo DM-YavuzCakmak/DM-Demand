@@ -336,6 +336,11 @@
             <p>
                 @{
                     string CustomName = $"{userName} {userLastName}";
+
+                    if (userId == 26)
+                    {
+                        CustomName = $"Hoşgeldin Gün Işığım 💜  {userName} {userLastName}";
+                    }
                 }
 
                 @CustomName
@@ -1363,8 +1368,51 @@
             productNameInput.value = "Ürün Adı Yok";
         }
     }
+
+        function validateForm() {
+        let demandTitle = $("#demandTitle").val().trim();
+        let description = $("#description").val().trim();
+        let rowCount = $("#yourTableId tbody tr").length; 
+
+        if (demandTitle === "") {
+            toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");
+            return false;
+        }
+
+        if (description === "") {
+            toastr.error("Açıklama alanı girilmesi zorunludur.", "Hata");
+            return false;
+        }
+
+        return true;
+    }
+
     function sendDemand() {
         document.getElementById("loadingOverlay").style.display = "block";
+
+        var demandTitle = document.getElementById('demandtitle').value.trim();
+        var description = document.getElementById('description').value.trim();
+
+        if (demandTitle === "") {
+            toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");
+            document.getElementById("loadingOverlay").style.display = "none";
+            return;
+        }
+
+    if (description === "") {
+        toastr.error("Açıklama alanı girilmesi zorunludur.", "Hata");
+        document.getElementById("loadingOverlay").style.display = "none";
+        return;
+    }
+
+    var table = document.getElementById("dataTable");
+    var rows = table.getElementsByTagName("tr");
+    if (rows.length <= 1) {
+        toastr.error("En az bir veri satırı eklenmelidir.", "Hata");
+        document.getElementById("loadingOverlay").style.display = "none";
+        return;
+    }
+
 
         var formData = new FormData();
 

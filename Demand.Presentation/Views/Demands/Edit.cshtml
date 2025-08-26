@@ -837,6 +837,292 @@
 @{
     var jsonProviders = JsonConvert.SerializeObject(ViewBag.Providers);
 }
+<style>
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+
+    .faq_container {
+        border-bottom: 2px solid #ddd;
+    }
+
+    .offer {
+        font-size: 1.2rem;
+        font-weight: 600;
+        padding: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+
+    .offercont {
+        max-height: 0;
+        overflow: hidden;
+        transition: 0.3s;
+    }
+
+    .offerAcordion {
+        padding: 0 10px 20px;
+        line-height: 1.5rem;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .fqa_headline_container h2 span {
+        font-weight: 700;
+    }
+
+    .offer-text h3 {
+        font-size: 22px;
+    }
+
+    .icon.active {
+        background: transparent;
+        border: 2px solid #fff;
+    }
+
+    .icon:hover {
+        cursor: pointer;
+    }
+
+    .icon-shape {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+
+    .icon .icon-shape::before {
+        position: absolute;
+        content: "";
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px;
+        height: 4px;
+        background: #fff;
+        border-radius: 3px;
+        transition: all 0.5s ease;
+    }
+
+    .icon .icon-shape::after {
+        position: absolute;
+        content: "";
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 4px;
+        height: 30px;
+        background: #fff;
+        border-radius: 3px;
+        transition: all 0.5s ease;
+    }
+
+    .icon .icon-shape.active::before {
+        transform: translate(-50%, -50%) rotate(180deg);
+        transition: all 0.5s ease;
+    }
+
+    .icon .icon-shape.active::after {
+        transform: translate(-50%, -50%) rotate(90deg);
+        transition: all 0.5s ease;
+    }
+
+    .fancy-file-input {
+        position: relative;
+        display: inline-block;
+        width: 200px;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .fancy-file-input input[type="file"] {
+            display: none;
+        }
+
+        .fancy-file-input:hover {
+            background-color: #0056b3;
+        }
+
+        .fancy-file-input span {
+            display: block;
+            font-size: 16px;
+        }
+
+        .fancy-file-input input[type="file"]:focus + span {
+            outline: none;
+        }
+
+        .fancy-file-input label {
+            font-size: 14px;
+            color: white;
+        }
+
+    .edit-button {
+        background-color: #ff9933;
+        color: #fff;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .edit-button:hover {
+            background-color: orange;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    #description {
+        height: 125px;
+        width: 550px;
+        resize: none;
+    }
+
+    #sendButton {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .form-row .currency-textbox {
+        position: absolute;
+        top: 0;
+    }
+
+    .form-group {
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+        color: #333;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    .file-group input[type="file"] {
+        display: none;
+    }
+
+    .file-group label {
+        background-color: #27ae60;
+        color: #fff;
+        font-weight: bold;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: inline-block;
+    }
+
+        .file-group label:hover {
+            background-color: #218c53;
+        }
+
+    .file-group .file-name {
+        margin-top: 10px;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    .file-group input[type="file"]:focus + label,
+    .file-group input[type="file"]:not(:focus) + label {
+        background-color: #27ae60;
+    }
+
+        .file-group input[type="file"]:focus + label:hover,
+        .file-group input[type="file"]:not(:focus) + label:hover {
+            background-color: #218c53;
+        }
+
+    .file-group input[type="file"] {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+
+        .file-group input[type="file"]:focus + label .file-name,
+        .file-group input[type="file"]:not(:focus) + label .file-name {
+            display: inline-block;
+        }
+
+        .file-group input[type="file"]:focus + label:before,
+        .file-group input[type="file"]:not(:focus) + label:before {
+            content: "Select File";
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+    .form-group.file-group {
+        width: calc(33.3333% - 10px);
+    }
+
+    .selected-file-name {
+        margin-left: 10px; /* Sola kaydırmak için */
+        color: white; /* Metni beyaz yapmak için */
+        font-size: 14px; /* İsteğe bağlı, font boyutunu ayarlayabilirsiniz */
+    }
+</style>
+
 <script>
     let offers = document.querySelectorAll(".offer");
     var providers = @Html.Raw(jsonProviders);

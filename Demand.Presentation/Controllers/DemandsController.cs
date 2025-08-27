@@ -1206,9 +1206,9 @@ namespace Demand.Presentation.Controllers
                          demandProcessHistory.Count > 0 ? new DemandHistoryViewModel
                         {
                             PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[0].ManagerId),
-                            Date = demandProcessHistory[0].UpdatedDate.Value.IsNotNull() ? demandProcessHistory[0].UpdatedDate : null,
+                            Date = demandProcessHistory[0].UpdatedDate.IsNotNull() ? demandProcessHistory[0].UpdatedDate : null,
                             Status = GetStatusMessage(demandProcessHistory[0].Status),
-                            Stage = demandProcessHistory[0].UpdatedDate.Value.IsNotNull() ? "BİRİM YÖNETİCİSİ ONAYI." : ""
+                            Stage = demandProcessHistory[0].UpdatedDate.IsNotNull() ? "BİRİM YÖNETİCİSİ ONAYI." : ""
 
                         }:null,
                        demandProcessHistory.Count > 1 ? new DemandHistoryViewModel
@@ -1216,7 +1216,7 @@ namespace Demand.Presentation.Controllers
                             PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[1].ManagerId),
                             Date = demandProcessHistory[1].UpdatedDate,
                             Status = GetStatusMessage(demandProcessHistory[1].Status),
-                            Stage = demandProcessHistory[1].UpdatedDate.Value.IsNotNull() ? "TEKLİF TOPLAMA." : ""
+                            Stage = demandProcessHistory[1].UpdatedDate.IsNotNull() ? "TEKLİF TOPLAMA." : ""
 
                         } : null,
                         demandProcessHistory.Count > 2 ? new DemandHistoryViewModel
@@ -1224,14 +1224,14 @@ namespace Demand.Presentation.Controllers
                             PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[2].ManagerId),
                             Date = demandProcessHistory[2].UpdatedDate,
                             Status = GetStatusMessage(demandProcessHistory[2].Status),
-                            Stage = demandProcessHistory[2].UpdatedDate.Value.IsNotNull() ? "BİRİM YÖNETİCİSİ TEKLİF TAVSİYESİ." : ""
+                            Stage = demandProcessHistory[2].UpdatedDate.IsNotNull() ? "BİRİM YÖNETİCİSİ TEKLİF TAVSİYESİ." : ""
                         } : null,
                         demandProcessHistory.Count > 3 ? new DemandHistoryViewModel
                         {
                             PersonnelFullName = GetPersonnelFullName((int)demandProcessHistory[3].ManagerId),
                             Date = demandProcessHistory[3].UpdatedDate,
                             Status = GetStatusMessage(demandProcessHistory[3].Status),
-                            Stage = demandProcessHistory[3].UpdatedDate.Value.IsNotNull() ? "YÖNETİM KURULU ONAYI." : ""
+                            Stage = demandProcessHistory[3].UpdatedDate.IsNotNull() ? "YÖNETİM KURULU ONAYI." : ""
                         } : null
                     };
                 }

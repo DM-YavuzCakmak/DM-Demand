@@ -1,5 +1,4 @@
 ﻿using Demand.Business.Abstract.AuthorizationService;
-using Demand.Core.Utilities.Results.Concrete;
 using Demand.Domain.Entities.Personnel;
 using Demand.Domain.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
 
 namespace Demand.Presentation.Controllers;
 
@@ -23,44 +21,64 @@ public class AuthorizationsController : Controller
     }
 
     [HttpPost("Login")]
-    public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel )
+    public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
     {
-        //var aaaa = (ClaimsIdentity)User.Identity;
-        //var claims = aaaa.Claims;
+        var loginResult = _authorizationService.Login(loginViewModel);
 
-        var dataResult = _authorizationService.Login(loginViewModel);
-        if (dataResult.Data == null)
-        {
-            return Json(new { success = false, message = "Hatalı email veya kullanıcı bulunamadı." });
-        }
+        if (loginResult.Data == null)
+            return Error("Hatalı email veya kullanıcı bulunamadı.");
 
-         #region HashingChecks
-        Microsoft.AspNetCore.Identity.PasswordHasher<PersonnelEntity> passwordHasher = new();
-        var resultant = passwordHasher.VerifyHashedPassword(dataResult.Data, dataResult.Data.Password, loginViewModel.Password);
-        #endregion
-        if (resultant == PasswordVerificationResult.Failed) 
-        {
-            return Json(new { success = false, message = "Hatalı şifre." });
-        }
+        if (!VerifyPassword(loginResult.Data, loginViewModel.Password))
+            return Error("Hatalı şifre.");
 
-        var identity = new System.Security.Claims.ClaimsIdentity(new[]
-        {
-    new System.Security.Claims.Claim("UserId", dataResult.Data.Id.ToString()),
-    new System.Security.Claims.Claim("FirstName", dataResult.Data.FirstName.ToString()),
-    new System.Security.Claims.Claim("LastName", dataResult.Data.LastName.ToString())
-}, CookieAuthenticationDefaults.AuthenticationScheme);
+        var identity = CreateIdentity(loginResult.Data);
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                                       new(identity),
-                                       new());
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity));
 
-        if (!string.IsNullOrEmpty(loginViewModel.ReturnUrl))
-        {
-            //return Redirect(loginViewModel.ReturnUrl);
-            return Json(new { success = true, returnUrl = loginViewModel.ReturnUrl });
-        }
-        return Json(new { success = true, returnUrl = Url.Action("Index", "Home") });
+        var returnUrl = string.IsNullOrEmpty(loginViewModel.ReturnUrl)
+            ? Url.Action("Index", "Home")
+            : loginViewModel.ReturnUrl;
 
-        return Json(new { success = true });
+        return Success(returnUrl);
     }
+
+    #region Private Helpers
+
+    private bool VerifyPassword(PersonnelEntity user, string password)
+    {
+        var passwordHasher = new PasswordHasher<PersonnelEntity>();
+        return passwordHasher.VerifyHashedPassword(user, user.Password, password)
+               != PasswordVerificationResult.Failed;
+    }
+
+    private ClaimsIdentity CreateIdentity(PersonnelEntity user)
+    {
+        return new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimConstants.UserId, user.Id.ToString()),
+            new Claim(ClaimConstants.FirstName, user.FirstName),
+            new Claim(ClaimConstants.LastName, user.LastName)
+        }, CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    private JsonResult Success(string returnUrl) =>
+        Json(new { success = true, returnUrl });
+
+    private JsonResult Error(string message) =>
+        Json(new { success = false, message });
+
+    #endregion
+
+    #region Constants
+
+    private static class ClaimConstants
+    {
+        public const string UserId = "UserId";
+        public const string FirstName = "FirstName";
+        public const string LastName = "LastName";
+    }
+
+    #endregion
 }

@@ -19,16 +19,6 @@
     <div class="main">
         <input type="checkbox" id="chk" aria-hidden="true">
 
-        @* <div class="signup">
-            <form>
-                <label for="chk" aria-hidden="true">Sign up</label>
-                <input type="text" name="txt" placeholder="User name" required="">
-                <input type="email" name="email" placeholder="Email" required="">
-                <input type="password" name="pswd" placeholder="Password" required="">
-                <button>Sign up</button>
-            </form>
-        </div> *@
-
         <div class="login">
             <form id="loginForm">
                 <label for="chk" aria-hidden="true">Giriş</label>
@@ -42,6 +32,7 @@
 </html>
 
 <script>
+
     $(document).ready(function () {
         $("#loginForm input").keypress(function (e) {
             if (e.which === 13) { 
@@ -50,6 +41,7 @@
             }
         });
     });
+
     function submitLoginForm() {
         var userEmail = document.getElementById('userEmail').value;
         var password = document.getElementById('password').value;

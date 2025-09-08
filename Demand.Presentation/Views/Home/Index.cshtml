@@ -45,7 +45,9 @@
         </div>
     </div>
     <div class="layout">
-        <nav class="sidebar">
+        <div id="hamburger">&#9776;</div>
+        <div id="overlay"></div>
+        <nav class="sidebar" id="sidebar">
                 <ul>
                     <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Anasayfa</a></li>
                 <li><a href="@Url.Action("Invoice", "Index")" class="@(ViewData["ActivePage"] as string == "Index" ? "active" : "")">Fatura Listesi</a></li>
@@ -369,6 +371,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
     </div>
+    <script>
+         const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        // Menü aç/kapa
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        });
+
+        // Overlay'e tıklayınca menüyü kapat
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.style.display = 'none';
+        });
+    </script>
 </body>
 
 </html>

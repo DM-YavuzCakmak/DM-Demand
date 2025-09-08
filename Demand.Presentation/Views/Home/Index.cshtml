@@ -44,6 +44,14 @@
             </p>
         </div>
     </div>
+    <div class="layout">
+        <nav class="sidebar">
+                <ul>
+                    <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Anasayfa</a></li>
+                <li><a href="@Url.Action("Invoice", "Index")" class="@(ViewData["ActivePage"] as string == "Index" ? "active" : "")">Fatura Listesi</a></li>
+                    <li><a href="@Url.Action("Invoice", "SendInvoice")" class="@(ViewData["ActivePage"] as string == "SendInvoice" ? "active" : "")">Fatura Aktar</a></li>
+                </ul>
+        </nav>
     <main class="table" id="demandTable">
         <section class="table__header">
             <h1>Talep Listesi</h1>
@@ -360,6 +368,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
+    </div>
 </body>
 
 </html>

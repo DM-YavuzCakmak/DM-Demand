@@ -207,6 +207,7 @@ namespace Demand.Presentation.Controllers
         [UserToken]
         public IActionResult Index()
         {
+            ViewData["ActivePage"] = "Home";
             long userId = GetUserId();
             var personnel = _personnelService.GetById(userId).Data;
             var personnelRoles = _personnelRoleService.GetList(x => x.PersonnelId == personnel.Id).Data.ToList();

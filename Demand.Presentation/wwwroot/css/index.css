@@ -1,14 +1,72 @@
 ﻿body {
     padding: 0;
     margin: 0;
-    height: 100%;
+    min-height: 100vh;
     font-family: "Roboto", sans-serif;
     background: linear-gradient(#141e30, #243b55);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
 }
+
+.layout {
+    display: flex;
+    margin-top: 70px;
+    align-items: stretch;
+}
+
+
+.table__body {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: .6rem;
+    overflow: auto;
+}
+
+
+.sidebar {
+    width: 220px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: .6rem;
+    padding: 20px 10px;
+    color: #000;
+    height: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+            .sidebar ul li a {
+                display: block;
+                padding: 12px 18px; 
+                border-radius: 8px;
+                text-decoration: none;
+                color: #000; 
+                font-weight: 600; 
+                font-size: 16px; 
+                letter-spacing: 0.5px; 
+                transition: background 0.3s, color 0.3s, transform 0.2s;
+            }
+                .sidebar ul li a:hover,
+                .sidebar ul li a.active {
+                    background: linear-gradient(135deg, #7f6af2, #5a4de0);
+                    color: #fff;
+                    transform: translateX(3px);
+                }
+
+
+.layout main.table {
+    flex: 1;
+    margin-left: 20px;
+    margin-top:20px;
+}
+
 
 .title {
     text-align: center;

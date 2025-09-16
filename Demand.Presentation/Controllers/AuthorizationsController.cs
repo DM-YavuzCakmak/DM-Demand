@@ -59,7 +59,8 @@ public class AuthorizationsController : Controller
         {
             new Claim(ClaimConstants.UserId, user.Id.ToString()),
             new Claim(ClaimConstants.FirstName, user.FirstName),
-            new Claim(ClaimConstants.LastName, user.LastName)
+            new Claim(ClaimConstants.LastName, user.LastName),
+            new Claim(ClaimConstants.IsViewNewInvoice, user.IsViewNewInvoice.ToString())
         }, CookieAuthenticationDefaults.AuthenticationScheme);
     }
 
@@ -78,6 +79,7 @@ public class AuthorizationsController : Controller
         public const string UserId = "UserId";
         public const string FirstName = "FirstName";
         public const string LastName = "LastName";
+        public const string IsViewNewInvoice = "IsViewNewInvoice";
     }
 
     #endregion

@@ -3,6 +3,7 @@ using Kep.Helpers.Extensions;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -215,7 +216,6 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             return nebimSubCategoryModels;
         }
 
-
         public List<NebimProductModel> GetNebimProductModels()
         {
             List<NebimProductModel> nebimProductModels = new List<NebimProductModel>();
@@ -340,6 +340,388 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                 Console.WriteLine("Hata: " + ex.Message);
             }
             return nebimProductModels;
+        }
+
+        public List<IncomingEInvoiceHeaderModel> GetIncomingEInvoiceHeaderModels()
+        {
+            List<IncomingEInvoiceHeaderModel> eInvoiceHeaderModels = new List<IncomingEInvoiceHeaderModel>();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStringDEM))
+                {
+                    using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoiceHeaders", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
+                        command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var invoice = new IncomingEInvoiceHeaderModel
+                                {
+                                    CompanyName = "DEM",
+                                    InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    EInvoiceNumber = reader["EInvoiceNumber"].ToString(),
+                                    ProcessCode = reader["ProcessCode"]?.ToString(),
+                                    IsReturn = Convert.ToBoolean(reader["IsReturn"]),
+                                    InvoiceDate = reader.GetDateTime(reader.GetOrdinal("InvoiceDate")),
+                                    InvoiceTime = reader.GetDateTime(reader.GetOrdinal("InvoiceTime")),
+                                    Description = reader["Description"] as string,
+                                    ConfirmationStatusCode = Convert.ToInt32(reader["ConfirmationStatusCode"]),
+                                    CurrAccTypeCode = Convert.ToInt32(reader["CurrAccTypeCode"]),
+                                    CurrAccCode = reader["CurrAccCode"].ToString(),
+                                    PayableAmount = reader.GetDecimal(reader.GetOrdinal("PayableAmount")),
+                                    CurrAccDescription = reader["CurrAccDescription"].ToString(),
+                                    TaxNumber = reader["TaxNumber"].ToString(),
+                                    IdentityNum = reader["IdentityNum"].ToString(),
+                                    TaxExemptionDescription = reader["TaxExemptionDescription"].ToString(),
+                                    StoppageRate = reader["StoppageRate"] == DBNull.Value ? null : (double?)reader["StoppageRate"],
+                                    DocCurrencyCode = reader["DocCurrencyCode"].ToString(),
+                                    TDisRate1 = reader["TDisRate1"] == DBNull.Value ? null : (double?)reader["TDisRate1"],
+                                    TDisRate2 = reader["TDisRate2"] == DBNull.Value ? null : (double?)reader["TDisRate2"],
+                                    TDisRate3 = reader["TDisRate3"] == DBNull.Value ? null : (double?)reader["TDisRate3"],
+                                    TDisRate4 = reader["TDisRate4"] == DBNull.Value ? null : (double?)reader["TDisRate4"],
+                                    TDisRate5 = reader["TDisRate5"] == DBNull.Value ? null : (double?)reader["TDisRate5"],
+                                    IsExpenseSlip = Convert.ToBoolean(reader["IsExpenseSlip"]),
+                                    CompanyCode = reader["CompanyCode"].ToString(),
+                                    OfficeCode = reader["OfficeCode"].ToString(),
+                                    EInvoiceAliasCode = reader["EInvoiceAliasCode"].ToString()
+                                };
+
+                                eInvoiceHeaderModels.Add(invoice);
+                            }
+                        }
+                    }
+                }
+                using (SqlConnection connection = new SqlConnection(connectionStringKEP))
+                {
+                    using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoiceHeaders", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
+                        command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var invoice = new IncomingEInvoiceHeaderModel
+                                {
+                                    CompanyName = "KEP",
+                                    InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    EInvoiceNumber = reader["EInvoiceNumber"].ToString(),
+                                    ProcessCode = reader["ProcessCode"]?.ToString(),
+                                    IsReturn = Convert.ToBoolean(reader["IsReturn"]),
+                                    InvoiceDate = reader.GetDateTime(reader.GetOrdinal("InvoiceDate")),
+                                    InvoiceTime = reader.GetDateTime(reader.GetOrdinal("InvoiceTime")),
+                                    Description = reader["Description"] as string,
+                                    ConfirmationStatusCode = Convert.ToInt32(reader["ConfirmationStatusCode"]),
+                                    CurrAccTypeCode = Convert.ToInt32(reader["CurrAccTypeCode"]),
+                                    CurrAccCode = reader["CurrAccCode"].ToString(),
+                                    PayableAmount = reader.GetDecimal(reader.GetOrdinal("PayableAmount")),
+                                    CurrAccDescription = reader["CurrAccDescription"].ToString(),
+                                    TaxNumber = reader["TaxNumber"].ToString(),
+                                    IdentityNum = reader["IdentityNum"].ToString(),
+                                    TaxExemptionDescription = reader["TaxExemptionDescription"].ToString(),
+                                    StoppageRate = reader["StoppageRate"] == DBNull.Value ? null : (double?)reader["StoppageRate"],
+                                    DocCurrencyCode = reader["DocCurrencyCode"].ToString(),
+                                    TDisRate1 = reader["TDisRate1"] == DBNull.Value ? null : (double?)reader["TDisRate1"],
+                                    TDisRate2 = reader["TDisRate2"] == DBNull.Value ? null : (double?)reader["TDisRate2"],
+                                    TDisRate3 = reader["TDisRate3"] == DBNull.Value ? null : (double?)reader["TDisRate3"],
+                                    TDisRate4 = reader["TDisRate4"] == DBNull.Value ? null : (double?)reader["TDisRate4"],
+                                    TDisRate5 = reader["TDisRate5"] == DBNull.Value ? null : (double?)reader["TDisRate5"],
+                                    IsExpenseSlip = Convert.ToBoolean(reader["IsExpenseSlip"]),
+                                    CompanyCode = reader["CompanyCode"].ToString(),
+                                    OfficeCode = reader["OfficeCode"].ToString(),
+                                    EInvoiceAliasCode = reader["EInvoiceAliasCode"].ToString()
+                                };
+
+                                eInvoiceHeaderModels.Add(invoice);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return eInvoiceHeaderModels.OrderByDescending(x=>x.InvoiceDate).ToList();
+        }
+
+        public List<IncomingEInvoiceLineModel> GetIncomingEInvoiceLineModels(Guid uuid)
+        {
+            List<IncomingEInvoiceLineModel> eInvoiceHeaderModels = new List<IncomingEInvoiceLineModel>();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionStringDEM))
+                {
+                    using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoices", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@UUID", uuid));
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var invoice = new IncomingEInvoiceLineModel
+                                {
+                                    // ===== Invoice Header =====
+                                    InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    EInvoiceNumber = reader["EInvoiceNumber"]?.ToString(),
+                                    ProcessCode = reader["ProcessCode"]?.ToString(),
+                                    IsReturn = reader["IsReturn"] != DBNull.Value && Convert.ToBoolean(reader["IsReturn"]),
+                                    InvoiceDate = reader.GetDateTime(reader.GetOrdinal("InvoiceDate")),
+                                    InvoiceTime = reader.GetDateTime(reader.GetOrdinal("InvoiceTime")),
+                                    Description = reader["Description"]?.ToString(),
+                                    ConfirmationStatusCode = reader["ConfirmationStatusCode"] != DBNull.Value ? Convert.ToInt32(reader["ConfirmationStatusCode"]) : 0,
+                                    CurrAccTypeCode = reader["CurrAccTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["CurrAccTypeCode"]) : 0,
+                                    PayableAmount = reader.GetDecimal(reader.GetOrdinal("PayableAmount")),
+                                    CurrAccCode = reader["CurrAccCode"]?.ToString(),
+                                    CurrAccDescription = reader["CurrAccDescription"]?.ToString(),
+                                    TaxNumber = reader["TaxNumber"]?.ToString(),
+                                    IdentityNum = reader["IdentityNum"]?.ToString(),
+                                    TaxTypeCode = reader["TaxTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["TaxTypeCode"]) : 0,
+                                    WithHoldingTaxTypeCode = reader["WithHoldingTaxTypeCode"]?.ToString(),
+                                    DovCode = reader["DovCode"]?.ToString(),
+                                    TaxExemptionDescription = reader["TaxExemptionDescription"]?.ToString(),
+                                    StoppageRate = reader["StoppageRate"] != DBNull.Value ? Convert.ToDouble(reader["StoppageRate"]) : 0,
+                                    DocCurrencyCode = reader["DocCurrencyCode"]?.ToString(),
+                                    ExchangeRate = reader["ExchangeRate"] != DBNull.Value ? Convert.ToDecimal(reader["ExchangeRate"]) : 0,
+                                    TDisRate1 = reader["TDisRate1"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate1"]) : 0,
+                                    TDisRate2 = reader["TDisRate2"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate2"]) : 0,
+                                    TDisRate3 = reader["TDisRate3"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate3"]) : 0,
+                                    TDisRate4 = reader["TDisRate4"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate4"]) : 0,
+                                    TDisRate5 = reader["TDisRate5"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate5"]) : 0,
+                                    IsExpenseSlip = reader["IsExpenseSlip"] != DBNull.Value && Convert.ToBoolean(reader["IsExpenseSlip"]),
+                                    CompanyCode = reader["CompanyCode"]?.ToString(),
+                                    OfficeCode = reader["OfficeCode"]?.ToString(),
+                                    EInvoiceAliasCode = reader["EInvoiceAliasCode"]?.ToString(),
+
+                                    // ===== Invoice Line =====
+                                    SortOrder = reader["SortOrder"] != DBNull.Value ? Convert.ToInt32(reader["SortOrder"]) : 0,
+                                    ItemTypeCode = reader["ItemTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["ItemTypeCode"]) : 0,
+                                    ItemCode = reader["ItemCode"]?.ToString(),
+                                    ColorCode = reader["ColorCode"]?.ToString(),
+                                    ItemDim1Code = reader["ItemDim1Code"]?.ToString(),
+                                    ItemDim2Code = reader["ItemDim2Code"]?.ToString(),
+                                    ItemDim3Code = reader["ItemDim3Code"]?.ToString(),
+                                    ItemName = reader["ItemName"]?.ToString(),
+                                    UnitOfMeasureCode = reader["UnitOfMeasureCode"]?.ToString(),
+                                    Qty1 = reader["Qty1"] != DBNull.Value ? Convert.ToDecimal(reader["Qty1"]) : 0,
+                                    UsedBarcode = reader["UsedBarcode"]?.ToString(),
+                                    VatRate = reader["VatRate"] != DBNull.Value ? Convert.ToDecimal(reader["VatRate"]) : 0,
+                                    PCTCode = reader["PCTCode"]?.ToString(),
+                                    PCTRate = reader["PCTRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["PCTRate"]) : null,
+                                    LDisRate1 = reader["LDisRate1"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate1"]) : null,
+                                    LDisRate2 = reader["LDisRate2"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate2"]) : null,
+                                    LDisRate3 = reader["LDisRate3"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate3"]) : null,
+                                    LDisRate4 = reader["LDisRate4"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate4"]) : null,
+                                    LDisRate5 = reader["LDisRate5"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate5"]) : null,
+                                    PriceCurrencyCode = reader["PriceCurrencyCode"]?.ToString(),
+                                    PriceExchangeRate = reader["PriceExchangeRate"] != DBNull.Value ? Convert.ToDecimal(reader["PriceExchangeRate"]) : 0,
+                                    LineDescription = reader["LineDescription"]?.ToString(),
+                                    ManufacturersItemIdentification = reader["ManufacturersItemIdentification"]?.ToString(),
+
+                                    // ===== Invoice Line Currency =====
+                                    Price = reader["Price"] != DBNull.Value ? Convert.ToDecimal(reader["Price"]) : 0,
+                                    Amount = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0,
+                                    LDiscount1 = reader["LDiscount1"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount1"]) : 0,
+                                    LDiscount2 = reader["LDiscount2"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount2"]) : 0,
+                                    LDiscount3 = reader["LDiscount3"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount3"]) : 0,
+                                    LDiscount4 = reader["LDiscount4"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount4"]) : 0,
+                                    LDiscount5 = reader["LDiscount5"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount5"]) : 0,
+                                    TDiscount1 = reader["TDiscount1"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount1"]) : 0,
+                                    TDiscount2 = reader["TDiscount2"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount2"]) : 0,
+                                    TDiscount3 = reader["TDiscount3"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount3"]) : 0,
+                                    TDiscount4 = reader["TDiscount4"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount4"]) : 0,
+                                    TDiscount5 = reader["TDiscount5"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount5"]) : 0,
+                                    TaxBase = reader["TaxBase"] != DBNull.Value ? Convert.ToDecimal(reader["TaxBase"]) : 0,
+                                    Pct = reader["Pct"] != DBNull.Value ? Convert.ToDecimal(reader["Pct"]) : 0,
+                                    Vat = reader["Vat"] != DBNull.Value ? Convert.ToDecimal(reader["Vat"]) : 0,
+                                    NetAmount = reader["NetAmount"] != DBNull.Value ? Convert.ToDecimal(reader["NetAmount"]) : 0,
+
+                                    // ===== Expense Slip =====
+                                    Expense_SortOrder = reader["Expense_SortOrder"] != DBNull.Value ? (int?)Convert.ToInt32(reader["Expense_SortOrder"]) : null,
+                                    Expense_GLAccCode = reader["Expense_GLAccCode"]?.ToString(),
+                                    Expense_LineDescription = reader["Expense_LineDescription"]?.ToString(),
+                                    Expense_ItemDescription = reader["Expense_ItemDescription"]?.ToString(),
+                                    Expense_TaxRate = reader["Expense_TaxRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxRate"]) : null,
+                                    Expense_Tax = reader["Expense_Tax"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_Tax"]) : null,
+                                    Expense_Amount = reader["Expense_Amount"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_Amount"]) : null,
+                                    Expense_TaxAmount = reader["Expense_TaxAmount"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxAmount"]) : null,
+                                    Expense_TaxAssessment = reader["Expense_TaxAssessment"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxAssessment"]) : null,
+                                    Expense_PriceCurrencyCode = reader["Expense_PriceCurrencyCode"]?.ToString(),
+                                    Expense_PriceExchangeRate = reader["Expense_PriceExchangeRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_PriceExchangeRate"]) : null,
+
+                                    // ===== Postal Address =====
+                                    TaxOfficeName = reader["TaxOfficeName"]?.ToString(),
+                                    TaxOfficeCode = reader["TaxOfficeCode"]?.ToString(),
+                                    FirstName = reader["FirstName"]?.ToString(),
+                                    LastName = reader["LastName"]?.ToString(),
+                                    StreetName = reader["StreetName"]?.ToString(),
+                                    BuildingNumber = reader["BuildingNumber"]?.ToString(),
+                                    CitySubdivisionName = reader["CitySubdivisionName"]?.ToString(),
+                                    CityName = reader["CityName"]?.ToString(),
+                                    CityCode = reader["CityCode"]?.ToString(),
+                                    PostalZone = reader["PostalZone"]?.ToString(),
+                                    CountryName = reader["CountryName"]?.ToString(),
+                                    CountryCode = reader["CountryCode"]?.ToString(),
+
+                                    // ===== Additional Info =====
+                                    OrderInfo = reader["OrderInfo"]?.ToString(),
+                                    ShipmentInfo = reader["ShipmentInfo"]?.ToString(),
+                                    CostCenterCode = reader["CostCenterCode"]?.ToString()
+                                };
+
+                                eInvoiceHeaderModels.Add(invoice);
+                            }
+                        }
+                    }
+                }
+                using (SqlConnection connection = new SqlConnection(connectionStringKEP))
+                {
+                    using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoices", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add(new SqlParameter("@UUID", uuid));
+
+                        connection.Open();
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var invoice = new IncomingEInvoiceLineModel
+                                {
+                                    // ===== Invoice Header =====
+                                    InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    EInvoiceNumber = reader["EInvoiceNumber"]?.ToString(),
+                                    ProcessCode = reader["ProcessCode"]?.ToString(),
+                                    IsReturn = reader["IsReturn"] != DBNull.Value && Convert.ToBoolean(reader["IsReturn"]),
+                                    InvoiceDate = reader.GetDateTime(reader.GetOrdinal("InvoiceDate")),
+                                    InvoiceTime = reader.GetDateTime(reader.GetOrdinal("InvoiceTime")),
+                                    Description = reader["Description"]?.ToString(),
+                                    ConfirmationStatusCode = reader["ConfirmationStatusCode"] != DBNull.Value ? Convert.ToInt32(reader["ConfirmationStatusCode"]) : 0,
+                                    CurrAccTypeCode = reader["CurrAccTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["CurrAccTypeCode"]) : 0,
+                                    PayableAmount = reader.GetDecimal(reader.GetOrdinal("PayableAmount")),
+                                    CurrAccCode = reader["CurrAccCode"]?.ToString(),
+                                    CurrAccDescription = reader["CurrAccDescription"]?.ToString(),
+                                    TaxNumber = reader["TaxNumber"]?.ToString(),
+                                    IdentityNum = reader["IdentityNum"]?.ToString(),
+                                    TaxTypeCode = reader["TaxTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["TaxTypeCode"]) : 0,
+                                    WithHoldingTaxTypeCode = reader["WithHoldingTaxTypeCode"]?.ToString(),
+                                    DovCode = reader["DovCode"]?.ToString(),
+                                    TaxExemptionDescription = reader["TaxExemptionDescription"]?.ToString(),
+                                    StoppageRate = reader["StoppageRate"] != DBNull.Value ? Convert.ToDouble(reader["StoppageRate"]) : 0,
+                                    DocCurrencyCode = reader["DocCurrencyCode"]?.ToString(),
+                                    ExchangeRate = reader["ExchangeRate"] != DBNull.Value ? Convert.ToDecimal(reader["ExchangeRate"]) : 0,
+                                    TDisRate1 = reader["TDisRate1"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate1"]) : 0,
+                                    TDisRate2 = reader["TDisRate2"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate2"]) : 0,
+                                    TDisRate3 = reader["TDisRate3"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate3"]) : 0,
+                                    TDisRate4 = reader["TDisRate4"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate4"]) : 0,
+                                    TDisRate5 = reader["TDisRate5"] != DBNull.Value ? Convert.ToDouble(reader["TDisRate5"]) : 0,
+                                    IsExpenseSlip = reader["IsExpenseSlip"] != DBNull.Value && Convert.ToBoolean(reader["IsExpenseSlip"]),
+                                    CompanyCode = reader["CompanyCode"]?.ToString(),
+                                    OfficeCode = reader["OfficeCode"]?.ToString(),
+                                    EInvoiceAliasCode = reader["EInvoiceAliasCode"]?.ToString(),
+
+                                    // ===== Invoice Line =====
+                                    SortOrder = reader["SortOrder"] != DBNull.Value ? Convert.ToInt32(reader["SortOrder"]) : 0,
+                                    ItemTypeCode = reader["ItemTypeCode"] != DBNull.Value ? Convert.ToInt32(reader["ItemTypeCode"]) : 0,
+                                    ItemCode = reader["ItemCode"]?.ToString(),
+                                    ColorCode = reader["ColorCode"]?.ToString(),
+                                    ItemDim1Code = reader["ItemDim1Code"]?.ToString(),
+                                    ItemDim2Code = reader["ItemDim2Code"]?.ToString(),
+                                    ItemDim3Code = reader["ItemDim3Code"]?.ToString(),
+                                    ItemName = reader["ItemName"]?.ToString(),
+                                    UnitOfMeasureCode = reader["UnitOfMeasureCode"]?.ToString(),
+                                    Qty1 = reader["Qty1"] != DBNull.Value ? Convert.ToDecimal(reader["Qty1"]) : 0,
+                                    UsedBarcode = reader["UsedBarcode"]?.ToString(),
+                                    VatRate = reader["VatRate"] != DBNull.Value ? Convert.ToDecimal(reader["VatRate"]) : 0,
+                                    PCTCode = reader["PCTCode"]?.ToString(),
+                                    PCTRate = reader["PCTRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["PCTRate"]) : null,
+                                    LDisRate1 = reader["LDisRate1"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate1"]) : null,
+                                    LDisRate2 = reader["LDisRate2"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate2"]) : null,
+                                    LDisRate3 = reader["LDisRate3"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate3"]) : null,
+                                    LDisRate4 = reader["LDisRate4"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate4"]) : null,
+                                    LDisRate5 = reader["LDisRate5"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["LDisRate5"]) : null,
+                                    PriceCurrencyCode = reader["PriceCurrencyCode"]?.ToString(),
+                                    PriceExchangeRate = reader["PriceExchangeRate"] != DBNull.Value ? Convert.ToDecimal(reader["PriceExchangeRate"]) : 0,
+                                    LineDescription = reader["LineDescription"]?.ToString(),
+                                    ManufacturersItemIdentification = reader["ManufacturersItemIdentification"]?.ToString(),
+
+                                    // ===== Invoice Line Currency =====
+                                    Price = reader["Price"] != DBNull.Value ? Convert.ToDecimal(reader["Price"]) : 0,
+                                    Amount = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : 0,
+                                    LDiscount1 = reader["LDiscount1"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount1"]) : 0,
+                                    LDiscount2 = reader["LDiscount2"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount2"]) : 0,
+                                    LDiscount3 = reader["LDiscount3"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount3"]) : 0,
+                                    LDiscount4 = reader["LDiscount4"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount4"]) : 0,
+                                    LDiscount5 = reader["LDiscount5"] != DBNull.Value ? Convert.ToDecimal(reader["LDiscount5"]) : 0,
+                                    TDiscount1 = reader["TDiscount1"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount1"]) : 0,
+                                    TDiscount2 = reader["TDiscount2"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount2"]) : 0,
+                                    TDiscount3 = reader["TDiscount3"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount3"]) : 0,
+                                    TDiscount4 = reader["TDiscount4"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount4"]) : 0,
+                                    TDiscount5 = reader["TDiscount5"] != DBNull.Value ? Convert.ToDecimal(reader["TDiscount5"]) : 0,
+                                    TaxBase = reader["TaxBase"] != DBNull.Value ? Convert.ToDecimal(reader["TaxBase"]) : 0,
+                                    Pct = reader["Pct"] != DBNull.Value ? Convert.ToDecimal(reader["Pct"]) : 0,
+                                    Vat = reader["Vat"] != DBNull.Value ? Convert.ToDecimal(reader["Vat"]) : 0,
+                                    NetAmount = reader["NetAmount"] != DBNull.Value ? Convert.ToDecimal(reader["NetAmount"]) : 0,
+
+                                    // ===== Expense Slip =====
+                                    Expense_SortOrder = reader["Expense_SortOrder"] != DBNull.Value ? (int?)Convert.ToInt32(reader["Expense_SortOrder"]) : null,
+                                    Expense_GLAccCode = reader["Expense_GLAccCode"]?.ToString(),
+                                    Expense_LineDescription = reader["Expense_LineDescription"]?.ToString(),
+                                    Expense_ItemDescription = reader["Expense_ItemDescription"]?.ToString(),
+                                    Expense_TaxRate = reader["Expense_TaxRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxRate"]) : null,
+                                    Expense_Tax = reader["Expense_Tax"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_Tax"]) : null,
+                                    Expense_Amount = reader["Expense_Amount"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_Amount"]) : null,
+                                    Expense_TaxAmount = reader["Expense_TaxAmount"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxAmount"]) : null,
+                                    Expense_TaxAssessment = reader["Expense_TaxAssessment"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_TaxAssessment"]) : null,
+                                    Expense_PriceCurrencyCode = reader["Expense_PriceCurrencyCode"]?.ToString(),
+                                    Expense_PriceExchangeRate = reader["Expense_PriceExchangeRate"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Expense_PriceExchangeRate"]) : null,
+
+                                    // ===== Postal Address =====
+                                    TaxOfficeName = reader["TaxOfficeName"]?.ToString(),
+                                    TaxOfficeCode = reader["TaxOfficeCode"]?.ToString(),
+                                    FirstName = reader["FirstName"]?.ToString(),
+                                    LastName = reader["LastName"]?.ToString(),
+                                    StreetName = reader["StreetName"]?.ToString(),
+                                    BuildingNumber = reader["BuildingNumber"]?.ToString(),
+                                    CitySubdivisionName = reader["CitySubdivisionName"]?.ToString(),
+                                    CityName = reader["CityName"]?.ToString(),
+                                    CityCode = reader["CityCode"]?.ToString(),
+                                    PostalZone = reader["PostalZone"]?.ToString(),
+                                    CountryName = reader["CountryName"]?.ToString(),
+                                    CountryCode = reader["CountryCode"]?.ToString(),
+
+                                    // ===== Additional Info =====
+                                    OrderInfo = reader["OrderInfo"]?.ToString(),
+                                    ShipmentInfo = reader["ShipmentInfo"]?.ToString(),
+                                    CostCenterCode = reader["CostCenterCode"]?.ToString()
+                                };
+
+                                eInvoiceHeaderModels.Add(invoice);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return eInvoiceHeaderModels.OrderBy(x => x.SortOrder).ToList();
         }
     }
 }

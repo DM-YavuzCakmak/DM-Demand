@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Demand.Domain.NebimModels
+﻿namespace Demand.Domain.NebimModels
 {
     public class NebimCategoryModel
     {

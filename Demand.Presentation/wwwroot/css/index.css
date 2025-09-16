@@ -92,6 +92,7 @@
     text-decoration: underline;
 }
 
+#tab-0:checked ~ section #content-0,
 #tab-1:checked ~ section #content-1,
 #tab-2:checked ~ section #content-2,
 #tab-3:checked ~ section #content-3,
@@ -193,6 +194,11 @@ label.tab.tab-primary {
 
 label.tab.tab-warning {
     border-radius: 0 6pt 6pt 0;
+}
+
+#tab-0:checked + label {
+    color: deepskyblue;
+    text-decoration: underline;
 }
 
 #tab-1:checked + label {
@@ -404,6 +410,10 @@ tbody tr {
         background-color: #ebc474;
     }
 
+    .status.new {
+        background-color: #ebc474;
+    }
+
 thead th span.icon-arrow {
     display: inline-block;
     width: 1.3rem;
@@ -524,6 +534,63 @@ thead th.active, tbody td.active {
         background-color: #6b8cf9;
         color: #fff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.update-button {
+    background-color: sandybrown;
+    color: black;
+    font-weight: bold;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+    .update-button:hover {
+        background-color: sandybrown;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.approve-button {
+    background-color: seagreen; /* Temel yeşil tonu */
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+    .approve-button:hover {
+        background-color: mediumseagreen; /* Hover için daha açık yeşil */
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+.cancel-button {
+    background-color: crimson; /* Temel kırmızı tonu */
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+    .cancel-button:hover {
+        background-color: firebrick; /* Hover için daha koyu kırmızı */
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
 .select-wrapper {

@@ -1,0 +1,672 @@
+﻿@using Demand.Domain.NebimModels
+@using System.Security.Claims
+@using System.Text.Json
+@model List<IncomingEInvoiceHeaderModel>
+
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+    var isViewNewInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewNewInvoice").Value);
+    var userName = claims.FirstOrDefault(x => x.Type == "FirstName")?.Value;
+    var userLastName = claims.FirstOrDefault(x => x.Type == "LastName")?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <title>DEM MUSEUMS</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+        </div>
+        <div class="user-info">
+            <p>
+                @{
+                    string CustomName = $"{userName} {userLastName}";
+                }
+
+                @CustomName
+            </p>
+        </div>
+    </div>
+    <main class="table" id="demandTable">
+        <section class="table__header">
+            <h1>Fatura Listesi</h1>
+        </section>
+        <div class="card tabs">
+            @if (isViewNewInvoice)
+            {
+                <input id="tab-0" type="radio" class="tab tab-selector" checked="checked" name="tab" />
+                <label for="tab-0" class="tab tab-primary">Yeni</label>
+            }
+            <input id="tab-1" type="radio" class="tab tab-selector" @(!isViewNewInvoice ? "checked='checked'" : "") name="tab" />
+            <label for="tab-1" class="tab tab-primary">Bekleyenler</label>
+            <input id="tab-2" type="radio" class="tab tab-selector" name="tab" />
+            <label for="tab-2" class="tab tab-success">Onaylananlar</label>
+            <input id="tab-3" type="radio" class="tab tab-selector" name="tab" />
+            <label for="tab-3" class="tab tab-default">Reddedilenler</label>
+            <div class="tabsShadow"></div>
+            @* <div class="glider"></div> *@
+            <section class="content">
+                @if (isViewNewInvoice)
+                {
+                    <div class="item" id="content-0">
+                        <section class="tableBody">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Firma <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity == null))
+                                    {
+                                        <tr>
+                                            <td data-label="Şirket">@invoice.CompanyName</td>
+                                            <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
+                                            <td data-label="Firma">@invoice.CurrAccDescription</td>
+                                            <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
+                                            @if (invoice.InvoiceDetailEntity != null)
+                                            {
+                                                <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
+                                                </td>
+                                            }
+                                            <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                            <td data-label="Statü">
+                                                <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
+                                            </td>
+                                            <td>
+                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                }
+                <div class="item" id="content-1">
+                    <section class="tableBody">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Firma <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onayı Beklenen <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 0 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                {
+                                    <tr>
+                                        <td data-label="Şirket">@invoice.CompanyName</td>
+                                        <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
+                                        <td data-label="Firma">@invoice.CurrAccDescription</td>
+                                        <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
+                                        @if (invoice.InvoiceDetailEntity != null)
+                                        {
+                                            <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
+                                            </td>
+                                        }
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                        <td data-label="Statü">
+                                            <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
+                                        </td>
+                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
+                                        <td data-label="Onayı Beklenen">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td>
+                                            @if (invoice.InvoiceDetailEntity.SentToUser == null)
+                                            {
+                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')">Onaya Gönder</a>
+                                            }
+                                            else if (userId == invoice.InvoiceDetailEntity.SentToUserId)
+                                            {
+                                                <a href="javascript:void(0)" class="approve-button" onclick="invoiceApproved('@invoice.InvoiceHeaderID')">Onayla</a>
+                                                <a href="javascript:void(0)" class="cancel-button" onclick="invoiceRejectionPopUp('@invoice.InvoiceHeaderID')">Reddet</a>
+                                            }
+                                            <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+                <div class="item" id="content-2">
+                    <section class="tableBody">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Döviz Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onaylayan <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Onay Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 2 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                {
+                                    <tr>
+                                        <td data-label="Şirket">@invoice.CompanyName</td>
+                                        <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
+                                        <td data-label="Firma">@invoice.CurrAccDescription</td>
+                                        <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
+                                        @if (invoice.InvoiceDetailEntity != null)
+                                        {
+                                            <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
+                                            </td>
+                                        }
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                        <td data-label="Statü">
+                                            <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
+                                        </td>
+                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
+                                        <td data-label="Onaylayan">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td data-label="Onay Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
+                                        <td>
+                                            <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+                <div class="item" id="content-3">
+                    <section class="tableBody">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Döviz Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Eden <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Açıklama <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                {
+                                    <tr>
+                                        <td data-label="Şirket">@invoice.CompanyName</td>
+                                        <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
+                                        <td data-label="Firma">@invoice.CurrAccDescription</td>
+                                        <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
+                                        @if (invoice.InvoiceDetailEntity != null)
+                                        {
+                                            <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
+                                            </td>
+                                        }
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                        <td data-label="Statü">
+                                            <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
+                                        </td>
+                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
+                                        <td data-label="Red Eden">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td data-label="Red Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
+                                        <td data-label="Red Açıklama">@(invoice.InvoiceDetailEntity.RejectionNote)</td>
+                                        <td>
+                                            @if (userId == invoice.InvoiceDetailEntity.ResponsiblePersonId)
+                                            {
+                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')">Onaya Gönder</a>
+                                            }
+                                            <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </section>
+        </div>
+    </main>
+    <div id="overlay"></div>
+
+    <div id="invoiceDetailPopup" class="popup">
+        <div class="popup-header">
+            <h2>Fatura Detayı</h2>
+        </div>
+
+        <div class="popup-content" style="overflow-y: auto !important;">
+
+            <!-- Header Bilgileri -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="invoiceNo">Fatura No</label>
+                    <input type="text" id="invoiceNo" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="requestDate">Fatura Tarihi</label>
+                    <input type="text" id="requestDate" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="payableAmount">Toplam Tutar</label>
+                    <input type="text" id="payableAmount" readonly />
+                </div>
+            </div>
+
+            <!-- Açıklama -->
+            <div class="form-group">
+                <label for="description">Açıklama</label>
+                <textarea id="description" readonly></textarea>
+            </div>
+
+            <!-- Line Bilgileri -->
+            <h3>Fatura Kalemleri</h3>
+            <table id="dataTable" border="1" style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Adı</th>
+                        <th>Adet</th>
+                        <th>İndirim Oranı</th>
+                        <th>İndirim Tutarı</th>
+                        <th>KDV Oranı</th>
+                        <th>KDV Tutarı</th>
+                        <th>Toplam Tutar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS ile doldurulacak -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="invoiceTypePopup" class="popup">
+        <div class="popup-header">
+            <h2>Fatura Tipi Güncelle</h2>
+        </div>
+
+        <div class="popup-content">
+
+            <!-- Header Bilgileri -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="invoiceType">Fatura Tipi:</label>
+                    <select id="invoiceType" name="invoiceType">
+                        <option value="Please Select Invoice Type">Lütfen fatura tipi seçin...</option>
+                        <option value="0">Toptan</option>
+                        <option value="1">Konsiye</option>
+                        <option value="2">Masraf</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="responsiblePersonId">Yönlendir:</label>
+                    <select id="responsiblePersonId" name="responsiblePersonId">
+                        <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
+                        @foreach (var personnel in ViewBag.PersonnelList)
+                        {
+                            @if (personnel.Id == userId)
+                            {
+                                <option value="@personnel.Id" selected>@(personnel.FirstName + " " + personnel.LastName)</option>
+                            }
+                            else
+                            {
+                                <option value="@personnel.Id">@(personnel.FirstName + " " + personnel.LastName)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <input type="hidden" id="invoiceTypePopupInvoiceId" value="" />
+            </div>
+            <div class="form-row">
+                <a href="javascript:void(0)" class="update-button" onclick="invoiceUpdate()">Güncelle</a>
+            </div>
+        </div>
+    </div>
+    <div id="invoiceApprovedUpdatePopup" class="popup">
+        <div class="popup-header">
+            <h2>Faturayı Onaya Gönder</h2>
+        </div>
+
+        <div class="popup-content">
+
+            <!-- Header Bilgileri -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="approvedPersonId">Onay Verecek Kişi:</label>
+                    <select id="approvedPersonId" name="approvedPersonId">
+                        <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
+                        @foreach (var personnel in ViewBag.PersonnelList)
+                        {
+                            <option value="@personnel.Id">@(personnel.FirstName + " " + personnel.LastName)</option>
+                        }
+                    </select>
+                </div>
+                <input type="hidden" id="invoiceApprovedUpdatePopupInvoiceId" value="" />
+            </div>
+            <div class="form-row">
+                <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdate()">Onaya Gönder</a>
+            </div>
+        </div>
+    </div>
+    <div id="invoiceRejectionPopup" class="popup">
+        <div class="popup-header">
+            <h2>Fatura Ret</h2>
+        </div>
+
+        <div class="popup-content">
+
+            <!-- Header Bilgileri -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="rejectionDesc">Ret Açıklama*</label>
+                    <input type="text" name="rejectionDesc" id="rejectionDesc" placeholder="Ret Açıklaması Giriniz" />
+                </div>
+                <input type="hidden" id="invoiceRejectionPopupInvoiceId" value="" />
+            </div>
+            <div class="form-row">
+                <a href="javascript:void(0)" class="update-button" onclick="invoiceRejection()">Reddet</a>
+            </div>
+        </div>
+    </div>
+    <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
+        Yükleniyor...
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/script.js"></script>
+</body>
+
+</html>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
+<script>
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closePopup("invoiceDetailPopup");
+            closePopup("invoiceTypePopup");
+        }
+    });
+
+    function invoiceTypeUpdatePopUp(invoiceHeaderId){
+        openPopup("invoiceTypePopup");
+
+        $("#invoiceTypePopupInvoiceId").val(invoiceHeaderId);
+    }
+
+    function invoiceApprovedUpdatePopUp(invoiceHeaderId){
+        openPopup("invoiceApprovedUpdatePopup");
+
+        $("#invoiceApprovedUpdatePopupInvoiceId").val(invoiceHeaderId);
+    }
+
+    function invoiceRejectionPopUp(invoiceHeaderId){
+        openPopup("invoiceRejectionPopup");
+
+        $("#invoiceRejectionPopupInvoiceId").val(invoiceHeaderId);
+    }
+
+
+     function invoiceUpdate() {
+        var invoiceId = $("#invoiceTypePopupInvoiceId").val();
+        var invoiceType = $("#invoiceType").val();
+        var responsiblePersonId = $("#responsiblePersonId").val();
+
+        var data = {
+            id: invoiceId,
+            invoiceType: parseInt(invoiceType),
+            responsiblePersonId: parseInt(responsiblePersonId)
+        };
+
+        $.ajax({
+            url: '/Invoice/InvoiceUpdate',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("Hata oluştu: " + error);
+            }
+        });
+    }
+
+
+     function invoiceApprovedUpdate() {
+        var invoiceId = $("#invoiceApprovedUpdatePopupInvoiceId").val();
+        var approvedPersonId = $("#approvedPersonId").val();
+
+        var data = {
+            id: invoiceId,
+            approvedPersonId: parseInt(approvedPersonId)
+        };
+
+        $.ajax({
+            url: '/Invoice/InvoiceApprovedUpdate',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("Hata oluştu: " + error);
+            }
+        });
+    }
+
+
+     function invoiceRejection() {
+        var invoiceId = $("#invoiceRejectionPopupInvoiceId").val();
+        var rejectionDesc = $("#rejectionDesc").val();
+
+        var data = {
+            id: invoiceId,
+            rejectionDesc: rejectionDesc
+        };
+
+        $.ajax({
+            url: '/Invoice/InvoiceRejection',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("Hata oluştu: " + error);
+            }
+        });
+    }
+
+    function invoiceApproved(invoiceHeaderId) {
+        $.ajax({
+            url: '/Invoice/InvoiceApproved',
+            type: 'GET',
+            data: { invoiceHeaderId: invoiceHeaderId },
+            success: function (response) {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("Hata oluştu: " + error);
+            }
+        });
+    }
+
+
+    function invoiceDetailPopup(invoiceHeaderId) {
+        $.ajax({
+            url: '/Invoice/GetInvoiceDetail',
+            type: 'GET',
+            data: { invoiceHeaderId: invoiceHeaderId },
+            success: function (data) {
+                // Header bilgilerini doldur
+                $("#invoiceNo").val(data[0].eInvoiceNumber);
+                $("#requestDate").val(data[0].invoiceDate);
+                $("#description").val(data[0].description);
+                $("#payableAmount").val(data[0].payableAmount + " " + data[0].docCurrencyCode);
+
+                // Line bilgilerini tabloya bas
+                var table = $("#dataTable tbody");
+                table.empty();
+
+                $.each(data, function (i, line) {
+                    table.append(`
+                        <tr>
+                            <td>${line.itemName}</td>
+                            <td>${line.qty1}</td>
+                            <td>${line.lDisRate1}</td>
+                            <td>${line.lDiscount1}</td>
+                            <td>${line.vatRate}</td>
+                            <td>${line.vat}</td>
+                            <td>${line.netAmount} ${line.priceCurrencyCode}</td>
+                        </tr>
+                    `);
+                });
+
+                // Popup aç
+                openPopup("invoiceDetailPopup");
+            }
+        });
+    }
+
+
+
+    function openPopup(popupId) {
+        var overlay = document.getElementById("overlay");
+        var popup = document.getElementById(popupId);
+
+        if (overlay && popup) {
+            overlay.style.display = "block";
+            popup.style.display = "block";
+
+            popup.style.width = "80%";
+            popup.style.height = "90%";
+
+            overlay.addEventListener("click", function () {
+                closeCreateDemandPopup();
+            });
+        }
+    }
+
+    function closePopup(popupId) {
+        var overlay = document.getElementById("overlay");
+        var popup = document.getElementById(popupId);
+
+        if (overlay && popup) {
+            overlay.style.display = "none";
+            popup.style.display = "none";
+            overlay.removeEventListener("click", function () {
+                closeCreateDemandPopup();
+            });
+        }
+    }
+</script>
+
+@functions {
+    string GetInvoiceType(int type)
+    {
+        switch (type)
+        {
+            case 0: return "Toptan";
+            case 1: return "Konsiye";
+            case 2: return "Masraf";
+            default: return type.ToString();
+        }
+    }
+
+    string GetStatusClass(int status)
+    {
+        switch (status)
+        {
+            case -1: return "new";
+            case 0: return "pending";
+            case 1: return "cancelled";
+            case 2: return "approved";
+            default: return "";
+        }
+    }
+
+    string GetStatusText(int status)
+    {
+        switch (status)
+        {
+            case -1: return "Yeni";
+            case 0: return "Beklemede";
+            case 1: return "Reddedildi";
+            case 2: return "Onaylandı";
+            default: return "";
+        }
+    }
+
+    string GetCurrencyIco(string currencyCode)
+    {
+        switch (currencyCode)
+        {
+            case "TRY": return "₺";
+            case "USD": return "$";
+            case "EUR": return "€";
+            case "GBP": return "£";
+            default: return currencyCode;
+        }
+    }
+}

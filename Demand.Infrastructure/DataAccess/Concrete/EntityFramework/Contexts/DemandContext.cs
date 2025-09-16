@@ -8,6 +8,7 @@ using Demand.Domain.Entities.DemandMediaEntity;
 using Demand.Domain.Entities.DemandOfferEntity;
 using Demand.Domain.Entities.DemandProcess;
 using Demand.Domain.Entities.DepartmentEntity;
+using Demand.Domain.Entities.InvoiceEntity;
 using Demand.Domain.Entities.OfferMediaEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
@@ -54,6 +55,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<OfferRequestEntity> OfferRequests{ get; set; }
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
         public virtual DbSet<CompanyLocationUnitsEntity>  CompanyLocationUnits{ get; set; }
+        public virtual DbSet<InvoiceDetailEntity> InvoiceDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -9,6 +9,7 @@ using Demand.Business.Abstract.DemandOfferService;
 using Demand.Business.Abstract.DemandProcessService;
 using Demand.Business.Abstract.DemandService;
 using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.InvoiceService;
 using Demand.Business.Abstract.OfferMediaService;
 using Demand.Business.Abstract.OfferRequestService;
 using Demand.Business.Abstract.PersonnelRole;
@@ -28,6 +29,7 @@ using Demand.Business.Concrete.DemandOfferService;
 using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.DemandService;
 using Demand.Business.Concrete.DepartmentService;
+using Demand.Business.Concrete.Invoice;
 using Demand.Business.Concrete.OfferMediaService;
 using Demand.Business.Concrete.OfferRequestService;
 using Demand.Business.Concrete.PersonnelRoleService;
@@ -47,6 +49,7 @@ using Demand.Infrastructure.DataAccess.Abstract.Department;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyLocationRepository;
 using Demand.Infrastructure.DataAccess.Abstract.ICompanyRepository;
 using Demand.Infrastructure.DataAccess.Abstract.IDemandRepository;
+using Demand.Infrastructure.DataAccess.Abstract.Invoice;
 using Demand.Infrastructure.DataAccess.Abstract.OfferMedia;
 using Demand.Infrastructure.DataAccess.Abstract.OfferRequest;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
@@ -66,6 +69,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandOffer;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.DemandProcess;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Department;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Invoice;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferRequest;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
@@ -116,6 +120,10 @@ builder.Services.AddScoped<ICompanyLocationUnitsService, CompanyLocationUnitsSer
 builder.Services.AddScoped<IDemandRepository, DemandRepository>();
 builder.Services.AddScoped<IDemandService, DemandService>();
 #endregion
+
+builder.Services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
+builder.Services.AddScoped<IInvoiceDetailService, InvoiceDetailService>();
+
 
 #region Personnel - Authorize
 builder.Services.AddScoped<IPersonnelRepository, PersonnelRepository>();

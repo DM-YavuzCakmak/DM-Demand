@@ -62,8 +62,15 @@
 
 .layout main.table {
     flex: 1;
-    margin-left: 20px;
     margin-top: 20px;
+    margin-left: 20px;
+    width: 82vw;
+    height: 90vh;
+    background-color: #fff5;
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
 }
 
 #hamburger {
@@ -105,8 +112,8 @@
     }
 
     .layout main.table {
-        margin-left: 0;
-        margin-top: 10px;
+        margin-top: 70px;
+        margin-left: 20px;
     }
 }
 

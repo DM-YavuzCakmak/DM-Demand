@@ -108,7 +108,7 @@
                                                     </td>
                                                 }
                                                 <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
-                                                <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                                <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                                 <td data-label="Statü">
                                                     <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
                                                 </td>
@@ -159,7 +159,7 @@
                                                 </td>
                                             }
                                             <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
-                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                             <td data-label="Statü">
                                                 <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
                                             </td>
@@ -221,7 +221,7 @@
                                                 </td>
                                             }
                                             <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
-                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                             <td data-label="Statü">
                                                 <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
                                             </td>
@@ -276,7 +276,7 @@
                                                 </td>
                                             }
                                             <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
-                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("F2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
+                                            <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                             <td data-label="Statü">
                                                 <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
                                             </td>

@@ -48,328 +48,329 @@
         <div id="hamburger">&#9776;</div>
         <div id="overlay"></div>
         <nav class="sidebar" id="sidebar">
-                <ul>
-                    <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Anasayfa</a></li>
-                <li><a href="@Url.Action("Invoice", "Index")" class="@(ViewData["ActivePage"] as string == "Index" ? "active" : "")">Fatura Listesi</a></li>
-                    <li><a href="@Url.Action("Invoice", "SendInvoice")" class="@(ViewData["ActivePage"] as string == "SendInvoice" ? "active" : "")">Fatura Aktar</a></li>
-                </ul>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
+                <li>
+                    <a href="@Url.Action("Index", "Invoice")" class="@(ViewData["ActivePage"] as string == "Invoice" ? "active" : "")">Fatura Listesi</a>
+                </li>
+            </ul>
         </nav>
-    <main class="table" id="demandTable">
-        <section class="table__header">
-            <h1>Talep Listesi</h1>
-            <div class="input-group">
-                <input type="search" id="searchInput" placeholder="Arama...">
-                <img src="~/images/search.png" alt="">
-            </div>
-            <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Talep Oluştur</button>
-        </section>
-        <div class="card tabs">
-            <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab" />
-            <label for="tab-1" class="tab tab-primary">Bekleyenler</label>
-            <input id="tab-2" type="radio" class="tab tab-selector" name="tab" />
-            <label for="tab-2" class="tab tab-success">Onaylananlar</label>
-            <input id="tab-3" type="radio" class="tab tab-selector" name="tab" />
-            <label for="tab-3" class="tab tab-default">Reddedilenler</label>
-            <div class="tabsShadow"></div>
-            @* <div class="glider"></div> *@
-            <section class="content">
-                <div class="item" id="content-1">
-                    <section class="tableBody">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var demand in Model)
-                                {
-                                    if (demand.Status == 0)
-                                    {
-                                        <tr>
-                                            <td data-label="Talep No">@demand.DemandId</td>
-                                            <td data-label="Talep Başlığı">@demand.DemandTitle</td>
-                                            <td data-label="Talep Eden">@demand.DemanderName</td>
-                                            <td data-label="Lokasyon">@demand.LocationName</td>
-                                            @if (Model.Count > 0 && demand.DemanderName != null)
-                                            {
-                                                <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
-
-                                            }
-                                            @if (Model.Count > 0 && demand.Status != null)
-                                            {
-                                                <td data-label="Statü">
-                                                    <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
-                                                </td>
-                                            }
-                                            <td data-label="Kimde">@demand.WhoseTurn</td>
-                                            <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
-                                            <td data-label="Y.K Üyesi">@demand.Yk</td>
-
-                                            <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
-                                                {
-                                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                }
-                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
-                                                {
-                                                    <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
-
-                                                }
-                                                else if (Model.Count > 0 && demand.DemanderName != null)
-                                                {
-                                                    <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </section>
+        <main class="table" id="demandTable">
+            <section class="table__header">
+                <h1>Talep Listesi</h1>
+                <div class="input-group">
+                    <input type="search" id="searchInput" placeholder="Arama...">
+                    <img src="~/images/search.png" alt="">
                 </div>
-                <div class="item" id="content-2">
-                    <section class="tableBody">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var demand in Model)
-                                {
-                                    if (demand.Status == 2)
-                                    {
-                                        <tr>
-                                            <td data-label="Talep No">@demand.DemandId</td>
-                                            <td data-label="Talep Başlığı">@demand.DemandTitle</td>
-                                            <td data-label="Talep Eden">@demand.DemanderName</td>
-                                            <td data-label="Lokasyon">@demand.LocationName</td>
-                                            @if (Model.Count > 0 && demand.DemanderName != null)
-                                            {
-                                                <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
-
-                                            }
-                                            
-                                            @if (Model.Count > 0 && demand.Status != null)
-                                            {
-                                                <td data-label="Statü">
-                                                    <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
-                                                </td>
-                                            }
-
-                                            <td data-label="Kimde">@demand.WhoseTurn</td>
-                                            <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
-                                            <td data-label="Y.K Üyesi">@demand.Yk</td>
-                                            <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
-                                                {
-                                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                }
-                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
-                                                {
-                                                    <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
-
-                                                }
-                                                else if (Model.Count > 0 && demand.DemanderName != null)
-                                                {
-                                                    <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
-                <div class="item" id="content-3">
-                    <section class="tableBody">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var demand in Model)
-                                {
-                                    if (demand.Status == 1)
-                                    {
-                                        <tr>
-                                            <td data-label="Talep No">@demand.DemandId</td>
-                                            <td data-label="Talep Başlığı">@demand.DemandTitle</td>
-                                            <td data-label="Talep Eden">@demand.DemanderName</td>
-                                            <td data-label="Lokasyon">@demand.LocationName</td>
-                                            @if (Model.Count > 0 && demand.DemanderName != null)
-                                            {
-                                                <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
-                                            }
-                                            @if (Model.Count > 0 && demand.Status != null)
-                                            {
-                                                <td data-label="Statü">
-                                                    <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
-                                                </td>
-                                            }
-                                            <td data-label="Kimde">@demand.WhoseTurn</td>
-                                            <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
-                                            <td data-label="Y.K Üyesi">@demand.Yk</td>
-                                            <td>
-                                                @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
-                                                {
-                                                    <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                }
-                                                @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
-                                                {
-                                                    <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
-
-                                                }
-                                                else if (Model.Count > 0 && demand.DemanderName != null)
-                                                {
-                                                    <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </section>
-                </div>
+                <button class="create-demand-button" onclick="openCreateDemandPopup()">+ Talep Oluştur</button>
             </section>
+            <div class="card tabs">
+                <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab" />
+                <label for="tab-1" class="tab tab-primary">Bekleyenler</label>
+                <input id="tab-2" type="radio" class="tab tab-selector" name="tab" />
+                <label for="tab-2" class="tab tab-success">Onaylananlar</label>
+                <input id="tab-3" type="radio" class="tab tab-selector" name="tab" />
+                <label for="tab-3" class="tab tab-default">Reddedilenler</label>
+                <div class="tabsShadow"></div>
+                @* <div class="glider"></div> *@
+                <section class="content">
+                    <div class="item" id="content-1">
+                        <section class="tableBody">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var demand in Model)
+                                    {
+                                        if (demand.Status == 0)
+                                        {
+                                            <tr>
+                                                <td data-label="Talep No">@demand.DemandId</td>
+                                                <td data-label="Talep Başlığı">@demand.DemandTitle</td>
+                                                <td data-label="Talep Eden">@demand.DemanderName</td>
+                                                <td data-label="Lokasyon">@demand.LocationName</td>
+                                                @if (Model.Count > 0 && demand.DemanderName != null)
+                                                {
+                                                    <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
+
+                                                }
+                                                @if (Model.Count > 0 && demand.Status != null)
+                                                {
+                                                    <td data-label="Statü">
+                                                        <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
+                                                    </td>
+                                                }
+                                                <td data-label="Kimde">@demand.WhoseTurn</td>
+                                                <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
+                                                <td data-label="Y.K Üyesi">@demand.Yk</td>
+
+                                                <td>
+                                                    @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
+                                                    }
+                                                    @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
+                                                    {
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+
+                                                    }
+                                                    else if (Model.Count > 0 && demand.DemanderName != null)
+                                                    {
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                    <div class="item" id="content-2">
+                        <section class="tableBody">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var demand in Model)
+                                    {
+                                        if (demand.Status == 2)
+                                        {
+                                            <tr>
+                                                <td data-label="Talep No">@demand.DemandId</td>
+                                                <td data-label="Talep Başlığı">@demand.DemandTitle</td>
+                                                <td data-label="Talep Eden">@demand.DemanderName</td>
+                                                <td data-label="Lokasyon">@demand.LocationName</td>
+                                                @if (Model.Count > 0 && demand.DemanderName != null)
+                                                {
+                                                    <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
+
+                                                }
+
+                                                @if (Model.Count > 0 && demand.Status != null)
+                                                {
+                                                    <td data-label="Statü">
+                                                        <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
+                                                    </td>
+                                                }
+
+                                                <td data-label="Kimde">@demand.WhoseTurn</td>
+                                                <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
+                                                <td data-label="Y.K Üyesi">@demand.Yk</td>
+                                                <td>
+                                                    @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
+                                                    }
+                                                    @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
+                                                    {
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+
+                                                    }
+                                                    else if (Model.Count > 0 && demand.DemanderName != null)
+                                                    {
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                    <div class="item" id="content-3">
+                        <section class="tableBody">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th> Talep No <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Başlığı <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Eden <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Lokasyon <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Talep Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Statü <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Kimde <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Onay/Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Y.K Üyesi <span class="icon-arrow">&UpArrow;</span></th>
+                                        <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var demand in Model)
+                                    {
+                                        if (demand.Status == 1)
+                                        {
+                                            <tr>
+                                                <td data-label="Talep No">@demand.DemandId</td>
+                                                <td data-label="Talep Başlığı">@demand.DemandTitle</td>
+                                                <td data-label="Talep Eden">@demand.DemanderName</td>
+                                                <td data-label="Lokasyon">@demand.LocationName</td>
+                                                @if (Model.Count > 0 && demand.DemanderName != null)
+                                                {
+                                                    <td data-label="Talep Tarihi">@demand.DemandDate.ToString("yyyy-MM-dd")</td>
+                                                }
+                                                @if (Model.Count > 0 && demand.Status != null)
+                                                {
+                                                    <td data-label="Statü">
+                                                        <p class="status @GetStatusClass((int)demand.Status)">@GetStatusText((int)demand.Status)</p>
+                                                    </td>
+                                                }
+                                                <td data-label="Kimde">@demand.WhoseTurn</td>
+                                                <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
+                                                <td data-label="Y.K Üyesi">@demand.Yk</td>
+                                                <td>
+                                                    @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
+                                                    }
+                                                    @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
+                                                    {
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+
+                                                    }
+                                                    else if (Model.Count > 0 && demand.DemanderName != null)
+                                                    {
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </section>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <div id="overlay"></div>
+
+        <div id="createDemandPopup" class="popup">
+            <div class="popup-header">
+                <h2>Talep Oluştur</h2>
+            </div>
+            <div class="popup-content" style="overflow-y: auto !important;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="demandtitle">Başlık:</label>
+                        <input type="text" id="demandtitle" placeholder="Talep Başlığı" name="demandtitle" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="companyName">Şirket Adı:</label>
+                        <select id="companyName" name="companyName">
+                            <option value="Please Select Company">Lütfen şirket seçin...</option>
+                            @foreach (var company in ViewBag.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Lokasyon:</label>
+                        <select id="location" name="location" onchange="updateLocationId()">
+                        </select>
+                        <input type="hidden" id="locationId" name="locationId" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="locationUnits">Lokasyon Birimi:</label>
+                        <select id="locationUnits" name="locationUnits" ">
+                        </select>
+                        <input type="hidden" id="locationUnitsId" name="locationUnitsId" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requestDate">Talep Tarihi:</label>
+                        <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" readonly>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!)</label>
+                        <input type="date" id="requirementDate" name="requirementDate" min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Departman:</label>
+                        <select id="department" name="department">
+                            <option value="Please Select department">Lütfen departman seçin..</option>
+                            @foreach (var department in ViewBag.Department)
+                            {
+                                <option value="@department.Id">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+
+
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Dosya Seç:</label>
+                    <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="description">Açıklama:</label>
+                        <textarea id="description" name="description"></textarea>
+                    </div>
+
+                </div>
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Tür</th>
+                            <th>Kategori</th>
+                            <th>Alt Kategori</th>
+                            <th>Ürün Açıklaması</th>
+                            <th>Ürün Kodu</th>
+                            <th>Ürün Adı</th>
+                            <th>Birim</th>
+                            <th>Adet</th>
+                        </tr>
+                    </thead>
+                </table>
+                <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
+                <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+                <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
+
+            </div>
         </div>
-    </main>
-    <div id="overlay"></div>
-
-    <div id="createDemandPopup" class="popup">
-        <div class="popup-header">
-            <h2>Talep Oluştur</h2>
+        <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
+            Yükleniyor...
         </div>
-        <div class="popup-content" style="overflow-y: auto !important;">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="demandtitle">Başlık:</label>
-                    <input type="text" id="demandtitle" placeholder="Talep Başlığı" name="demandtitle" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="companyName">Şirket Adı:</label>
-                    <select id="companyName" name="companyName">
-                        <option value="Please Select Company">Lütfen şirket seçin...</option>
-                        @foreach (var company in ViewBag.Companies)
-                        {
-                            <option value="@company.Id">@company.Name</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="location">Lokasyon:</label>
-                    <select id="location" name="location" onchange="updateLocationId()">
-                    </select>
-                    <input type="hidden" id="locationId" name="locationId" />
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="locationUnits">Lokasyon Birimi:</label>
-                    <select id="locationUnits" name="locationUnits" ">
-                    </select>
-                    <input type="hidden" id="locationUnitsId" name="locationUnitsId" />
-                </div>
-
-                <div class="form-group">
-                    <label for="requestDate">Talep Tarihi:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="@DateTime.Now.ToString("dd/MM/yyyy")" readonly>
-                </div>
-
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="requirementDate">Gereklilik Tarihi: (Lütfen en az 3 gün sonrasını seçiniz!)</label>
-                    <input type="date" id="requirementDate" name="requirementDate" min="@DateTime.Now.ToString("yyyy-MM-dd")">
-                </div>
-                <div class="form-group">
-                    <label for="department">Departman:</label>
-                    <select id="department" name="department">
-                        <option value="Please Select department">Lütfen departman seçin..</option>
-                    @foreach (var department in ViewBag.Department)
-                    {
-                            <option value="@department.Id">@department.Name</option>
-                    }
-                    </select>
-                </div>
-
-
-            </div>
-
-            <div class="form-group">
-                <label for="description">Dosya Seç:</label>
-                <input type="file" id="fileInput" name="fileInput" multiple accept=".png, .jpeg, .pdf" />
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="description">Açıklama:</label>
-                    <textarea id="description" name="description"></textarea>
-                </div>
-
-            </div>
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Tür</th>
-                        <th>Kategori</th>
-                        <th>Alt Kategori</th>
-                        <th>Ürün Açıklaması</th>
-                        <th>Ürün Kodu</th>
-                        <th>Ürün Adı</th>
-                        <th>Birim</th>
-                        <th>Adet</th>
-                    </tr>
-                </thead>
-            </table>
-            <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
-            <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
-            <button id="sendButton" type="button" onclick="sendDemand()">Oluştur</button>
-
-        </div>
-    </div>
-    <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
-        Yükleniyor...
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/js/script.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+        <script src="~/js/script.js"></script>
     </div>
     <script>
          const hamburger = document.getElementById('hamburger');
@@ -772,7 +773,7 @@
         function validateForm() {
         let demandTitle = $("#demandTitle").val().trim();
         let description = $("#description").val().trim();
-        let rowCount = $("#yourTableId tbody tr").length; 
+        let rowCount = $("#yourTableId tbody tr").length;
 
         if (demandTitle === "") {
             toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");

@@ -30,6 +30,7 @@ namespace Demand.Presentation.Controllers
 
         public IActionResult Index()
         {
+            ViewData["ActivePage"] = "Invoice";
             var nebimConnection = new NebimConnection();
             var IncomingEInvoiceHeaderModels = nebimConnection.GetIncomingEInvoiceHeaderModels();
 

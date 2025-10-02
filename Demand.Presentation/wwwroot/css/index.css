@@ -798,9 +798,102 @@ thead th.active, tbody td.active {
     z-index: 1001;
     overflow: scroll;
 }
+#invoiceTypePopup,
+#invoiceApprovedUpdatePopup,
+#invoiceRejectionPopup {
+    max-height: 300px;
+    overflow-y: auto;
+    max-width: 650px;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+    /* Form satırlarını dikey yap */
+    #invoiceTypePopup .form-row,
+    #invoiceApprovedUpdatePopup .form-row,
+    #invoiceRejectionPopup .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    /* Form-group alt alta dizilsin */
+    #invoiceTypePopup .form-group,
+    #invoiceApprovedUpdatePopup .form-group,
+    #invoiceRejectionPopup .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    /* select ve input küçült */
+    #invoiceTypePopup select,
+    #invoiceApprovedUpdatePopup select,
+    #invoiceRejectionPopup select,
+    #invoiceTypePopup input,
+    #invoiceApprovedUpdatePopup input,
+    #invoiceRejectionPopup input,
+    #invoiceTypePopup textarea,
+    #invoiceApprovedUpdatePopup textarea,
+    #invoiceRejectionPopup textarea {
+        font-size: 13px;
+        padding: 5px;
+        height: 30px;
+        box-sizing: border-box;
+    }
+
+    /* textarea için biraz daha yükseklik */
+    #invoiceTypePopup textarea,
+    #invoiceApprovedUpdatePopup textarea,
+    #invoiceRejectionPopup textarea {
+        height: 50px;
+    }
+
+    /* sadece bu popuplardaki butonlar */
+    #invoiceTypePopup .update-button,
+    #invoiceApprovedUpdatePopup .update-button,
+    #invoiceRejectionPopup .update-button {
+        display: block;
+        width: fit-content;
+        padding: 6px 15px;
+        font-size: 14px;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px; /* form elemanlarının hemen altına */
+    }.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+    select.small-select {
+    font-size: 13px;
+    padding: 5px;
+    height: 30px;
+}
 
 .popup-header h2 {
     margin: 0;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.popup .button-group {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .file-group input[type="file"] {
@@ -859,18 +952,7 @@ thead th.active, tbody td.active {
         text-overflow: ellipsis;
     }
 
-.popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
 
-.popup .button-group {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-}
 
 .form-row {
     display: flex;

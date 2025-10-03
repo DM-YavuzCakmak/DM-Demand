@@ -310,23 +310,23 @@
             <div class="popup-content" style="overflow-y: auto !important;">
 
                 <!-- Header Bilgileri -->
-                <div class="form-row">
+                <div class="form-group" style="width:auto !important">
                     <div class="form-group">
                         <label for="invoiceNo">Fatura No</label>
                         <input type="text" id="invoiceNo" readonly />
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="width:auto !important">
                         <label for="requestDate">Fatura Tarihi</label>
                         <input type="text" id="requestDate" readonly />
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="width:auto !important">
                         <label for="payableAmount">Toplam Tutar</label>
                         <input type="text" id="payableAmount" readonly />
                     </div>
                 </div>
 
                 <!-- Açıklama -->
-                <div class="form-group">
+                <div class="form-group" style="width:auto !important">
                     <label for="description">Açıklama</label>
                     <textarea id="description" readonly></textarea>
                 </div>
@@ -360,16 +360,17 @@
 
                 <!-- Header Bilgileri -->
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="width:auto !important">
                         <label for="invoiceType">Fatura Tipi:</label>
                         <select id="invoiceType" name="invoiceType">
                             <option value="Please Select Invoice Type">Lütfen fatura tipi seçin...</option>
-                            <option value="0">Toptan</option>
-                            <option value="1">Konsiye</option>
-                            <option value="2">Masraf</option>
+                            <option value="0">Toptan Alım</option>
+                            <option value="1">Konsiye Alım</option>
+                            <option value="2">Masraf Alımı</option>
                         </select>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group" style="width:auto !important">
                         <label for="responsiblePersonId">Yönlendir:</label>
                         <select id="responsiblePersonId" name="responsiblePersonId">
                             <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
@@ -387,10 +388,12 @@
                         </select>
                     </div>
                     <input type="hidden" id="invoiceTypePopupInvoiceId" value="" />
+                    <div class="form-group" style="width:auto !important">
+                        <a href="javascript:void(0)" class="update-button" onclick="invoiceUpdate()">Güncelle</a>
+
+                    </div>
                 </div>
-                <div class="form-row">
-                    <a href="javascript:void(0)" class="update-button" onclick="invoiceUpdate()">Güncelle</a>
-                </div>
+
             </div>
         </div>
         <div id="invoiceApprovedUpdatePopup" class="popup">
@@ -402,7 +405,7 @@
 
                 <!-- Header Bilgileri -->
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="width:auto !important">
                         <label for="approvedPersonId">Onay Verecek Kişi:</label>
                         <select id="approvedPersonId" name="approvedPersonId">
                             <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
@@ -414,7 +417,7 @@
                     </div>
                     <input type="hidden" id="invoiceApprovedUpdatePopupInvoiceId" value="" />
                 </div>
-                <div class="form-row">
+                <div class="form-group" style="width:auto !important">
                     <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdate()">Onaya Gönder</a>
                 </div>
             </div>
@@ -428,13 +431,13 @@
 
                 <!-- Header Bilgileri -->
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="width:auto !important">
                         <label for="rejectionDesc">Ret Açıklama*</label>
                         <input type="text" name="rejectionDesc" id="rejectionDesc" placeholder="Ret Açıklaması Giriniz" />
                     </div>
                     <input type="hidden" id="invoiceRejectionPopupInvoiceId" value="" />
                 </div>
-                <div class="form-row">
+                <div class="form-group" style="width:auto !important">
                     <a href="javascript:void(0)" class="update-button" onclick="invoiceRejection()">Reddet</a>
                 </div>
             </div>
@@ -660,9 +663,9 @@
     {
         switch (type)
         {
-            case 0: return "Toptan";
-            case 1: return "Konsiye";
-            case 2: return "Masraf";
+            case 0: return "Toptan Alım";
+            case 1: return "Konsiye Alım";
+            case 2: return "Masraf Alım";
             default: return type.ToString();
         }
     }

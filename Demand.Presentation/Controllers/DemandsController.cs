@@ -136,6 +136,7 @@ namespace Demand.Presentation.Controllers
             {
                 demandProcess = _demandProcessService.GetList(x => x.Status == 0 && x.DemandId == id).Data.FirstOrDefault();
             }
+           
             bool isWhoPersonnel = demandProcess.ManagerId == userId ? true : false;
             DemandViewModel demandViewModel = new DemandViewModel
             {
@@ -634,10 +635,10 @@ namespace Demand.Presentation.Controllers
                 demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == 10 && x.Status == 0);
             }
             else
-            { 
-                 demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == UserId && x.Status == 0);
+            {
+                demandProcessEntity = demandProcessEntities.FirstOrDefault(x => x.ManagerId == UserId && x.Status == 0);
             }
-               
+
 
             if (demandProcessEntity == null)
             {
@@ -1062,7 +1063,7 @@ namespace Demand.Presentation.Controllers
 
                     }
                 }
-                    if (demandMediaEntities.IsNotNullOrEmpty())
+                if (demandMediaEntities.IsNotNullOrEmpty())
                 {
                     demandViewModel.File1Path = System.IO.File.ReadAllBytes(_webHostEnvironment.WebRootPath + demandMediaEntities[0].Path);
                     demandViewModel.File1Name = demandMediaEntities[0].FileName;
@@ -1344,9 +1345,9 @@ namespace Demand.Presentation.Controllers
                         var requestInfo = new RequestInfoEntity
                         {
                             DemandId = demandViewModel.DemandId.Value,
-                            ProductCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull()? Convert.ToInt32(type) : null,
+                            ProductCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ? Convert.ToInt32(type) : null,
                             NebimCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ? Convert.ToInt32(category) : null,
-                            NebimSubCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ?  Convert.ToInt32(subcategory) : null,
+                            NebimSubCategoryId = long.Parse(type) == 1 && long.Parse(type).IsNotNull() ? Convert.ToInt32(subcategory) : null,
                             Quantity = Convert.ToInt32(quantity),
                             ProductName = productname,
                             ProductCode = productcode,
@@ -1369,8 +1370,8 @@ namespace Demand.Presentation.Controllers
                     {
 
                         existingRequestInfo.ProductName = productname;
-                            existingRequestInfo.Quantity = Convert.ToInt32(quantity);
-                            existingRequestInfo.Unit = unit;
+                        existingRequestInfo.Quantity = Convert.ToInt32(quantity);
+                        existingRequestInfo.Unit = unit;
                         _requestInfoService.Update(existingRequestInfo);
                     }
                     var totalPrice = demandViewModel.TotalPrice[i];
@@ -1466,7 +1467,7 @@ namespace Demand.Presentation.Controllers
                 demandProcessEntity.UpdatedDate = DateTime.Now;
                 _demandProcessService.UpdateDemandProcess(demandProcessEntity);
             }
-            
+
 
             PersonnelEntity demandOpenPerson = _personnelService.GetById(demandProcessEntities.First().CreatedAt).Data;
             DemandEntity demand = _demandService.GetById(demandProcessEntities.First().DemandId).Data;
@@ -1474,7 +1475,7 @@ namespace Demand.Presentation.Controllers
             #region mailSend
             string demandLink = "https://portal.demmuseums.com/api/Demands/Edit/" + demandProcessEntities.First().DemandId;
             var emailBody = $"Merhabalar Sayın " + demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + ",<br/><br/>" +
-                        demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafınızdan açılan," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi Satın Alma Birimi Tarafından <b> '"+ demandStatusChangeViewModel.Description + "'</b> gerekçesi ile geri döndürülmüştür. Lütfen talebin detaylarına ve geri döndürme sebebine uygun olarak talebinizi güncelleyiniz.<br/><br/>" +
+                        demandOpenPerson.FirstName + " " + demandOpenPerson.LastName + " tarafınızdan açılan," + demand.DemandTitle + " başlıklı," + demand.Id + " numaralı satın alma talebi Satın Alma Birimi Tarafından <b> '" + demandStatusChangeViewModel.Description + "'</b> gerekçesi ile geri döndürülmüştür. Lütfen talebin detaylarına ve geri döndürme sebebine uygun olarak talebinizi güncelleyiniz.<br/><br/>" +
                          $"Talep URL : <a href='{demandLink}'>  TALEP GÖRÜNTÜLE  </a> <br/><br/>" +
          "Saygılarımızla.";
             EmailHelper.SendEmail(new List<string> { demandOpenPerson.Email }, "Geri Dönen Satın Alma Talebi", emailBody);

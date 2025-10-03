@@ -154,6 +154,10 @@ namespace Demand.Presentation.Controllers
             var yk = _demandProcessService.GetList(x => x.DemandId == demand.Id).Data.OrderByDescending(x => x.Id).FirstOrDefault();
             var demandYk = _personnelService.GetById(yk.ManagerId).Data;
 
+            bool cLevelParent = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.OrderBy(x => x.Id).FirstOrDefault()?.ManagerId
+      == _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.OrderByDescending(x => x.Id).FirstOrDefault()?.ManagerId;
+
+
             var viewModel = new DemandViewModel
             {
                 DemandId = demand.Id,
@@ -165,7 +169,8 @@ namespace Demand.Presentation.Controllers
                 AprrovedDate = yk.UpdatedDate?.ToString("dd/MM/yyyy") ?? "TAMAMLANMADI",
                 Yk = $"{demandYk.FirstName} {demandYk.LastName}",
                 isDemandOffer = demandOffers.Any(),
-                DemanderName = $"{personnelResult.Data.FirstName} {personnelResult.Data.LastName}"
+                DemanderName = $"{personnelResult.Data.FirstName} {personnelResult.Data.LastName}",
+                IsCLevel = cLevelParent
             };
 
             var companyLocation = _companyLocationService.GetById(demand.CompanyLocationId);

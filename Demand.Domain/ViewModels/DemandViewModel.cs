@@ -113,6 +113,7 @@ namespace Demand.Domain.ViewModels
         public int? InstallmentPayment { get; set; }
         public string? InstallmentPaymentText { get; set; }
         public string? ProcessDescription { get; set; }
+        public bool? IsCLevel { get; set; }
 
 
 

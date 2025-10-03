@@ -1,12 +1,7 @@
 ﻿using Demand.Domain.NebimModels;
 using Kep.Helpers.Extensions;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Demand.Core.DatabaseConnection.NebimConnection
 {
@@ -365,6 +360,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                                 {
                                     CompanyName = "DEM",
                                     InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    FromIntegratorUUID = reader["FromIntegrator_UUID"].ToString(),
                                     EInvoiceNumber = reader["EInvoiceNumber"].ToString(),
                                     ProcessCode = reader["ProcessCode"]?.ToString(),
                                     IsReturn = Convert.ToBoolean(reader["IsReturn"]),
@@ -415,6 +411,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                                 {
                                     CompanyName = "KEP",
                                     InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+                                    FromIntegratorUUID = reader["FromIntegrator_UUID"].ToString(),
                                     EInvoiceNumber = reader["EInvoiceNumber"].ToString(),
                                     ProcessCode = reader["ProcessCode"]?.ToString(),
                                     IsReturn = Convert.ToBoolean(reader["IsReturn"]),

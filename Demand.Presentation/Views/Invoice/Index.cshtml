@@ -113,7 +113,7 @@
                                                     <p class="status @GetStatusClass((int)invoice.Status)">@GetStatusText((int)invoice.Status)</p>
                                                 </td>
                                                 <td>
-                                                    <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                                    <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID" class="view-button" target="_blank">Fatura Detayı</a>
                                                 </td>
                                             </tr>
                                         }
@@ -175,7 +175,7 @@
                                                     <a href="javascript:void(0)" class="approve-button" onclick="invoiceApproved('@invoice.InvoiceHeaderID')">Onayla</a>
                                                     <a href="javascript:void(0)" class="cancel-button" onclick="invoiceRejectionPopUp('@invoice.InvoiceHeaderID')">Reddet</a>
                                                 }
-                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID" class="view-button" target="_blank">Fatura Detayı</a>
                                             </td>
                                         </tr>
                                     }
@@ -229,7 +229,7 @@
                                             <td data-label="Onaylayan">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
                                             <td data-label="Onay Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                             <td>
-                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID" class="view-button" target="_blank">Fatura Detayı</a>
                                             </td>
                                         </tr>
                                     }
@@ -289,7 +289,7 @@
                                                 {
                                                     <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')">Onaya Gönder</a>
                                                 }
-                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.InvoiceHeaderID" class="view-button" target="_blank">Fatura Detayı</a>
+                                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID" class="view-button" target="_blank">Fatura Detayı</a>
                                             </td>
                                         </tr>
                                     }

@@ -6,6 +6,7 @@ namespace Demand.Domain.NebimModels
     public class IncomingEInvoiceHeaderModel
     {
         public Guid InvoiceHeaderID { get; set; }
+        public string FromIntegratorUUID { get; set; }
         public string EInvoiceNumber { get; set; }
         public string ProcessCode { get; set; }
         public bool IsReturn { get; set; }

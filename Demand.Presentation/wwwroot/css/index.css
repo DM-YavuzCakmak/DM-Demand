@@ -808,7 +808,6 @@ thead th.active, tbody td.active {
     padding: 15px;
 }
 
-    /* Form satırlarını dikey yap */
     #invoiceTypePopup .form-row,
     #invoiceApprovedUpdatePopup .form-row,
     #invoiceRejectionPopup .form-row {
@@ -817,7 +816,6 @@ thead th.active, tbody td.active {
         gap: 5px;
     }
 
-    /* Form-group alt alta dizilsin */
     #invoiceTypePopup .form-group,
     #invoiceApprovedUpdatePopup .form-group,
     #invoiceRejectionPopup .form-group {
@@ -826,7 +824,6 @@ thead th.active, tbody td.active {
         margin-bottom: 10px;
     }
 
-    /* select ve input küçült */
     #invoiceTypePopup select,
     #invoiceApprovedUpdatePopup select,
     #invoiceRejectionPopup select,
@@ -842,14 +839,12 @@ thead th.active, tbody td.active {
         box-sizing: border-box;
     }
 
-    /* textarea için biraz daha yükseklik */
     #invoiceTypePopup textarea,
     #invoiceApprovedUpdatePopup textarea,
     #invoiceRejectionPopup textarea {
         height: 50px;
     }
 
-    /* sadece bu popuplardaki butonlar */
     #invoiceTypePopup .update-button,
     #invoiceApprovedUpdatePopup .update-button,
     #invoiceRejectionPopup .update-button {
@@ -862,7 +857,7 @@ thead th.active, tbody td.active {
         text-decoration: none;
         border-radius: 5px;
         cursor: pointer;
-        margin-top: 5px; /* form elemanlarının hemen altına */
+        margin-top: 5px; 
     }.form-group {
     display: flex;
     flex-direction: column;
@@ -886,7 +881,6 @@ thead th.active, tbody td.active {
 }
 .form-row {
     display: flex;
-    flex-direction: column;
     gap: 10px;
 }
 

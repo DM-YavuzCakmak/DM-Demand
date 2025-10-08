@@ -59,7 +59,6 @@ namespace Demand.Domain.ViewModels
         public int? Quantity3 { get; set; }
         public string? Unit3 { get; set; }
         public string? CurrencySymbol3 { get; set; }
-
         public string? ConfirmingNote { get; set; }
         public List<string>? RequestInfoId { get; set; }
         public List<string>? Type { get; set; }
@@ -74,7 +73,6 @@ namespace Demand.Domain.ViewModels
         public List<string>? Price { get; set; }
         public List<string>? TotalPrice { get; set; }
         public List<long>? OfferRequestId { get; set; }
-
         #endregion
         #region CurrencyTypeTableFields
         public int? CurrencyTypeId { get; set; }
@@ -97,12 +95,10 @@ namespace Demand.Domain.ViewModels
         public decimal? ExchangeRate{ get; set; }
         public bool? isOppenOffer { get; set; } = false;
         public bool? isDemandOffer { get; set; } = false;
-
         public List<IFormFile>? ProformoFiles { get; set; }
         public string? ProformoFile1Name { get; set; }
         public string? ProformoFile2Name { get; set; }
         public string? ProformoFile3Name { get; set; }
-
         public byte[]? ProformoFile1Path { get; set; }
         public byte[]? ProformoFile2Path { get; set; }
         public byte[]? ProformoFile3Path { get; set; }
@@ -114,9 +110,6 @@ namespace Demand.Domain.ViewModels
         public string? InstallmentPaymentText { get; set; }
         public string? ProcessDescription { get; set; }
         public bool? IsCLevel { get; set; }
-
-
-
     }
 
     public class DemandOfferViewModel
@@ -133,6 +126,7 @@ namespace Demand.Domain.ViewModels
         public string? Quantity { get; set; }
         public decimal? Price { get; set; }
         public string SupplierName { get; set; }
+        public string SupplierTaxNumber { get; set; }
         public string SupplierPhone { get; set; }
         public long SupplierId { get; set; }
         public string? SupplierAdress { get; set; }
@@ -143,11 +137,8 @@ namespace Demand.Domain.ViewModels
         public int? PaymentType { get; set; }
         public int? InstallmentPayment { get; set; }
         public int? PartialPayment { get; set; }
-
         public List<IFormFile>? Files { get; set; }
         public string? File1Name { get; set; }
-
-
         public List<OfferRequestViewModel>? RequestInfoViewModels { get; set; }
     }
 
@@ -157,11 +148,9 @@ namespace Demand.Domain.ViewModels
         public int? Quantity { get; set; }
         public string Unit { get; set; }
     }
-
     public class Product
     {
         public string? Name { get; set; }
-
         public string? ProductCode { get; set; }
         public List<Product>? SubProducts { get; set; }
         public string? Description { get; set; }

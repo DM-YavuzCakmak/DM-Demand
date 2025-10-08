@@ -20,11 +20,6 @@ namespace Demand.Domain.Entities.DemandOfferEntity
         public int? PaymentType { get; set; }
         public int? InstallmentPayment { get; set; }
         public int? PartialPayment { get; set; }
-
-        public string? SupplierName { get; set; }
-        public string? SupplierPhone { get; set; }
-        public string? SupplierContactName { get; set; }
-        public string? SupplierAdress { get; set; }
         public long? SupplierId { get; set; }
         public decimal? ExchangeRate { get; set; }
     }

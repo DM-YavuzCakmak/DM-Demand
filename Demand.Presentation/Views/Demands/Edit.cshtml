@@ -125,8 +125,9 @@
         }
 
             .decline-button:hover {
-            background-color: red;
+                background-color: red;
             }
+
         #description {
             height: 125px;
             width: 100%;
@@ -179,7 +180,8 @@
             #addButton:hover, #removeButton:hover {
                 background-color: #45a049;
             }
-             .header {
+
+        .header {
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             color: white;
@@ -390,6 +392,15 @@
                                     <input type="text" id="exchangeRate1" name="exchangeRate1">
                                 </div>
                             </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="offerTaxNumber1">Vergi Kimlik No :</label>
+                                    <input type="text" id="offerTaxNumber1" maxlength="11"
+                                           inputmode="numeric"  
+       inputmode="numeric" name="offerTaxNumber1" value="@(Model.DemandOffers.Count > 0 ? Model?.DemandOffers?[0].SupplierTaxNumber ?? "" : "")">
+                                </div>
+                            </div>
                             <div class="form-row">
 
                                 <div class="form-group">
@@ -567,7 +578,13 @@
                                     <input type="text" id="exchangeRate2" name="exchangeRate2">
                                 </div>
                             </div>
-
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="offerTaxNumber2">Vergi Kimlik No :</label>
+                                    <input type="text" id="offerTaxNumber2" maxlength="11"
+                                           inputmode="numeric" name="offerTaxNumber2" value="@(Model.DemandOffers.Count > 1 ? Model?.DemandOffers?[1].SupplierTaxNumber ?? "" : "")">
+                                </div>
+                            </div>
                             <div class="form-row">
 
                                 <div class="form-group">
@@ -743,6 +760,13 @@
                                     <input type="text" id="exchangeRate3" name="exchangeRate3">
                                 </div>
                             </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="offerTaxNumber3">Vergi Kimlik No :</label>
+                                    <input type="text" id="offerTaxNumber3" maxlength="11"
+                                           inputmode="numeric" name="offerTaxNumber3" value="@(Model.DemandOffers.Count > 2 ? Model?.DemandOffers?[2].SupplierTaxNumber ?? "" : "")">
+                                </div>
+                            </div>
 
                             <div class="form-row">
                                 <div class="form-group">
@@ -825,7 +849,7 @@
 
                 </div>
             }
-           
+
 
         }
     </form>
@@ -1191,41 +1215,43 @@
 
 
         $('#provider').change(function () {
-            var selectedProviderId = $(this).val();
-            if (selectedProviderId !== "") {
-                var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
-                if (selectedProvider) {
-                    $('#offerCompanyName1').val(selectedProvider.Name);
-                    $('#offerCompanyPhone1').val(selectedProvider.PhoneNumber);
-                    $('#offerCompanyAddress1').val(selectedProvider.Address);
-
-                }
+        var selectedProviderId = $(this).val();
+        if (selectedProviderId !== "") {
+            var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
+            if (selectedProvider) {
+                $('#offerCompanyName1').val(selectedProvider.Name);
+                $('#offerCompanyPhone1').val(selectedProvider.PhoneNumber);
+                $('#offerCompanyAddress1').val(selectedProvider.Address);
+                $('#offerTaxNumber1').val(selectedProvider.Tax || selectedProvider.TaxNumber || ''); // provider model'in property adı değişmiş olabilir
             }
-        });
-        $('#provider2').change(function () {
-            var selectedProviderId = $(this).val();
-            if (selectedProviderId !== "") {
-                var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
-                if (selectedProvider) {
-                    $('#offerCompanyName2').val(selectedProvider.Name);
-                    $('#offerCompanyPhone2').val(selectedProvider.PhoneNumber);
-                    $('#offerCompanyAddress2').val(selectedProvider.Address);
+        }
+    });
 
-                }
+    $('#provider2').change(function () {
+        var selectedProviderId = $(this).val();
+        if (selectedProviderId !== "") {
+            var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
+            if (selectedProvider) {
+                $('#offerCompanyName2').val(selectedProvider.Name);
+                $('#offerCompanyPhone2').val(selectedProvider.PhoneNumber);
+                $('#offerCompanyAddress2').val(selectedProvider.Address);
+                $('#offerTaxNumber2').val(selectedProvider.Tax || selectedProvider.TaxNumber || '');
             }
-        });
-        $('#provider3').change(function () {
-            var selectedProviderId = $(this).val();
-            if (selectedProviderId !== "") {
-                var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
-                if (selectedProvider) {
-                    $('#offerCompanyName3').val(selectedProvider.Name);
-                    $('#offerCompanyPhone3').val(selectedProvider.PhoneNumber);
-                    $('#offerCompanyAddress3').val(selectedProvider.Address);
+        }
+    });
 
-                }
+    $('#provider3').change(function () {
+        var selectedProviderId = $(this).val();
+        if (selectedProviderId !== "") {
+            var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
+            if (selectedProvider) {
+                $('#offerCompanyName3').val(selectedProvider.Name);
+                $('#offerCompanyPhone3').val(selectedProvider.PhoneNumber);
+                $('#offerCompanyAddress3').val(selectedProvider.Address);
+                $('#offerTaxNumber3').val(selectedProvider.Tax || selectedProvider.TaxNumber || '');
             }
-        });
+        }
+    });
         $('#offerCurrencyType1').change(function () {
             var currencyType = $(this).val();
             if (currencyType == 2 || currencyType == 3) {
@@ -1352,6 +1378,20 @@
     }
 
     function getOfferData(offerNumber) {
+
+
+       var taxNumberInput = $(`#offerTaxNumber${offerNumber}`);
+       var taxNumber = taxNumberInput.val().trim();
+
+       taxNumber = taxNumber.replace(/\D/g, '');
+       taxNumberInput.val(taxNumber);
+
+       if (taxNumber.length < 10 || taxNumber.length > 11) {
+           toastr.error("Vergi kimlik numarası yalnızca 10 veya 11 haneli rakamlardan oluşmalıdır.");
+           taxNumberInput.focus();
+           return null;
+       }
+
         var offerCompanyName = $(`#offerCompanyName${offerNumber}`).val();
         var offerCompanyPhone = $(`#offerCompanyPhone${offerNumber}`).val();
         var offerCompanyAddress = $(`#offerCompanyAddress${offerNumber}`).val();
@@ -1367,8 +1407,7 @@
         var paymentType = $(`input[name='paymentType${offerNumber}']:checked`).val();
         var InstallmentPayment = $(`#maturitySelect${offerNumber}`).val();
         var PartialPayment = $(`#partialSelect${offerNumber}`).val();
-
-
+        var taxNumber = $(`#offerTaxNumber${offerNumber}`).val();
 
         if (notRegisteredProvider) {
             selectedProviderId = null;
@@ -1389,7 +1428,8 @@
             maturityDate: maturityDate,
             paymentType: paymentType,
             InstallmentPayment: InstallmentPayment,
-            PartialPayment: PartialPayment
+            PartialPayment: PartialPayment,
+            TaxNumber: taxNumber     // <-- burayı ekledik
         };
     }
 
@@ -1468,76 +1508,6 @@
 
     }
 
-
-    // function updateDemand(offerNumber) {
-    //     var demandId = @Model.DemandId;
-    //     var companyId = $('#companyName').val();
-    //     var locationId = $('#location').val();
-    //     var departmentId = $('#department').val();
-    //     var description = $('#description').val();
-
-    //     var offer1Data = getOfferData(offerNumber);
-
-    //     var exchangeRate = '';
-    //     if (offerNumber === 1) {
-    //         exchangeRate = $('#exchangeRate1').val().trim();
-    //     } else if (offerNumber === 2) {
-    //         exchangeRate = $('#exchangeRate2').val().trim();
-    //     } else if (offerNumber === 3) {
-    //         exchangeRate = $('#exchangeRate3').val().trim();
-    //     }
-
-    //     // var fileInputs = document.querySelectorAll('input[type="file"]');
-    //     // for (var i = 0; i < fileInputs.length; i++) {
-    //     //     var fileInput = fileInputs[i];
-    //     //     if (fileInput.files.length > 0) {
-    //     //         for (var j = 0; j < fileInput.files.length; j++) {
-    //     //             formData.append('Files', fileInput.files[j]);
-    //     //             formData.append('FileNames', fileInput.files[j].name);
-    //     //         }
-    //     //     }
-    //     // }
-
-    //     var updateDemandViewModel = {
-    //         DemandId: demandId,
-    //         CompanyId: companyId,
-    //         CompanyLocationId: locationId,
-    //         DepartmentId: departmentId,
-    //         Description: description,
-    //         OfferCompanyName: offer1Data.OfferCompanyName,
-    //         OfferCompanyPhone: offer1Data.OfferCompanyPhone,
-    //         OfferCompanyAddress: offer1Data.OfferCompanyAddress,
-    //         IsProvider1Registered: offer1Data.IsProviderRegistered,
-    //         OfferCurrencyType: offer1Data.OfferCurrencyType,
-    //         OfferAmount: offer1Data.OfferAmount,
-    //         OfferMaterial: offer1Data.OfferMaterial,
-    //         OfferPrice: offer1Data.OfferPrice,
-    //         OfferTotalPrice: offer1Data.OfferTotalPrice,
-    //         OfferCompanyId: offer1Data.OfferCompanyId,
-    //         ExchangeRate: exchangeRate !== '' ? exchangeRate : null,
-    //         deadlineDate: offer1Data.deadlineDate,
-    //         maturityDate: offer1Data.maturityDate,
-    //         paymentType : offer1Data.paymentType !== '' ?offer1Data.paymentType : null ,
-    //         InstallmentPayment : offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null
-    //         PartialPayment : offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null ,
-    //     };
-
-    //     console.log(updateDemandViewModel);
-    //     $.ajax({
-    //         url: '/api/Demands/UpdateDemand',
-    //         type: 'POST',
-    //         contentType: 'application/json',
-    //         data: JSON.stringify(updateDemandViewModel),
-    //         success: function (result) {
-    //             toastr.success("Demand Offer Created", "Success");
-    //             location.reload();
-    //         },
-    //         error: function (error) {
-    //             console.error('Error updating demand:', error);
-    //         }
-    //     });
-    // }
-
     function updateDemand(offerNumber) {
         var demandId = @Model.DemandId;
         var companyId = $('#companyName').val();
@@ -1589,7 +1559,9 @@
                 InstallmentPayment: offer1Data.InstallmentPayment !== '' ? offer1Data.InstallmentPayment : null,
                 PartialPayment: offer1Data.PartialPayment !== '' ? offer1Data.PartialPayment : null,
                 FileContent: offer1Data.fileContent,
-                FileName: offer1Data.fileName
+                FileName: offer1Data.fileName,
+                TaxNumber: offer1Data.TaxNumber
+
             };
 
             $.ajax({
@@ -1643,7 +1615,7 @@
 
     function declineChangeStatus(demandId) {
 
-            var description = document.getElementById("descriptionInput").value; 
+            var description = document.getElementById("descriptionInput").value;
 
         var demandStatusChangeViewModel = {
             DemandId: demandId,

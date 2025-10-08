@@ -22,6 +22,7 @@ namespace Demand.Domain.ViewModels
         public int? InstallmentPayment { get; set; }
         public int? PartialPayment { get; set; }
         public string? OfferCompanyName { get; set; }
+        public string? TaxNumber { get; set; }
         public long? OfferCompanyId { get; set; }
         public string? OfferCompanyPhone { get; set; }
         public string? OfferCompanyAddress { get; set; }

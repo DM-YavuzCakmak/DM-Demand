@@ -212,10 +212,6 @@ namespace Demand.Presentation.Controllers
                 demandOfferViewModel.CurrencyTypeId = demandOfferEntity.CurrencyTypeId;
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
-                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
-                    demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
-                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
-                    demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
 
 
                 ProviderEntity providerEntity = new ProviderEntity();
@@ -342,12 +338,7 @@ namespace Demand.Presentation.Controllers
                 demandOfferViewModel.TotalPrice = demandOfferEntity.TotalPrice;
                 if (demandOfferEntity.SupplierId.HasValue)
                     demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
-                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
-                    demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
-                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
-                    demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
-                if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierAdress))
-                    demandOfferViewModel.SupplierAdress = demandOfferEntity.SupplierAdress;
+
                 if (demandOfferEntity.DeadlineDate.IsNotNull())
                 {
                     demandOfferViewModel.DeadlineDate = demandOfferEntity.DeadlineDate;
@@ -905,25 +896,24 @@ namespace Demand.Presentation.Controllers
                 providerEntity.CreatedAt = userId;
                 providerEntity.UpdatedDate = null;
                 providerEntity.UpdatedAt = null;
+                providerEntity.TaxNumber = updateDemandViewModel.TaxNumber;
                 _providerService.Add(providerEntity);
             }
             #endregion
 
             #region RequestInfo
             RequestInfoEntity requestInfo = _requestInfoService.GetByDemandId((long)updateDemandViewModel.DemandId).Data;
-            if (updateDemandViewModel.OfferCompanyName.IsNotNull())
+            if (updateDemandViewModel.OfferCompanyId.IsNotNull())
             {
                 DemandOfferEntity demandOfferEntity = new DemandOfferEntity();
                 demandOfferEntity.CreatedAt = userId;
                 demandOfferEntity.CreatedDate = DateTime.Now;
                 demandOfferEntity.CurrencyTypeId = (long)updateDemandViewModel.OfferCurrencyType;
                 demandOfferEntity.DemandId = (long)updateDemandViewModel.DemandId;
-                demandOfferEntity.SupplierName = updateDemandViewModel.OfferCompanyName;
-                demandOfferEntity.SupplierPhone = updateDemandViewModel.OfferCompanyPhone;
+
                 demandOfferEntity.SupplierId = updateDemandViewModel.OfferCompanyId.IsNotNull() ? updateDemandViewModel.OfferCompanyId.Value : providerEntity.Id;
                 demandOfferEntity.IsDeleted = false;
                 //demandOfferEntity.RequestInfoId = requestInfo.Id;
-                demandOfferEntity.SupplierAdress = updateDemandViewModel.OfferCompanyAddress;
                 demandOfferEntity.Status = 0;
                 demandOfferEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
                 demandOfferEntity.UpdatedAt = null;
@@ -953,23 +943,6 @@ namespace Demand.Presentation.Controllers
                         _offerMediaService.AddOfferMedia(offerMediaEntity);
                     }
                 }
-                #region
-                //if (demandOfferAdd.Id.IsNotNull())
-                //{
-                //    OfferRequestEntity offerRequestEntity = new OfferRequestEntity();
-                //    offerRequestEntity.Status = 0;
-                //    offerRequestEntity.DemandOfferId = demandOfferEntity.Id;
-                //    offerRequestEntity.UpdatedDate = null;
-                //    offerRequestEntity.CreatedDate= DateTime.Now;
-                //    offerRequestEntity.UpdatedAt = null;
-                //    offerRequestEntity.CreatedAt = userId;
-                //    offerRequestEntity.IsDeleted = false;
-                //    offerRequestEntity.RequestInfoId = requestInfo.Id;
-                //    offerRequestEntity.TotalPrice = updateDemandViewModel.OfferTotalPrice;
-                //    offerRequestEntity.UnitPrice = updateDemandViewModel.OfferPrice;
-                //    _offerRequestService.Add(offerRequestEntity);
-                //}
-                #endregion
             }
             #endregion
 
@@ -1117,10 +1090,6 @@ namespace Demand.Presentation.Controllers
 
                     if (demandOfferEntity.SupplierId.HasValue)
                         demandOfferViewModel.SupplierId = demandOfferEntity.SupplierId.Value;
-                    if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierName))
-                        demandOfferViewModel.SupplierName = demandOfferEntity.SupplierName;
-                    if (!string.IsNullOrWhiteSpace(demandOfferEntity.SupplierPhone))
-                        demandOfferViewModel.SupplierPhone = demandOfferEntity.SupplierPhone;
 
 
                     ProviderEntity providerEntity = new ProviderEntity();

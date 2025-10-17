@@ -121,9 +121,13 @@ builder.Services.AddScoped<IDemandRepository, DemandRepository>();
 builder.Services.AddScoped<IDemandService, DemandService>();
 #endregion
 
+#region Invoice
 builder.Services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
 builder.Services.AddScoped<IInvoiceDetailService, InvoiceDetailService>();
 
+builder.Services.AddScoped<IInvoiceDemandRepository, InvoiceDemandRepository>();
+builder.Services.AddScoped<IInvoiceDemandService, InvoiceDemandService>();
+#endregion
 
 #region Personnel - Authorize
 builder.Services.AddScoped<IPersonnelRepository, PersonnelRepository>();

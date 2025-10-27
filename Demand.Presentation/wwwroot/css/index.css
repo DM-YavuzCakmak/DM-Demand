@@ -60,6 +60,45 @@
                     transform: translateX(3px);
                 }
 
+    /* Alt menü başlangıçta kapalı */
+    .sidebar .submenu {
+        display: none;
+        margin-top: 8px;
+        margin-left: 10px;
+        padding-left: 10px;
+        border-left: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+        /* Alt menü açıkken */
+        .sidebar .submenu.open {
+            display: block;
+        }
+
+        /* Alt menüdeki linkler biraz daha küçük olsun */
+        .sidebar .submenu a {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 6px;
+        }
+
+.submenu-toggle {
+    cursor: pointer;
+}
+
+.action-buttons a {
+    color: #444;
+    margin: 0 2px;
+    font-size: 22px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    .action-buttons a:hover {
+        color: #007bff;
+        transform: scale(1.1);
+    }
+
 .layout main.table {
     flex: 1;
     margin-top: 20px;
@@ -616,6 +655,7 @@ thead th.active, tbody td.active {
     font-weight: bold;
     padding: 8px 15px;
     border: none;
+    margin-top: 2px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
@@ -635,6 +675,7 @@ thead th.active, tbody td.active {
     font-weight: bold;
     padding: 8px 15px;
     border: none;
+    margin-top: 2px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
@@ -654,6 +695,7 @@ thead th.active, tbody td.active {
     font-weight: bold;
     padding: 8px 15px;
     border: none;
+    margin-top:2px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
@@ -673,6 +715,7 @@ thead th.active, tbody td.active {
     font-weight: bold;
     padding: 8px 15px;
     border: none;
+    margin-top: 2px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
@@ -798,10 +841,17 @@ thead th.active, tbody td.active {
     z-index: 1001;
     overflow: scroll;
 }
-#invoiceTypePopup,
+
+#invoiceTypePopup {
+    max-height: 300px;
+    overflow-y: auto;
+    max-width: 650px;
+    border-radius: 15px;
+    padding: 15px;
+}
 #invoiceApprovedUpdatePopup,
 #invoiceRejectionPopup {
-    max-height: 300px;
+    max-height: 200px;
     overflow-y: auto;
     max-width: 650px;
     border-radius: 15px;
@@ -1051,12 +1101,10 @@ thead th.active, tbody td.active {
 @media (min-width: 1025px) {
     .edit-button {
         padding: 8px 15px;
-        font-size: 18px;
     }
 
     .view-button {
         padding: 8px 15px;
-        font-size: 18px;
     }
 }
 

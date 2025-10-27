@@ -334,7 +334,8 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimProductModels;
         }
-        public List<IncomingEInvoiceHeaderModel> GetIncomingEInvoiceHeaderModels()
+
+        public List<IncomingEInvoiceHeaderModel> GetIncomingEInvoiceHeaderModels(Guid? uuid = null)
         {
             List<IncomingEInvoiceHeaderModel> eInvoiceHeaderModels = new List<IncomingEInvoiceHeaderModel>();
             try
@@ -346,6 +347,8 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
                         command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
+                        if(uuid != null)
+                            command.Parameters.Add(new SqlParameter("@UUID", uuid));
 
                         connection.Open();
 
@@ -397,6 +400,8 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
                         command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
+                        if (uuid != null)
+                            command.Parameters.Add(new SqlParameter("@UUID", uuid));
 
                         connection.Open();
 

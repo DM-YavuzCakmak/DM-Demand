@@ -1,4 +1,5 @@
-﻿using Demand.Domain.Entities.ApprovedSupplierEntity;
+﻿using Demand.Domain.DTO;
+using Demand.Domain.Entities.ApprovedSupplierEntity;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.CompanyLocationUnitsEntity;
@@ -56,13 +57,32 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
         public virtual DbSet<CompanyLocationUnitsEntity>  CompanyLocationUnits{ get; set; }
         public virtual DbSet<InvoiceDetailEntity> InvoiceDetails { get; set; }
+        public virtual DbSet<InvoiceDemandEntity> InvoiceDemands { get; set; }
+        public virtual DbSet<DemandsByTaxNumberDto> DemandsByTaxNumberDto { get; set; }
 
+        public List<DemandsByTaxNumberDto> GetDemandsByTaxNumber(string taxnumber, long invoiceId)
+        {
+            try
+            {
+                return this.DemandsByTaxNumberDto.FromSqlInterpolated($"sp_GetDemandsByTaxNumber @TaxNumber={taxnumber}, @InvoiceId={invoiceId}").ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DemandOfferEntity>().Property(a => a.ExchangeRate).HasPrecision(18,2);
             modelBuilder.Entity<DemandOfferEntity>().Property(a => a.TotalPrice).HasPrecision(18, 2);
 
+            modelBuilder.Entity<DemandsByTaxNumberDto>().HasNoKey();
+            modelBuilder.Entity<DemandsByTaxNumberDto>().Property(a => a.ExchangeRate).HasPrecision(18, 2);
+            modelBuilder.Entity<DemandsByTaxNumberDto>().Property(a => a.TotalPrice).HasPrecision(18, 2);
+
+            modelBuilder.Entity<InvoiceDemandEntity>().Property(a => a.TotalPrice).HasPrecision(18, 2);
         }
 
     }

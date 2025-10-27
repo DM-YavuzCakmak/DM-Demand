@@ -13,6 +13,7 @@ public class PersonnelEntity : BaseEntity
     public int? DepartmentId { get; set; }
 
     public bool? IsViewNewInvoice { get; set; } = false;
+    public bool? IsViewControlInvoice { get; set; } = false;
 
     [ForeignKey("ParentId")]
     public virtual PersonnelEntity Parent { get; set; }

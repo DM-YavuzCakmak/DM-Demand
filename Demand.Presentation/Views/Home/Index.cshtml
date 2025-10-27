@@ -6,6 +6,8 @@
 @{
     var claimsIdentity = (ClaimsIdentity)User.Identity;
     var claims = claimsIdentity.Claims;
+    var isViewNewInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewNewInvoice").Value);
+    var IsViewControlInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewControlInvoice").Value);
     var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
     var userName = claims.FirstOrDefault(x => x.Type == "FirstName")?.Value;
     var userLastName = claims.FirstOrDefault(x => x.Type == "LastName")?.Value;
@@ -46,8 +48,42 @@
             <ul>
                 <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
                 <li>
-                    <a href="@Url.Action("Index", "Invoice")" class="@(ViewData["ActivePage"] as string == "Invoice" ? "active" : "")">Fatura Listesi</a>
+                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
+                    <ul class="submenu">
+                        @if (isViewNewInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
+                                    Yeni
+                                </a>
+                            </li>
+                        }
+                        @if (IsViewControlInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
+                                    Kontrol Bekleyen
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
+                                Onay Bekleyen
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
+                                Onaylanan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
+                                Reddedilen
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+
             </ul>
         </nav>
         <main class="table" id="demandTable">
@@ -388,6 +424,16 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggles = document.querySelectorAll(".submenu-toggle");
+        toggles.forEach(toggle => {
+            toggle.addEventListener("click", function () {
+                const submenu = this.nextElementSibling;
+                submenu.classList.toggle("open");
+            });
+        });
+    });
+
     $(document).ready(function () {
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();

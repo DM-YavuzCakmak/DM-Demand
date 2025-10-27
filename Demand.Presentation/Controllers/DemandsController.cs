@@ -20,7 +20,6 @@ using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Core.Utilities.Email;
 using Demand.Core.Utilities.Results.Abstract;
-using Demand.Core.Utilities.Results.Concrete;
 using Demand.Domain.Entities.Company;
 using Demand.Domain.Entities.CompanyLocation;
 using Demand.Domain.Entities.CurrencyTypeEntity;
@@ -39,18 +38,9 @@ using Demand.Domain.Entities.RequestInfoEntity;
 using Demand.Domain.Entities.Role;
 using Demand.Domain.Enums;
 using Demand.Domain.ViewModels;
-using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Kep.Helpers.Extensions;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 

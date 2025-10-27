@@ -14,6 +14,7 @@ using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Abstract.Provider;
 using Demand.Business.Abstract.RequestInfo;
 using Demand.Business.Abstract.RoleService;
+using Demand.Business.Concrete.DemandProcessService;
 using Demand.Business.Concrete.ProductCategoryService;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
@@ -136,7 +137,7 @@ namespace Demand.Presentation.Controllers
             {
                 demandProcess = _demandProcessService.GetList(x => x.Status == 0 && x.DemandId == id).Data.FirstOrDefault();
             }
-           
+
             bool isWhoPersonnel = demandProcess.ManagerId == userId ? true : false;
             DemandViewModel demandViewModel = new DemandViewModel
             {
@@ -290,6 +291,10 @@ namespace Demand.Presentation.Controllers
             supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
             List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
             DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.DemandId == demand.Id && x.Status == 0).Data.FirstOrDefault();
+            var managerNote = _demandProcessService
+   .GetList(x => x.DemandId == demand.Id && x.HierarchyOrder == 2)
+   .Data
+   .FirstOrDefault()?.Desciription;
 
             DemandViewModel demandViewModel = new DemandViewModel
             {
@@ -298,7 +303,7 @@ namespace Demand.Presentation.Controllers
                 DemandDate = demand.CreatedDate,
                 DemanderName = personnel.FirstName + " " + personnel.LastName,
                 DepartmentId = demand.DepartmentId,
-                Description = demand.Description,
+                Description = managerNote,
                 CreatedDate = demand.CreatedDate,
                 IsDeleted = demand.IsDeleted,
                 RequirementDate = demand.RequirementDate,
@@ -566,21 +571,24 @@ namespace Demand.Presentation.Controllers
                 _demandProcessService.AddDemandProcess(demandProcessFirstApprovedManager);
 
                 i++;
-
-                DemandProcessEntity demandProcessLastManager = new DemandProcessEntity
+                if (FirstApprovedPersonnel.ParentId != null)
                 {
-                    DemandId = addedDemand.Id,
-                    ManagerId = (int)FirstApprovedPersonnel.ParentId,
-                    IsDeleted = false,
-                    HierarchyOrder = i,
-                    Desciription = string.Empty,
-                    Status = 0,
-                    CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
-                    CreatedDate = DateTime.Now,
-                    UpdatedAt = null,
-                    UpdatedDate = null,
-                };
-                _demandProcessService.AddDemandProcess(demandProcessLastManager);
+
+                    DemandProcessEntity demandProcessLastManager = new DemandProcessEntity
+                    {
+                        DemandId = addedDemand.Id,
+                        ManagerId = (int)FirstApprovedPersonnel.ParentId,
+                        IsDeleted = false,
+                        HierarchyOrder = i,
+                        Desciription = string.Empty,
+                        Status = 0,
+                        CreatedAt = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                        CreatedDate = DateTime.Now,
+                        UpdatedAt = null,
+                        UpdatedDate = null,
+                    };
+                    _demandProcessService.AddDemandProcess(demandProcessLastManager);
+                }
 
             }
             else
@@ -988,6 +996,8 @@ namespace Demand.Presentation.Controllers
                 supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
                 List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
                 DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
+
+                DemandProcessEntity PurchasingDepartmentNote = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.ManagerId==10 && x.DemandId == DemandId).Data.FirstOrDefault();
                 List<DemandProcessEntity> demandProcessHistory = _demandProcessService.GetList(x => x.DemandId == demand.Id).Data.ToList();
 
                 DemandProcessEntity isApprovedActiveProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0 && x.DemandId == demand.Id).Data.FirstOrDefault();
@@ -1013,6 +1023,7 @@ namespace Demand.Presentation.Controllers
                     CompanyName = company.Name,
                     DepartmentName = department.Name,
                     ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
+                    PurchasingDepartmentNote = demandProcess.IsNotNull()? PurchasingDepartmentNote.Desciription : "",
                     isApprovedActive = isApprovedActiveProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isApprovedActiveProcess.ManagerId == userId ? true : false
 
                 };
@@ -1120,14 +1131,12 @@ namespace Demand.Presentation.Controllers
                             Quantity = requestInfo.Quantity,
                             Unit = requestInfo.Unit
                         };
-
                         OfferRequestEntity? offerRequestEntity = _offerRequestService.GetFirstOrDefault(x => x.RequestInfoId == requestInfo.Id && x.DemandOfferId == demandOfferEntity.Id).Data;
                         if (offerRequestEntity != null)
                         {
                             offerRequestViewModel.OfferRequestId = offerRequestEntity.Id;
                             offerRequestViewModel.Price = offerRequestEntity.UnitPrice ?? 0;
                             offerRequestViewModel.TotalPrice = offerRequestEntity.TotalPrice ?? 0;
-
                             offerRequestViewModels.Add(offerRequestViewModel);
                         }
 
@@ -1417,7 +1426,6 @@ namespace Demand.Presentation.Controllers
             return historypersonnel != null ? historypersonnel.FirstName + " " + historypersonnel.LastName : "Bilinmiyor";
         }
 
-
         [HttpPut("declineChangeStatus")]
         public IActionResult declineChangeStatus([FromBody] DemandStatusChangeViewModel demandStatusChangeViewModel)
         {
@@ -1452,5 +1460,7 @@ namespace Demand.Presentation.Controllers
 
             return Ok();
         }
+
+
     }
 }

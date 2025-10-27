@@ -60,6 +60,7 @@ namespace Demand.Domain.ViewModels
         public string? Unit3 { get; set; }
         public string? CurrencySymbol3 { get; set; }
         public string? ConfirmingNote { get; set; }
+        public string? PurchasingDepartmentNote { get; set; }
         public List<string>? RequestInfoId { get; set; }
         public List<string>? Type { get; set; }
         public List<string>? Category { get; set; }

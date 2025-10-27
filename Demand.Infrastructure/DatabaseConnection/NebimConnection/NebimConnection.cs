@@ -106,7 +106,6 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimCategoryModels;
         }
-
         public List<NebimSubCategoryModel> GetNebimSubCategoryModels()
         {
             List<NebimSubCategoryModel> nebimSubCategoryModels = new List<NebimSubCategoryModel>();
@@ -210,7 +209,6 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimSubCategoryModels;
         }
-
         public List<NebimProductModel> GetNebimProductModels()
         {
             List<NebimProductModel> nebimProductModels = new List<NebimProductModel>();
@@ -336,7 +334,6 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimProductModels;
         }
-
         public List<IncomingEInvoiceHeaderModel> GetIncomingEInvoiceHeaderModels()
         {
             List<IncomingEInvoiceHeaderModel> eInvoiceHeaderModels = new List<IncomingEInvoiceHeaderModel>();
@@ -451,7 +448,6 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return eInvoiceHeaderModels.OrderByDescending(x=>x.InvoiceDate).ToList();
         }
-
         public List<IncomingEInvoiceLineModel> GetIncomingEInvoiceLineModels(Guid uuid)
         {
             List<IncomingEInvoiceLineModel> eInvoiceHeaderModels = new List<IncomingEInvoiceLineModel>();

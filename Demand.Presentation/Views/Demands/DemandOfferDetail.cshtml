@@ -1,6 +1,7 @@
 ﻿@using Demand.Domain.Enums
 @using Demand.Domain.ViewModels
 @using System.Security.Claims
+@using System.Globalization
 @using Newtonsoft.Json
 @model DemandViewModel
 
@@ -579,6 +580,7 @@
 
             <div class="pricing-tables">
                 <h2 style="color:white;font-weight:bold;text-align:center">Birim Yöneticisi Notu: @Model.ConfirmingNote</h2>
+                <h2 style="color:white;font-weight:bold;text-align:center">Satın Alma Departmanı Notu: @Model.PurchasingDepartmentNote</h2>
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)
@@ -610,7 +612,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@offerRequestViewModel.TotalPrice.ToString("N2")</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -621,7 +623,7 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[0].CurrencyTypeId != null && Model.DemandOffers[0].CurrencyTypeId == 1)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice TL</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice.Value.ToString("N2") TL</h1>
                                     }
                                     else
                                     {
@@ -633,11 +635,11 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[0].CurrencyTypeId == 2)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice $</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice.Value.ToString("N2") $</h1>
                                     }
                                     else if (Model.DemandOffers[0].CurrencyTypeId == 3)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice €</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[0].TotalPrice.Value.ToString("N2") €</h1>
                                     }
                                 </div>
 
@@ -742,7 +744,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@offerRequestViewModel.TotalPrice.ToString("N2")</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -753,7 +755,7 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[1].CurrencyTypeId == 1)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice TL</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice.Value.ToString("N2") TL</h1>
                                     }
                                     else
                                     {
@@ -765,11 +767,11 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[1].CurrencyTypeId == 2)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice $</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice.Value.ToString("N2") $</h1>
                                     }
                                     else if (Model.DemandOffers[1].CurrencyTypeId == 3)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice €</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[1].TotalPrice.Value.ToString("N2") €</h1>
                                     }
                                 </div>
 
@@ -876,7 +878,7 @@
                                                         <td>@offerRequestViewModel.ProductName</td>
                                                         <td>@offerRequestViewModel.Quantity</td>
                                                         <td>@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</td>
-                                                        <td>@offerRequestViewModel.TotalPrice</td>
+                                                        <td>@offerRequestViewModel.TotalPrice.ToString("N2")</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -888,7 +890,7 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[2].CurrencyTypeId == 1)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice TL</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice.Value.ToString("N2") TL</h1>
                                     }
                                     else
                                     {
@@ -900,11 +902,11 @@
                                 <div class="price">
                                     @if (Model.DemandOffers[2].CurrencyTypeId == 2)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice $</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice.Value.ToString("N2") $</h1>
                                     }
                                     else if (Model.DemandOffers[2].CurrencyTypeId == 3)
                                     {
-                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice €</h1>
+                                        <h1 class="currency-value">@Model.DemandOffers[2].TotalPrice.Value.ToString("N2") €</h1>
                                     }
                                 </div>
 

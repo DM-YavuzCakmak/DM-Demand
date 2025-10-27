@@ -117,12 +117,12 @@
                                                         <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
                                                     }
 
-                                                    @if (userId == 10 || userId == 57 || (demand.isDemandOffer == true && (userId == 12 || userId == 18)))
+                                                    @if (userId == 10 || userId == 57 || (demand.isDemandOffer == true))
                                                     {
                                                         <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
                                                     }
                                                     else if (Model.Count > 0 && demand.DemanderName != null)
-                                                    {
+                                                    {   
                                                         <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
                                                     }
                                                 </td>
@@ -372,13 +372,11 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
 
-        // Menü aç/kapa
         hamburger.addEventListener('click', () => {
             sidebar.classList.toggle('active');
             overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
         });
 
-        // Overlay'e tıklayınca menüyü kapat
         overlay.addEventListener('click', () => {
             sidebar.classList.remove('active');
             overlay.style.display = 'none';
@@ -387,7 +385,6 @@
 </body>
 
 </html>
-
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
 <script>
@@ -576,7 +573,6 @@
         var table = document.getElementById("dataTable");
         var newRow = table.insertRow(table.rows.length);
         var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
-
         cells.forEach(function (cell) {
             var selectedCompanyId = $('#companyName').val();
             var newCell = newRow.insertCell(-1);
@@ -620,6 +616,7 @@
                         }
                     });
                 } else if (cell === 'type') {
+                    debugger;
                     select.addEventListener('change', function () {
                         disableFields(this.parentNode.parentNode.parentNode);
                     });
@@ -658,7 +655,7 @@
     }
 
     function removeRow() {
-        var table = document.getElementById("dataTable");//.getElementsByTagName('tbody')[0];
+        var table = document.getElementById("dataTable");
         if (table.rows.length > 1) {
             table.deleteRow(-1);
         }

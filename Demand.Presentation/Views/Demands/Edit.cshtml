@@ -838,7 +838,11 @@
                 </div>
             </div>
             <div class="button-group" style="display: flex; align-items: center; gap: 10px;">
-                <input type="text" id="descriptionInput" placeholder="Açıklama giriniz..."
+                <input type="text" id="noteDescriptionInput" placeholder="Teklif Açıklaması giriniz.."
+                       style="padding: 8px; border: 1px solid #ccc; border-radius: 8px; outline: none; width: 685px;">
+            </div>
+            <div class="button-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" id="descriptionInput" placeholder="Geri Döndürme Açıklaması giriniz..."
                        style="padding: 8px; border: 1px solid #ccc; border-radius: 8px; outline: none; width: 550px;">
                 <button onclick="declineChangeStatus(@Model.DemandId)" type="button" class="decline-button">Geri Döndür</button>
             </div>
@@ -1585,9 +1589,12 @@
 
 
     function changeStatus(demandId) {
+                    var description = document.getElementById("noteDescriptionInput").value;
+
         var demandStatusChangeViewModel = {
             DemandId: demandId,
-            Status: 2
+            Status: 2,
+            Description: description
         };
 
         $.ajax({

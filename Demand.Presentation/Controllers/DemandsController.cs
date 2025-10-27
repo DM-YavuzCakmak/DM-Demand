@@ -1013,7 +1013,7 @@ namespace Demand.Presentation.Controllers
                     CompanyName = company.Name,
                     DepartmentName = department.Name,
                     ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
-                    PurchasingDepartmentNote = demandProcess.IsNotNull()? PurchasingDepartmentNote.Desciription : "",
+                    PurchasingDepartmentNote = PurchasingDepartmentNote.IsNotNull()? PurchasingDepartmentNote.Desciription : "",
                     isApprovedActive = isApprovedActiveProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isApprovedActiveProcess.ManagerId == userId ? true : false
 
                 };

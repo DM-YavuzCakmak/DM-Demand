@@ -305,8 +305,8 @@
                     <div class="offercont">
                         <div class="offerAcordion">
                             <div class="form-group">
-                                <label for="provider">Kayıtlı Sağlayıcı:</label>
-                                <select id="provider" name="provider" style="width:200px">
+                                <label for="provider1">Kayıtlı Sağlayıcı:</label>
+                                <select id="provider1" name="provider1" style="width:200px">
                                     @if (Model.DemandOffers.Count != 0 && Model.DemandOffers.Any())
                                     {
                                         <option value="@Model.DemandOffers[0].SupplierId">@Model.DemandOffers[0].SupplierName</option>
@@ -1145,9 +1145,9 @@
     }
 
     .selected-file-name {
-        margin-left: 10px; /* Sola kaydırmak için */
-        color: white; /* Metni beyaz yapmak için */
-        font-size: 14px; /* İsteğe bağlı, font boyutunu ayarlayabilirsiniz */
+        margin-left: 10px;
+        color: white;
+        font-size: 14px;
     }
 </style>
 
@@ -1218,7 +1218,7 @@
         });
 
 
-        $('#provider').change(function () {
+        $('#provider1').change(function () {
         var selectedProviderId = $(this).val();
         if (selectedProviderId !== "") {
             var selectedProvider = providers.find(p => p.Id == parseInt(selectedProviderId));
@@ -1226,7 +1226,7 @@
                 $('#offerCompanyName1').val(selectedProvider.Name);
                 $('#offerCompanyPhone1').val(selectedProvider.PhoneNumber);
                 $('#offerCompanyAddress1').val(selectedProvider.Address);
-                $('#offerTaxNumber1').val(selectedProvider.Tax || selectedProvider.TaxNumber || ''); // provider model'in property adı değişmiş olabilir
+                $('#offerTaxNumber1').val(selectedProvider.Tax || selectedProvider.TaxNumber || '');
             }
         }
     });
@@ -1417,6 +1417,8 @@
             selectedProviderId = null;
         }
 
+        console.log('aaaaa' + notRegisteredProvider);
+        console.log('bbbbb' + selectedProviderId);
         return {
             OfferCompanyName: offerCompanyName,
             OfferCompanyPhone: offerCompanyPhone,
@@ -1433,33 +1435,12 @@
             paymentType: paymentType,
             InstallmentPayment: InstallmentPayment,
             PartialPayment: PartialPayment,
-            TaxNumber: taxNumber     // <-- burayı ekledik
+            TaxNumber: taxNumber     
         };
+
+         console.log('bbbbb' + selectedProviderId);
+
     }
-
-    // function getFileData() {
-    //     return new Promise(function (resolve, reject) {
-    //         var fileInput = document.getElementById('fileInput');
-    //         if (fileInput.files.length === 0) {
-    //             resolve(null);
-    //             return;
-    //         }
-
-    //         var file = fileInput.files[0];
-    //         var reader = new FileReader();
-
-    //         reader.onload = function (event) {
-    //             var fileContent = event.target.result.split(',')[1];
-    //             resolve(fileContent);
-    //         };
-
-    //         reader.onerror = function (error) {
-    //             reject(error);
-    //         };
-
-    //         reader.readAsDataURL(file);
-    //     });
-    // }
 
     function getFileData(offerId) {
         return new Promise(function (resolve, reject) {

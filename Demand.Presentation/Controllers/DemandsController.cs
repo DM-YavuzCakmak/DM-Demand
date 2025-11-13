@@ -395,6 +395,7 @@ namespace Demand.Presentation.Controllers
             }
             var demandEntity = new DemandEntity
             {
+                CompanyId= (long) demandViewModel.CompanyId,
                 CompanyLocationId = (long)demandViewModel.CompanyLocationId,
                 LocationUnitId = (long)demandViewModel.LocationUnitId,
                 DemandTitle = demandViewModel.DemandTitle,
@@ -944,7 +945,6 @@ namespace Demand.Presentation.Controllers
             }
             #endregion
 
-
             #region UpdateDemand
             DemandEntity demandEntity = _demandService.GetById(updateDemandViewModel.DemandId.Value).Data;
             string title = demandEntity.DemandTitle;
@@ -1451,6 +1451,33 @@ namespace Demand.Presentation.Controllers
             return Ok();
         }
 
+        [HttpGet("GetDemandById")]
+        public IActionResult GetDemandById(long id)
+        {
+            DemandEntity demand = _demandService.GetById(id).Data;
+            List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == id).Data.ToList();
 
+            DemandViewModel demandViewModel = new DemandViewModel
+            {
+                DemandId = demand.Id,
+                DemandTitle = demand.DemandTitle,
+                CompanyId= demand.CompanyId,
+                Description = demand.Description,
+                LocationUnitId = demand.LocationUnitId,
+                CompanyLocationId = demand.CompanyLocationId,
+                DepartmentId = demand.DepartmentId,
+                requestInfoViewModels = requestInfos?.Select(r => new RequestInfoViewModel
+                {
+                    Unit = r.Unit,
+                    Quantity = r.Quantity,
+                    Metarial = r.ProductName,
+                    ProductCategoryId = r.ProductCategoryId,
+                    NebimCategoryId = r.NebimCategoryId,
+                    NebimSubCategoryId = r.NebimSubCategoryId
+                }).ToList()
+            };
+
+            return Ok(demandViewModel);
+        }
     }
 }

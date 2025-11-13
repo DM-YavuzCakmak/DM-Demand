@@ -145,9 +145,14 @@ namespace Demand.Domain.ViewModels
 
     public class RequestInfoViewModel
     {
-        public string Metarial { get; set; }
+        public long DemandId { get; set; }
+        public int? NebimCategoryId { get; set; }
+        public int? NebimSubCategoryId { get; set; }
+        public string? Metarial { get; set; }
+        public string? ProductCode { get; set; }
         public int? Quantity { get; set; }
-        public string Unit { get; set; }
+        public string? Unit { get; set; }
+        public int? ProductCategoryId { get; set; }
     }
     public class Product
     {

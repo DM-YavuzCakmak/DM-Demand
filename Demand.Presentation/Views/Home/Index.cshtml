@@ -148,18 +148,30 @@
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
 
                                                 <td>
+                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                        <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
+                                                    </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                     {
-                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                    }
+                                                        @*<a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>*@
 
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="icon-link" title="Güncelle" >
+                                                            <img src="~/images/update.png" alt="Güncelle" />
+                                                        </a>
+                                                    }
                                                     @if (userId == 10 || userId == 57 || (demand.isDemandOffer == true))
                                                     {
-                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                        @*<a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                     else if (Model.Count > 0 && demand.DemanderName != null)
-                                                    {   
-                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                    {
+                                                        @*<a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                 </td>
                                             </tr>
@@ -213,18 +225,30 @@
                                                 <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
                                                 <td>
+                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                        <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
+                                                    </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                     {
-                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                    }
-                                                    @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
-                                                    {
-                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                        @*<a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>*@
 
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="icon-link" title="Güncelle">
+                                                            <img src="~/images/update.png" alt="Güncelle" />
+                                                        </a>
+                                                    }
+                                                    @if (userId == 10 || userId == 57 || (demand.isDemandOffer == true))
+                                                    {
+                                                        @*<a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                     else if (Model.Count > 0 && demand.DemanderName != null)
                                                     {
-                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                        @*<a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                 </td>
                                             </tr>
@@ -275,18 +299,30 @@
                                                 <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
                                                 <td>
+                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                        <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
+                                                    </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                     {
-                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>
-                                                    }
-                                                    @if (userId == 12 || userId == 10 || userId == 57 || @demand.isDemandOffer == true)
-                                                    {
-                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                        @*<a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>*@
 
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="icon-link" title="Güncelle">
+                                                            <img src="~/images/update.png" alt="Güncelle" />
+                                                        </a>
+                                                    }
+                                                    @if (userId == 10 || userId == 57 || (demand.isDemandOffer == true))
+                                                    {
+                                                        @*<a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("DemandOfferDetail", "Demands", new { DemandId = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                     else if (Model.Count > 0 && demand.DemanderName != null)
                                                     {
-                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>
+                                                        @*<a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="view-button">Teklif Detayı</a>*@
+                                                        <a href="@Url.Action("Detail", "Demands", new { id = demand.DemandId })" class="icon-link" title="Detay">
+                                                            <img src="~/images/detail.png" alt="Detay" />
+                                                        </a>
                                                     }
                                                 </td>
                                             </tr>
@@ -388,6 +424,7 @@
                             <th>Birim</th>
                             <th>Adet</th>
                         </tr>
+                    <tbody></tbody>
                     </thead>
                 </table>
                 <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
@@ -435,6 +472,106 @@
     });
 
     $(document).ready(function () {
+    $(document).on('click', '.repeat-button', function (e) {
+           e.preventDefault();
+
+           var demandId = $(this).data('id');
+           if (!demandId) {
+               if (typeof toastr !== 'undefined') toastr.error('Talep ID bulunamadı.', 'Hata');
+               else alert('Talep ID bulunamadı.');
+               return;
+           }
+
+           var $loading = $('#loadingOverlay');
+           if ($loading.length) $loading.show();
+
+           $.ajax({
+               url: '/api/Demands/GetDemandById',
+               type: 'GET',
+               data: { id: demandId },
+               success: function (response) {
+                   console.log('GetDemandById response:', response);
+                   var data = response && response.data ? response.data : response;
+
+                   if (!data) {
+                       if (typeof toastr !== 'undefined') toastr.error('Talep bilgileri alınamadı.');
+                       else alert('Talep bilgileri alınamadı.');
+                       if ($loading.length) $loading.hide();
+                       return;
+                   }
+
+                   openCreateDemandPopup();
+
+                   $('#demandtitle').val(data.demandTitle || '');
+                   $('#description').val(data.description || '');
+
+                   if (data.companyId) {
+                       $('#companyName').val(data.companyId).trigger('change');
+
+                       setTimeout(() => {
+                           if (data.companyLocationId) {
+                               $('#location').val(data.companyLocationId).trigger('change');
+
+                               setTimeout(() => {
+                                   if (data.locationUnitId) {
+                                       $('#locationUnits').val(data.locationUnitId);
+                                   }
+                               }, 400);
+                           }
+                       }, 400);
+                   }
+
+                   if (data.departmentId) {
+                       $('#department').val(data.departmentId);
+                   }
+
+                   if (data.requirementDate && data.requirementDate !== "0001-01-01T00:00:00") {
+                       const reqDate = new Date(data.requirementDate);
+                       $('#requirementDate').val(reqDate.toISOString().split("T")[0]);
+                   }
+
+                   const tableBody = $('#dataTable tbody');
+                   tableBody.empty();
+
+                   if (data.requestInfoViewModels && data.requestInfoViewModels.length > 0) {
+                       data.requestInfoViewModels.forEach((item) => {
+                           addRow();
+                           // var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
+                           const row = $('#dataTable tbody tr').last();
+                           row.find('.productName').val(item.metarial || '');
+                           row.find('.quantity').val(item.quantity || '');
+                           row.find('.unit').val(item.unit || '');
+
+                           setTimeout(() => {
+                               if (item.productCategoryId){
+                                    var event = new Event('change', { bubbles: true });
+                                    var select = row.find('.type')[0];
+                                    select.value = item.productCategoryId;
+                                    select.dispatchEvent(event);
+                               }
+                               if (item.nebimCategoryId)
+                                   row.find('.category').val(item.nebimCategoryId).trigger('change');
+                               if (item.nebimSubCategoryId)
+                                   row.find('.subcategory').val(item.nebimSubCategoryId).trigger('change');
+                           }, 300);
+                       });
+                   }
+
+                   if ($loading.length) $loading.hide();
+               },
+               error: function (xhr, status, error) {
+                   console.error('GetDemandById error:', status, error, xhr);
+                   if (typeof toastr !== 'undefined') toastr.error('Talep bilgileri alınamadı.', 'Hata');
+                   else alert('Talep bilgileri alınamadı.');
+                   if ($loading.length) $loading.hide();
+               }
+           });
+       });
+
+
+
+
+
         $('#companyName').change(function () {
             var selectedCompanyId = $(this).val();
 
@@ -585,7 +722,6 @@
             });
         }
     }
-
     function closeCreateDemandPopup() {
         var overlay = document.getElementById("overlay");
         var popup = document.getElementById("createDemandPopup");
@@ -596,9 +732,19 @@
             overlay.removeEventListener("click", function () {
                 closeCreateDemandPopup();
             });
+
+            $('#createDemandPopup').find('input[type="text"], input[type="date"], textarea').val('');
+            $('#createDemandPopup').find('select').prop('selectedIndex', 0);
+            $('#location').empty().append('<option value="">Lütfen seçiniz</option>');
+            $('#locationUnits').empty().append('<option value="">Lütfen seçiniz</option>');
+            $('#fileInput').val('');
+            $('#requestDate').val(new Date().toLocaleDateString('tr-TR'));
+
+            $('#dataTable tbody').empty();
+
+            if (typeof rowCount !== 'undefined') rowCount = 0;
         }
     }
-
 
     document.addEventListener('DOMContentLoaded', function () {
         var requirementDateInput = document.getElementById("requirementDate");
@@ -615,19 +761,25 @@
             }
         });
     });
-    function addRow() {
-        var table = document.getElementById("dataTable");
-        var newRow = table.insertRow(table.rows.length);
+        function addRow() {
+        if (typeof rowCount === 'undefined') rowCount = 0;
+        rowCount++;
+
+        var tableBody = document.querySelector("#dataTable tbody");
+        var newRow = document.createElement("tr");
+
         var cells = ['type', 'category', 'subcategory', 'product', 'productCode', 'productName', 'unit', 'quantity'];
         cells.forEach(function (cell) {
             var selectedCompanyId = $('#companyName').val();
-            var newCell = newRow.insertCell(-1);
+            var newCell = document.createElement("td");
+
             if (cell === 'type' || cell === 'category' || cell === 'subcategory' || cell === 'product' || cell === 'unit') {
                 var div = document.createElement("div");
                 div.className = "select-wrapper";
                 var select = document.createElement("select");
                 select.name = cell + "[]";
                 select.className = cell;
+
                 if (cell === 'unit') {
                     var option1 = document.createElement("option");
                     option1.text = "Adet";
@@ -637,8 +789,7 @@
                     option2.text = "Metre";
                     option2.value = "2";
                     select.appendChild(option2);
-                }
-                else if (cell === 'category') {
+                } else if (cell === 'category') {
                     var locationUnitId = $('#locationUnits').val();
                     var companyBrandCode = 1;
                     if (locationUnitId == 2 || locationUnitId == 8) {
@@ -648,6 +799,7 @@
                     select.addEventListener('change', function () {
                         updateSubcategories(this.parentNode.parentNode.parentNode);
                     });
+
                     var subCategoryModels = @Html.Raw(Json.Serialize(Model[0].NebimCategoryModels));
                     select.innerHTML = '';
                     var defaultOption = document.createElement('option');
@@ -662,10 +814,10 @@
                         }
                     });
                 } else if (cell === 'type') {
-                    debugger;
                     select.addEventListener('change', function () {
                         disableFields(this.parentNode.parentNode.parentNode);
                     });
+
                     var subCategoryModels = @Html.Raw(Json.Serialize(ViewBag.ProductCategories));
                     select.innerHTML = '';
                     var defaultOption = document.createElement('option');
@@ -686,6 +838,7 @@
                         updateProductCode(this.parentNode.parentNode.parentNode);
                     });
                 }
+
                 div.appendChild(select);
                 newCell.appendChild(div);
             } else {
@@ -693,11 +846,14 @@
                 input.type = "text";
                 input.name = cell + "[]";
                 input.className = cell;
-
                 newCell.className = "form-group";
                 newCell.appendChild(input);
             }
+
+            newRow.appendChild(newCell);
         });
+
+        tableBody.appendChild(newRow);
     }
 
     function removeRow() {
@@ -859,10 +1015,12 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
+        formData.append('CompanyId', document.getElementById('company').value);
         formData.append('LocationUnitId', document.getElementById('locationUnits').value);
         formData.append('RequirementDate', document.getElementById('requirementDate').value);
 
         var aa = document.getElementById('locationUnits').value;
+        var bb = document.getElementById('company').value;
         console.log(aa);
 
 

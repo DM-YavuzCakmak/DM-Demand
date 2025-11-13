@@ -122,7 +122,10 @@
     color: #fff;
     display: none; 
 }
-
+.icon-link {
+    text-decoration: none; 
+    display: inline-block;
+}
 @media (max-width: 768px) {
     .layout {
         flex-direction: column;

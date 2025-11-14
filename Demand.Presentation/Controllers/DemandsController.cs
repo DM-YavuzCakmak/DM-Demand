@@ -950,7 +950,6 @@ namespace Demand.Presentation.Controllers
             string title = demandEntity.DemandTitle;
             demandEntity.CompanyLocationId = updateDemandViewModel.CompanyLocationId.Value;
             demandEntity.DepartmentId = updateDemandViewModel.DepartmentId.Value;
-            demandEntity.Description = updateDemandViewModel.Description;
             demandEntity.DemandTitle = updateDemandViewModel.DemandTitle;
             demandEntity.UpdatedAt = userId;
             demandEntity.UpdatedDate = DateTime.Now;

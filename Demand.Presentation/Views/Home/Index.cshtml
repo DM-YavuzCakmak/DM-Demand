@@ -148,14 +148,14 @@
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
 
                                                 <td>
-                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                    <a href="javascript:void(0)" class="icon-link repeat-button" data-id="@demand.DemandId" title="Tekrarla">
                                                         <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
                                                     </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
                                                     {
                                                         @*<a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="edit-button">Güncelle</a>*@
 
-                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="icon-link" title="Güncelle" >
+                                                        <a href="@Url.Action("Edit", "Demands", new { id = demand.DemandId })" class="icon-link" title="Güncelle">
                                                             <img src="~/images/update.png" alt="Güncelle" />
                                                         </a>
                                                     }
@@ -225,7 +225,7 @@
                                                 <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
                                                 <td>
-                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                    <a href="javascript:void(0)" class="icon-link repeat-button" data-id="@demand.DemandId" title="Tekrarla">
                                                         <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
                                                     </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
@@ -299,7 +299,7 @@
                                                 <td data-label="Onay/Red Tarihi">@demand.AprrovedDate</td>
                                                 <td data-label="Y.K Üyesi">@demand.Yk</td>
                                                 <td>
-                                                    <a href="javascript:void(0)" class="icon-link" data-id="@demand.DemandId" title="Tekrarla ">
+                                                    <a href="javascript:void(0)" class="icon-link repeat-button" data-id="@demand.DemandId" title="Tekrarla">
                                                         <img id="logo" src="~/images/repeat.png" alt="Tekrarla">
                                                     </a>
                                                     @if ((demand.CreatedAt == userId || userId == 10 || userId == 57) && demand.Status == 0)
@@ -1015,12 +1015,12 @@
         formData.append('Description', document.getElementById('description').value);
         formData.append('DemandTitle', document.getElementById('demandtitle').value);
         formData.append('CompanyLocationId', document.getElementById('location').value);
-        formData.append('CompanyId', document.getElementById('company').value);
+        formData.append('CompanyId', document.getElementById('companyName').value);
         formData.append('LocationUnitId', document.getElementById('locationUnits').value);
         formData.append('RequirementDate', document.getElementById('requirementDate').value);
 
         var aa = document.getElementById('locationUnits').value;
-        var bb = document.getElementById('company').value;
+        var bb = document.getElementById('companyName').value;
         console.log(aa);
 
 

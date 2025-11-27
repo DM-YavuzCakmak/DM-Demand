@@ -365,7 +365,7 @@ namespace Demand.Presentation.Controllers
             ViewBag.Companies = companies;
             List<DepartmentEntity> departments = _departmentService.GetAll().Data.ToList();
             ViewBag.Departments = departments;
-            List<ProviderEntity> providers = _providerService.GetAll().Data.ToList();
+            List<ProviderEntity> providers = _providerService.GetList(x=> x.IsDeleted == false).Data.ToList();
             ViewBag.Providers = providers;
             ViewBag.OfferRequest = offerRequestEntity;
             return View(demandViewModel);
@@ -981,8 +981,7 @@ namespace Demand.Presentation.Controllers
                 DepartmentEntity department = _departmentService.GetById(demand.DepartmentId).Data;
                 List<RequestInfoEntity> requestInfos = _requestInfoService.GetList(x => x.DemandId == DemandId).Data.ToList();
                 List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == DemandId).Data.ToList();
-                List<long> supplierIds = new List<long>();
-                supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
+                List<long> supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
                 List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
                 DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
 
@@ -1279,7 +1278,7 @@ namespace Demand.Presentation.Controllers
             offerRequestViewModels[0].ProductCategories = productCategories;
 
             return View(offerRequestViewModels);
-        }
+        }  
         [HttpPost("AddOfferRequest")]
         public IActionResult AddOfferRequest([FromForm] DemandViewModel demandViewModel)
         {

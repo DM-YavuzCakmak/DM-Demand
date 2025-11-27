@@ -593,7 +593,8 @@
 
                                 <ul class="item-list">
 @*                                     <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName</li>
- *@                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[0].SupplierName.Length))</li>
+ *@                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[0].CompanyName?.Substring(0, Math.Min(33, Model.DemandOffers[0].CompanyName.Length))</li>
+
 
                                     <li>
                                         <table id="dataTable">
@@ -726,7 +727,8 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[1].SupplierName.Length))</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[1].CompanyName?.Substring(0, Math.Min(33, Model.DemandOffers[1].CompanyName.Length))</li>
+
                                     <li>
                                         <table id="dataTable">
                                             <thead>
@@ -859,7 +861,8 @@
                                 </div>
 
                                 <ul class="item-list">
-                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].SupplierName?.Substring(0, Math.Min(33, Model.DemandOffers[2].SupplierName.Length))</li>
+                                    <li><strong>Sağlayıcı:</strong> @Model.DemandOffers[2].CompanyName?.Substring(0, Math.Min(33, Model.DemandOffers[2].CompanyName.Length))</li>
+
 
                                     <li>
                                         <table id="dataTable">

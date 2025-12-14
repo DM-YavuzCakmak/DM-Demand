@@ -1,0 +1,1169 @@
+﻿@using Demand.Domain.NebimModels
+@using System.Security.Claims
+@using System.Text.Json
+@model IncomingEInvoiceHeaderModel
+
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+    var isViewNewInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewNewInvoice").Value);
+    var IsViewControlInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewControlInvoice").Value);
+    var userName = claims.FirstOrDefault(x => x.Type == "FirstName")?.Value;
+    var userLastName = claims.FirstOrDefault(x => x.Type == "LastName")?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" asp-append-version="true" />
+    <style>
+        /* Kart görünümü */
+        .tableBody {
+            border-radius: 14px;
+            padding: 28px 32px 24px;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.12);
+            border: 1px solid #e2e8f0;
+        }
+
+            /* Satırlar arası boşluk */
+            .tableBody .row {
+                margin-bottom: 18px;
+            }
+
+            /* Label’lar */
+            .tableBody label {
+                font-weight: 600;
+                font-size: 0.95rem;
+                color: #1f2933;
+                margin-bottom: 6px;
+            }
+
+            /* Yardım yazıları */
+            .tableBody small.form-text {
+                font-size: 0.78rem;
+                color: #6b7280;
+            }
+
+            /* Input & select’ler */
+            .tableBody .form-control {
+                border-radius: 10px;
+                border: 1px solid #d1d5db;
+                padding: 0.55rem 0.85rem;
+                font-size: 0.93rem;
+                transition: all 0.15s ease;
+                background-color: #f9fafb;
+            }
+
+                .tableBody .form-control::placeholder {
+                    color: #9ca3af;
+                    font-size: 0.88rem;
+                }
+
+                .tableBody .form-control:focus {
+                    background-color: #ffffff;
+                    border-color: #72006F;
+                    box-shadow: 0 0 0 0.17rem rgba(114, 0, 111, 0.18);
+                }
+
+            /* Zorunlu alan yıldızı */
+            .tableBody label span {
+                font-weight: 700;
+            }
+
+            /* Kimlik türü radio butonlarını buton gibi gösterme */
+            .tableBody .btn-group .btn {
+                min-width: 150px;
+                border-radius: 999px !important;
+                font-size: 0.9rem;
+                font-weight: 500;
+                padding: 0.45rem 0.9rem;
+            }
+
+            /* Birincil renk ayarları (#72006F) */
+            .tableBody .btn-outline-primary {
+                border-color: #72006F;
+                color: #72006F;
+                background-color: #fff;
+            }
+
+                .tableBody .btn-outline-primary:hover,
+                .tableBody .btn-outline-primary:focus,
+                .tableBody .btn-outline-primary:active,
+                .tableBody .btn-outline-primary.active {
+                    background-color: #72006F;
+                    color: #ffffff;
+                    box-shadow: 0 0 0 0.12rem rgba(114, 0, 111, 0.3);
+                }
+
+            /* Kaydet butonu */
+            .tableBody .btn-primary {
+                background: linear-gradient(135deg, #72006F, #a1009c);
+                border: none;
+                border-radius: 999px;
+                padding: 0.6rem 2.4rem;
+                font-weight: 600;
+                letter-spacing: .02em;
+                box-shadow: 0 10px 25px rgba(114, 0, 111, 0.35);
+                transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+            }
+
+                .tableBody .btn-primary:hover {
+                    filter: brightness(1.05);
+                    transform: translateY(-1px);
+                    box-shadow: 0 14px 30px rgba(114, 0, 111, 0.45);
+                }
+
+                .tableBody .btn-primary:active {
+                    transform: translateY(0);
+                    box-shadow: 0 8px 18px rgba(114, 0, 111, 0.30);
+                }
+
+            /* Butonun bulunduğu alan */
+            .tableBody .text-center {
+                margin-top: 16px;
+            }
+
+        .search2-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .search2-btn:hover {
+                background: #e0e0e0;
+            }
+
+            .search2-btn i {
+                font-size: 14px;
+            }
+
+        .column-filter {
+            width: 95% !important;
+            padding: 6px 8px !important;
+            height: 30px !important;
+            font-size: 14px !important;
+            border: 1px solid #c2c2c2;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 4px;
+        }
+
+            .column-filter:focus {
+                border-color: #7d7dff;
+                outline: none;
+                box-shadow: 0 0 3px rgba(125, 125, 255, 0.5);
+            }
+
+        #dataTableProductDetail tbody tr {
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+            #dataTableProductDetail tbody tr:hover {
+                background-color: #eef7ff !important;
+                cursor: pointer;
+            }
+
+    </style>
+    <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>DEM MUSEUMS</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+        </div>
+        <div class="user-info">
+            <p>
+                @{
+                    string CustomName = $"{userName} {userLastName}";
+                }
+
+                @CustomName
+            </p>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div id="hamburger">&#9776;</div>
+        <div id="overlay"></div>
+        <nav class="sidebar" id="sidebar">
+            <ul>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
+                        @if (isViewNewInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
+                                    Yeni
+                                </a>
+                            </li>
+                        }
+                        @if (IsViewControlInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
+                                    Kontrol Bekleyen
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
+                                Onay Bekleyen
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
+                                Onaylanan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
+                                Reddedilen
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
+                        <li>
+                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
+                                Yeni Başvuru
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
+                                Onaylı Tedarikçi Listesi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
+                                Onay Bekleyenler
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <main class="table" id="demandTable">
+            <section class="table__header">
+                <h1>Fatura Aktarım</h1>
+            </section>
+
+            <section class="content">
+                <div id="content-2">
+                    <section class="tableBody">
+
+                        <!-- Header Bilgileri -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="company">Şirket</label>
+                                <input type="text" id="company" value="@Model.CompanyName" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="provider">Firma</label>
+                                <input type="text" id="provider" value="@Model.CurrAccDescription" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="taxnumber">VKN/TCKN</label>
+                                <input type="text" id="taxnumber" value="@Model.TaxNumber" readonly />
+                            </div>
+                        </div>
+
+                        <!-- Header Bilgileri -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoiceNo">Fatura No</label>
+                                <input type="text" id="invoiceNo" value="@Model.EInvoiceNumber" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="requestDate">Fatura Tarihi</label>
+                                <input type="text" id="requestDate" value="@(Model.InvoiceDate.ToShortDateString())" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="payableAmount">Fatura Tutarı</label>
+                                <input type="text" id="payableAmount" value="@(Model.PayableAmount.ToString("N2") + " " + GetCurrencyIco(Model.DocCurrencyCode))" readonly />
+                            </div>
+                        </div>
+
+                        <!-- Header Bilgileri -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="office">Ofis</label>
+                                <select name="office" class="form-control" id="office">
+                                    <option>Lütfen Seçiniz</option>
+                                    @foreach (var a in ViewBag.NebimOfficeModels)
+                                    {
+                                        <option value="@a.OfficeCode">@a.OfficeDescription</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="warehouse">Depo</label>
+                                <select name="warehouse" class="form-control" id="warehouse">
+                                    <option>Lütfen Seçiniz</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@Model.FromIntegratorUUID"
+                                   target="_blank" title="Fatura Görüntüle">
+                                    <button id="invoiceDetailButton" type="button" style="margin-top:15px"><i class="fa fa-file-invoice"></i> Fatura Görüntüle</button>
+                                </a>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="invoiceDetailPopupInvoiceId" value="" />
+
+                        <!-- Fatura Kalemleri -->
+                        <h3 style="margin: 10px;">Fatura Kalemleri</h3>
+                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc;">
+                            <table id="dataTableInvoiceDetail" border="1" style="width:100%; border-collapse: collapse;">
+                                <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
+                                    <tr>
+                                        <th>Adı</th>
+                                        <th>Adet</th>
+                                        @* <th>İndirim Oranı</th>
+								<th>İndirim Tutarı</th> *@
+                                        <th>KDV Oranı</th>
+                                        <th>KDV Tutarı</th>
+                                        <th>Toplam Tutar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- JS ile doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Fatura Aktarım -->
+                        <h3 style="margin: 10px;margin-top:30px">Fatura Aktarım</h3>
+                        <table id="dataTable" border="1">
+                            <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Ürün Kod</th>
+                                    <th>Ürün Açıklama</th>
+                                    <th>Miktar</th>
+                                    <th>Birim</th>
+                                    <th>KDV</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>İskonto Değeri</th>
+                                    <th>KDV Tutarı</th>
+                                    <th>Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div style="margin:20px">
+                            <button id="addButton" type="button" onclick="addRow()">Satır Ekle</button>
+                            <button id="removeButton" type="button" onclick="removeRow()">Satır Sil</button>
+                        </div>
+                        <!-- Header Bilgileri -->
+                        <div class="form-row" style="margin-top:10px">
+                            <div class="form-group">
+                                <label for="sumTotalAmount">Toplam Tutar</label>
+                                <input type="text" id="sumTotalAmount" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="sumDiscount">Toplam İskonto</label>
+                                <input type="text" id="sumDiscount" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="sumSubTotal">Ara Toplam</label>
+                                <input type="text" id="sumSubTotal" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="sumVat">KDV Tutarı</label>
+                                <input type="text" id="sumVat" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="sumGrandTotal">KDV Dahil Toplam Tutar</label>
+                                <input type="text" id="sumGrandTotal" readonly />
+                            </div>
+                        </div>
+
+                        <div style="margin:20px">
+                            <button id="btnInvoiceTransfer" type="button"><i class="fa fa-paper-plane"></i> Nebime Aktar</button>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </main>
+        <div id="overlay"></div>
+
+        <div id="productList-popup" class="popup">
+            <div class="popup-header">
+                <h2>Ürün Listesi</h2>
+            </div>
+
+            <div class="popup-content" style="overflow-y: auto !important;">
+
+                <input type="hidden" id="invoiceDetailPopupInvoiceId" value="" />
+
+                <div style="max-height: 750px; overflow-y: auto; border: 1px solid #ccc;">
+                    <table id="dataTableProductDetail" border="1" style="width:100%; border-collapse: collapse;">
+                        <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
+                            <tr>
+                                <th>
+                                    Ürün Kodu<br />
+                                    <input type="text" class="column-filter" data-col="0" style="width: 95%;" />
+                                </th>
+                                <th>
+                                    Ürün Adı<br />
+                                    <input type="text" class="column-filter" data-col="1" style="width: 95%;" />
+                                </th>
+                                <th>
+                                    KDV Oranı
+                                </th>
+                                <th>
+                                    Ürün Ana Grubu<br />
+                                    <input type="text" class="column-filter" data-col="3" style="width: 95%;" />
+                                </th>
+                                <th>
+                                    Ürün Grubu<br />
+                                    <input type="text" class="column-filter" data-col="4" style="width: 95%;" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in ViewBag.NebimProductModels)
+                            {
+                                <tr>
+                                    <td>@product.ProductCode</td>
+                                    <td>@product.ProductDescription</td>
+                                    <td>@product.ItemTaxGrCode</td>
+                                    <td>@product.ProductHierarchyLevel01Description</td>
+                                    <td>@product.ProductHierarchyLevel02Description</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
+            Yükleniyor...
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/script.js"></script>
+
+    <script>
+         const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        // Menü aç/kapa
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        });
+
+        // Overlay'e tıklayınca menüyü kapat
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
+<script>
+    var warehouseList = @Html.Raw(Json.Serialize(ViewBag.NebimWareHouseModels));
+
+    $("#office").on("change", function () {
+        var selectedOffice = $(this).val();
+        var warehouseSelect = $("#warehouse");
+
+        // önce depo listesini temizle
+        warehouseSelect.empty();
+        warehouseSelect.append('<option value="">Lütfen Seçiniz</option>');
+
+        if (!selectedOffice) return;
+
+        // seçilen ofise göre depoları filtrele
+        var filtered = warehouseList.filter(function (w) {
+            return w.officeCode == selectedOffice;
+        });
+
+        // eşleşen depoları select içine ekle
+        filtered.forEach(function (w) {
+            warehouseSelect.append(
+                '<option value="' + w.warehouseCode + '">' + w.warehouseDescription + '</option>'
+            );
+        });
+    });
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggles = document.querySelectorAll(".submenu-toggle");
+        toggles.forEach(toggle => {
+            toggle.addEventListener("click", function () {
+                const submenu = this.nextElementSibling;
+                submenu.classList.toggle("open");
+            });
+        });
+        invoiceDetailPopup('@Model.InvoiceHeaderID');
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closePopup("productList-popup");
+        }
+    });
+
+    function formatPrice(value) {
+        if (value == null || value === "") return "";
+        return Number(value).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
+
+    $(document).on('change', '.chk-select', function () {
+        var row = $(this).closest('tr');
+        if ($(this).is(':checked')) {
+            row.addClass('matched-row');
+        } else {
+            row.removeClass('matched-row');
+        }
+    });
+
+    function invoiceDetailPopup(invoiceHeaderId) {
+        $("#invoiceDetailPopupInvoiceId").val(invoiceHeaderId);
+
+        $.ajax({
+            url: '/Invoice/GetInvoiceDetails',
+            type: 'GET',
+            data: { invoiceHeaderId: invoiceHeaderId },
+            success: function (data) {
+
+                // Line bilgilerini tabloya bas
+                var tableInvoiceDetail = $("#dataTableInvoiceDetail tbody");
+                tableInvoiceDetail.empty();
+
+                if (!data.invoiceDetails || data.invoiceDetails.length === 0) {
+                    // ⚠️ Eğer kayıt yoksa uyarı satırı ekle
+                    tableInvoiceDetail.append(`
+                        <tr>
+                            <td colspan="10" style="text-align:center; color:#666; padding:10px;">
+                                Fatura Detayları Bulunmamaktadır
+                            </td>
+                        </tr>
+                    `);
+                } else {
+                    $.each(data.invoiceDetails, function (i, line) {
+                        tableInvoiceDetail.append(`
+                            <tr>
+                                <td data-label="Adı">${line.itemName}</td>
+                                <td data-label="Adet">${line.qty1}</td>
+                                <td data-label="KDV Oranı">${line.vatRate}</td>
+                                <td data-label="KDV Tutarı">${line.vat}</td>
+                                <td data-label="Toplam Tutar">${line.netAmount} ${line.priceCurrencyCode}</td>
+                            </tr>
+                        `);
+                                // <td>${line.lDisRate1}</td>
+                                // <td>${line.lDiscount1}</td>
+                    });
+                }
+            }
+        });
+    }
+
+    function openPopup(popupId) {
+        var overlay = document.getElementById("overlay");
+        var popup = document.getElementById(popupId);
+
+        if (overlay && popup) {
+            overlay.style.display = "block";
+            popup.style.display = "block";
+
+            popup.style.width = "80%";
+            popup.style.height = "90%";
+
+            overlay.addEventListener("click", function () {
+                closePopup(popupId);
+            });
+        }
+    }
+
+    function closePopup(popupId) {
+        var overlay = document.getElementById("overlay");
+        var popup = document.getElementById(popupId);
+
+        if (overlay && popup) {
+            overlay.style.display = "none";
+            popup.style.display = "none";
+            overlay.removeEventListener("click", function () {
+                closePopup(popupId);
+            });
+        }
+    }
+</script>
+<script>
+    function toLowerTr(text) {
+        return text
+            .toLocaleLowerCase("tr")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    $(function () {
+
+        $('.column-filter').on('keyup change', function () {
+
+            var $filters = $('.column-filter');
+
+            $('#dataTableProductDetail tbody tr').each(function () {
+                var $row = $(this);
+                var show = true;
+
+                $filters.each(function () {
+                    var colIndex = $(this).data('col');
+                    var filterVal = toLowerTr($(this).val().trim());
+
+                    if (!filterVal) return;
+
+                    var cellText = toLowerTr($row.children('td').eq(colIndex).text());
+
+                    if (!cellText.includes(filterVal)) {
+                        show = false;
+                        return false;
+                    }
+                });
+
+                $row.toggle(show);
+            });
+
+        });
+
+    });
+
+    $('#dataTableProductDetail tbody').on('dblclick', 'tr', function () {
+
+        if (!currentProductRow) return; // güvenlik
+
+        // Popup'taki seçilen satırdan değerleri al
+        var productCode  = $(this).children().eq(0).text().trim(); // Ürün Kodu
+        var productName  = $(this).children().eq(1).text().trim(); // Ürün Adı
+        var productKdvRaw = $(this).children().eq(2).text().trim();
+
+        // KDV aralık ise ilk kısmı al (%1-%10 → %1)
+        var productKdv = productKdvRaw.includes('-')
+            ? productKdvRaw.split('-')[0].trim()
+            : productKdvRaw;
+
+        // Ana tabloda, popup'u açan satırdaki input'ları doldur
+        currentProductRow.find('input.productCode').val(productCode);
+        currentProductRow.find('input.productName').val(productName);
+        currentProductRow.find('input.vatrate').val(productKdv);   // vatrate senin mevcut alan
+
+        // İstersen satırdaki başka alanları da resetleyebilirsin:
+        // currentProductRow.find('input.unitprice').val('');
+        calculateRowPrices(currentProductRow);
+        recalcTotals();
+
+        // Popup'u kapat (senin fonksiyonun varsa)
+        closePopup("productList-popup");
+    });
+
+
+    var currentProductRow = null; // popup'u hangi satır açtı
+
+    function addRow() {
+        if (typeof rowCount === 'undefined') rowCount = 0;
+        rowCount++;
+
+        var tableBody = document.querySelector("#dataTable tbody");
+        var newRow = document.createElement("tr");
+
+        var cells = ['product', 'productCode', 'productName', 'quantity', 'unit', 'vatrate', 'unitprice', 'discount', 'vatrateamount', 'totalamount'];
+        cells.forEach(function (cell) {
+            var newCell = document.createElement("td");
+
+            if (cell === 'unit' || cell === 'discounttype') {
+                var div = document.createElement("div");
+                div.className = "select-wrapper";
+                var select = document.createElement("select");
+                select.name = cell + "[]";
+                select.className = cell;
+                if (cell === 'unit') {
+                    var option1 = document.createElement("option");
+                    option1.text = "Adet";
+                    option1.value = "1";
+                    select.appendChild(option1);
+                    var option2 = document.createElement("option");
+                    option2.text = "Metre";
+                    option2.value = "2";
+                    select.appendChild(option2);
+                } else if (cell === 'discounttype') {
+                    select.innerHTML = '';
+                    var defaultOption = document.createElement('option');
+                    defaultOption.text = "İskonto seçiniz";
+                    select.add(defaultOption);
+                    var option1 = document.createElement("option");
+                    option1.text = "Tutar";
+                    option1.value = "1";
+                    select.appendChild(option1);
+                    var option2 = document.createElement("option");
+                    option2.text = "Yüzde";
+                    option2.value = "2";
+                    select.appendChild(option2);
+                    $(select).on("change", function () {
+                        var $row = $(this).closest("tr");
+                        // 2) discount kilidini kaldır
+                        var totalAmountInput = $row.find("input.discount");
+                        totalAmountInput.prop("readonly", false);
+                        totalAmountInput.css("background-color", "white"); // Görsel olarak aktif olsun
+                    });
+                }
+
+                div.appendChild(select);
+                newCell.appendChild(div);
+            } else if(cell === 'product'){
+                var button = document.createElement("button");
+                button.type = "button";
+                button.name = cell + "[]";
+                button.className = cell + " search2-btn";
+                button.innerHTML = '<i class="fa fa-search"></i>'; // ikon
+
+                button.addEventListener("click", function () {
+                    // Bu butonun olduğu satırı global değişkene ata
+                    currentProductRow = $(this).closest("tr");
+
+                    openPopup("productList-popup");
+                });
+
+                newCell.className = "form-group";
+                newCell.appendChild(button);
+            } else {
+                var input = document.createElement("input");
+                input.type = "text";
+                input.name = cell + "[]";
+                input.className = cell;
+
+                if (cell === "quantity") {
+                    input.value = 1;
+
+                    input.addEventListener("input", function () {
+                        // Virgülü noktaya çevir (isteğe bağlı)
+                        this.value = this.value.replace(",", ".");
+
+                        // Sadece rakam ve tek nokta izin ver
+                        this.value = this.value
+                            .replace(/[^0-9.]/g, "")    // rakam ve nokta dışını sil
+                            .replace(/(\..*)\./g, '$1'); // ikinci noktayı engelle
+
+                        // Noktadan sonra max 2 basamak
+                        if (this.value.includes(".")) {
+                            let parts = this.value.split(".");
+                            parts[1] = parts[1].slice(0, 2); // ikinci kısmı 2 basamak ile sınırla
+                            this.value = parts[0] + "." + parts[1];
+                        }
+                    });
+
+                    input.addEventListener("blur", function () {
+                        calculateRowPrices(this);
+                        recalcTotals();
+                    });
+                }
+                if (cell === "totalamount") {
+                
+                    input.type = "text";
+
+                    input.addEventListener("input", function () {
+
+                        // Önce TL, nokta, boşluk gibi şeyleri temizle
+                        let raw = this.value.replace(/[₺\s\.]/g, "").replace(",", ".");
+
+                        // Geçerli sayı değilse boş bırak
+                        if (isNaN(raw)) {
+                            this.value = "";
+                            return;
+                        }
+
+                        // Sayıya çevir
+                        let num = parseFloat(raw);
+
+                        // Eğer sayı değilse çıkar
+                        if (!num && num !== 0) {
+                            this.value = "";
+                            return;
+                        }
+
+                        // 2 ondalık basamakla formatla
+                        let formatted = num.toLocaleString("tr-TR", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                        // Noktadan sonra max 2 basamak
+                        if (this.value.includes(",")) {
+                            let parts = this.value.split(",");
+                            parts[1] = parts[1].slice(0, 2); // ikinci kısmı 2 basamak ile sınırla
+                            this.value = parts[0] + "," + parts[1];
+                        }
+
+                    });
+
+                    // Input odaktan çıkınca format tekrar uygulanır
+                    input.addEventListener("blur", function () {
+                        let raw = this.value.replace(/[₺\s\.]/g, "").replace(",", ".");
+                        let num = parseFloat(raw);
+
+                        if (!isNaN(num)) {
+                            this.value = num.toLocaleString("tr-TR", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }) + " ₺";
+                        }
+                        calculateRowPrices(this);
+                        recalcTotals();
+
+                    });
+                }
+                if (cell === "discount") {
+
+                    input.type = "text";
+                    input.value = '0,00 ₺';
+                    input.addEventListener("input", function () {
+
+                        // Önce TL, nokta, boşluk gibi şeyleri temizle
+                        let raw = this.value.replace(/[₺\s\.]/g, "").replace(",", ".");
+
+                        // Geçerli sayı değilse boş bırak
+                        if (isNaN(raw)) {
+                            this.value = "";
+                            return;
+                        }
+
+                        // Sayıya çevir
+                        let num = parseFloat(raw);
+
+                        // Eğer sayı değilse çıkar
+                        if (!num && num !== 0) {
+                            this.value = "";
+                            return;
+                        }
+
+                        // 2 ondalık basamakla formatla
+                        let formatted = num.toLocaleString("tr-TR", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                        // Noktadan sonra max 2 basamak
+                        if (this.value.includes(",")) {
+                            let parts = this.value.split(",");
+                            parts[1] = parts[1].slice(0, 2); // ikinci kısmı 2 basamak ile sınırla
+                            this.value = parts[0] + "," + parts[1];
+                        }
+
+                    });
+
+                    // Input odaktan çıkınca format tekrar uygulanır
+                    input.addEventListener("blur", function () {
+                        let raw = this.value.replace(/[₺\s\.]/g, "").replace(",", ".");
+                        let num = parseFloat(raw);
+
+                        if (!isNaN(num)) {
+                            this.value = num.toLocaleString("tr-TR", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }) + " ₺";
+                        }   
+                        calculateRowPrices(currentProductRow);
+                        recalcTotals();
+                    });
+                }
+                // READONLY OLACAK ALANLAR
+                var readonlyCells = ['productCode', 'productName', "vatrate", "unitprice", "vatrateamount"];
+                if (readonlyCells.includes(cell)) {
+                    input.readOnly = true;
+                    input.style.backgroundColor = "#f2f2f2";  // İstersen gri yap
+                }
+                if (cell === "quantity") {
+                    input.value = 1;
+                }
+                newCell.className = "form-group";
+                newCell.appendChild(input);
+            }
+
+            newRow.appendChild(newCell);
+        });
+
+        tableBody.appendChild(newRow);
+        recalcTotals();
+
+    }
+
+    function parseTL(value) {
+        if (!value) return 0;
+
+        return parseFloat(
+            value.toString()
+                .replace(/[₺\s]/g, "")  // TL ve boşlukları sil
+                .replace(/\./g, "")     // binlik nokta
+                .replace(",", ".")      // ondalık virgül → nokta
+        ) || 0;
+    }
+
+    function formatTL(num) {
+        return num.toLocaleString("tr-TR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " ₺";
+    }
+
+    // sadece sayısal alanlar için (miktar vb.)
+    function parseNumber(value) {
+        if (!value) return 0;
+        return parseFloat(
+            value.toString()
+                .replace(/\./g, "")
+                .replace(",", ".")
+        ) || 0;
+    }
+
+    function recalcTotals() {
+        var totalAmountSum = 0;  // Tutar kolonları toplamı
+        var discountSum    = 0;  // İskonto Değeri kolonları toplamı
+        var vatSum         = 0;  // Toplam KDV
+        // Ara Toplam = toplamTutar - toplamİskonto
+        // KDV Dahil Toplam = AraToplam + KDV
+
+        $('#dataTable tbody tr').each(function () {
+            var $row = $(this);
+
+            var rowTotal     = parseTL($row.find('input.totalamount').val());
+            var rowDiscount  = parseTL($row.find('input.discount').val());
+
+            totalAmountSum += rowTotal;
+            discountSum    += rowDiscount;
+
+            // İskonto düşülmüş baz tutar
+            var baseAmount = Math.max(rowTotal - rowDiscount, 0);
+
+            // KDV oranı: "%1", "%10", "%1-%10" gibi değerlerden ilkini al
+            var kdvText  = ($row.find('input.vatrate').val() || "").trim(); // ör: "%1-%10"
+            var kdvFirst = kdvText.split('-')[0].trim();                    // "%1"
+            var kdvNum   = parseFloat(
+                kdvFirst.replace('%', '').replace(',', '.')
+            ) || 0;                                                         // 1
+
+            var kdvRate = kdvNum / 100.0;                                   // 0.01
+
+            // Satır KDV: iskonto düşülmüş tutar × oran
+            var rowVat = baseAmount * kdvRate;
+            vatSum += rowVat;
+        });
+
+        var subTotal   = totalAmountSum - discountSum;
+        var grandTotal = subTotal + vatSum;
+
+        $('#sumTotalAmount').val(formatTL(totalAmountSum));
+        $('#sumDiscount').val(formatTL(discountSum));
+        $('#sumSubTotal').val(formatTL(subTotal));
+        $('#sumVat').val(formatTL(vatSum));
+        $('#sumGrandTotal').val(formatTL(grandTotal));
+    }
+
+    function calculateRowPrices(totalAmountInput) {
+
+        var $row = $(totalAmountInput).closest("tr");
+
+        // Miktar
+        var quantity = parseFloat(
+            $row.find("input.quantity").val().replace(",", ".")
+        );
+        if (!quantity || quantity <= 0) return;
+
+        // Toplam tutarı numerik hale getir
+        var totalRaw = $row.find("input.totalamount").val()
+            .replace(/[₺\s\.]/g, "") // . ve TL işaretlerini sil
+            .replace(",", ".");
+
+        var total = parseFloat(totalRaw) || 0;
+
+        var discountRaw = ($row.find("input.discount").val() || "")
+            .replace(/[₺\s\.]/g, "")
+            .replace(",", ".");
+        var discount = parseFloat(discountRaw) || 0;
+        
+        // İskonto düşülmüş tutar (KDV bu tutar üzerinden hesaplanacak)
+        var baseAmount = Math.max(total - discount, 0);
+
+        // KDV oranı (%10 → 10)
+        var kdvText = ($row.find("input.vatrate").val() || "").trim();
+        var kdvFirst = kdvText.split('-')[0].trim();                // "%1-%10" → "%1"
+        var kdvRaw = kdvFirst.replace("%", "").replace(",", ".");   // "%1" → "1"
+        var kdvRate = (parseFloat(kdvRaw) || 0) / 100;              // 1 → 0.01
+
+        // 1) KDV’siz birim fiyat (toplam / miktar)
+        var unitPrice = quantity > 0 ? (total / quantity) : 0;
+
+        // 2) Satır KDV tutarı = (iskonto düşülmüş tutar × oran)
+        var rowVat = baseAmount * kdvRate;
+
+        // formatlı yaz
+        var formatTL = (n) =>
+            n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " ₺";
+
+        $row.find("input.unitprice").val(formatTL(unitPrice));
+        $row.find("input.vatrateamount").val(formatTL(rowVat));
+    }
+
+
+    function validateForm() {
+        let demandTitle = $("#demandTitle").val().trim();
+        let description = $("#description").val().trim();
+        let rowCount = $("#yourTableId tbody tr").length;
+
+        if (demandTitle === "") {
+            toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");
+            return false;
+        }
+
+        if (description === "") {
+            toastr.error("Açıklama alanı girilmesi zorunludur.", "Hata");
+            return false;
+        }
+
+        return true;
+    }
+
+    function removeRow() {
+        var table = document.getElementById("dataTable");
+        if (table.rows.length > 1) {
+            table.deleteRow(-1);
+        }
+        recalcTotals();
+    }
+</script>
+<script>
+    $('#btnInvoiceTransfer').on('click', function (e) {
+        var errors = [];
+
+        // 1) Ofis seçilmiş mi?
+        var officeVal = $('#office').val();
+        if (!officeVal || officeVal === "" || officeVal === "Lütfen Seçiniz") {
+            errors.push("Lütfen bir ofis seçiniz.");
+        }
+
+        // 2) Depo seçilmiş mi?
+        var warehouseVal = $('#warehouse').val();
+        if (!warehouseVal || warehouseVal === "" || warehouseVal === "Lütfen Seçiniz") {
+            errors.push("Lütfen bir depo seçiniz.");
+        }
+
+        // 3) Tabloda satır var mı?
+        var rows = $('#dataTable tbody tr');
+        if (rows.length === 0) {
+            errors.push("Lütfen en az bir satır ekleyiniz.");
+        }
+
+        // 4) Tüm satırların tutarı 0'dan büyük olmalı
+        var allRowsValid = true;
+
+        rows.each(function () {
+            var totalVal = parseTL($(this).find('input.totalamount').val());
+            if (totalVal <= 0) {
+                allRowsValid = false;
+                return false; // break
+            }
+        });
+
+        if (!allRowsValid) {
+            errors.push("Tüm satırlarda 'Tutar' değeri 0'dan büyük olmalıdır.");
+        }
+
+        // Validasyon hatası varsa işlemi durdur
+        if (errors.length > 0) {
+            e.preventDefault();
+            toastr.error(errors.join("\n"), "Hata");
+            return false;
+        }
+
+        // Her şey doğru → işlem devam
+        toastr.success(`Fatura Nebime Aktarılmıştır.`, "Başarılı");
+    });
+</script>
+@functions {
+    string GetInvoiceType(int type)
+    {
+        switch (type)
+        {
+            case 0: return "Toptan Alım";
+            case 1: return "Konsiye Alım";
+            case 2: return "Masraf Alım";
+            default: return type.ToString();
+        }
+    }
+
+    string GetStatusClass(int status)
+    {
+        switch (status)
+        {
+            case -1: return "new";
+            case 0: return "pending";
+            case 1: return "cancelled";
+            case 2: return "approved";
+            default: return "";
+        }
+    }
+
+    string GetStatusText(int status)
+    {
+        switch (status)
+        {
+            case -1: return "Yeni";
+            case 0: return "Beklemede";
+            case 1: return "Reddedildi";
+            case 2: return "Onaylandı";
+            default: return "";
+        }
+    }
+
+    string GetCurrencyIco(string currencyCode)
+    {
+        switch (currencyCode)
+        {
+            case "TRY": return "₺";
+            case "USD": return "$";
+            case "EUR": return "€";
+            case "GBP": return "£";
+            default: return currencyCode;
+        }
+    }
+}

@@ -1,0 +1,454 @@
+﻿@using Demand.Domain.DTO
+@using Demand.Domain.Entities.ProviderEntity
+@using Demand.Domain.NebimModels
+@using System.Security.Claims
+@using System.Text.Json
+@model IEnumerable<ProviderEntity>
+
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var userId = long.Parse(claims.FirstOrDefault(x => x.Type == "UserId").Value);
+    var isViewNewInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewNewInvoice").Value);
+    var IsViewControlInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewControlInvoice").Value);
+    var userName = claims.FirstOrDefault(x => x.Type == "FirstName")?.Value;
+    var userLastName = claims.FirstOrDefault(x => x.Type == "LastName")?.Value;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="~/css/index.css" rel="stylesheet" asp-append-version="true" />
+    <style>
+        .matched-row {
+            background-color: #c9f7c1 !important; /* açık mavi ton */
+            transition: background-color 0.3s ease !important;
+        }
+
+            .matched-row:hover {
+                background-color: #b3f0aa !important; /* hover olduğunda biraz daha koyu */
+            }
+
+        .inline-form {
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        .btn-approve,
+        .btn-reject {
+            border: none;
+            cursor: pointer;
+            padding: 4px 7px;
+            border-radius: 3px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+        }
+
+        .btn-approve {
+            background: #45a35c;
+            color: #fff;
+        }
+
+            .btn-approve:hover {
+                background: #3b8e4f;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            }
+
+        .btn-reject {
+            background: #d9534f;
+            color: #fff;
+        }
+
+            .btn-reject:hover {
+                background: #c44440;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            }
+
+            .btn-approve:active,
+            .btn-reject:active {
+                transform: translateY(1px);
+                box-shadow: none;
+            }
+
+    </style>
+    <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>DEM MUSEUMS</title>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+        </div>
+        <div class="user-info">
+            <p>
+                @{
+                    string CustomName = $"{userName} {userLastName}";
+                }
+
+                @CustomName
+            </p>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div id="hamburger">&#9776;</div>
+        <div id="overlay"></div>
+        <nav class="sidebar" id="sidebar">
+            <ul>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
+                        @if (isViewNewInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
+                                    Yeni
+                                </a>
+                            </li>
+                        }
+                        @if (IsViewControlInvoice)
+                        {
+                            <li>
+                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
+                                    Kontrol Bekleyen
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
+                                Onay Bekleyen
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
+                                Onaylanan
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
+                                Reddedilen
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
+                        <li>
+                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
+                                Yeni Başvuru
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
+                                Onaylı Tedarikçi Listesi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
+                                Onay Bekleyenler
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="table" id="pendingSuppliers">
+            <section class="table__header">
+                <h1>Onay Bekleyen Tedarikçiler</h1>
+            </section>
+
+            <section class="content">
+                <div id="content-2">
+                    <section class="tableBody">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tedarikçi Ünvanı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th>VKN / TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th>Telefon <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th>Adres <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th>Oluşturma Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th>Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var supplier in Model)
+                                {
+                                    <tr>
+                                        <td data-label="Tedarikçi Ünvanı">@supplier.Name</td>
+                                        <td data-label="VKN / TCKN">@(supplier.TaxNumber == null ? supplier.NationalIdNumber : supplier.TaxNumber)</td>
+                                        <td data-label="Telefon">@supplier.PhoneNumber</td>
+                                        <td data-label="Adres">@supplier.Address</td>
+                                        <td data-label="Oluşturma Tarihi">
+                                            @supplier.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                                        </td>
+                                        <td class="action-buttons" data-label="Aksiyon">
+                                            <!-- Detay -->
+                                            <a href="javascript:void(0)"
+                                               onclick="showSupplierDetail('@supplier.Id')"
+                                               title="Detay">
+                                                <i class="fa fa-search"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </section>
+        </main>
+
+
+        <div id="overlay"></div>
+
+        <!-- Tedarikçi Detay Modal -->
+        <div class="popup" id="supplierDetailModal">
+            <div class="popup-header">
+                <h2>Tedarikçi Detayı</h2>
+            </div>
+
+            <div class="popup-content" style="overflow-y: auto !important;">
+
+                <div class="row mb-4">
+                    <div class="form-group col" id="companyNameGroup" style="width:100%">
+                        <label for="companyName">Firma Ünvanı</label>
+                        <input name="CompanyName"
+                               type="text"
+                               class="form-control"
+                               id="companyName"
+                               aria-describedby="companyNameHelp"
+                               placeholder="Firma Ünvanı"
+                               maxlength="75"
+                               oninput="this.value = this.value.toUpperCase()" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="addressLine2">İl</label>
+                        <select name="CityId" class="form-control" id="cityId" aria-describedby="cityIdHelp" readonly>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="addressLine2">İlçe</label>
+                        <select name="DistrictId" class="form-control" id="districtId" aria-describedby="districtIdHelp" readonly>
+                            <option>Please Select City</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taxNumber">Vergi No / TCKN</label>
+                        <input name="TaxNumber" type="text" class="form-control" id="taxNumber" placeholder="Vergi No / TCKN"
+                               oninput="handleInput(event)" maxlength="11" readonly>
+                    </div>
+                    <div class="form-group ">
+                        <label for="taxAdministrationId">Vergi Dairesi</label>
+                        <select name="TaxAdministration" class="form-control" id="taxAdministrationId" aria-describedby="taxAdministrationIdHelp" readonly>
+                            <option value="">Please Select Tax Administration</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label for="email">E-posta</label>
+                        <input name="email" type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="E-posta" readonly>
+                    </div>
+                    <div class="form-group col">
+                        <label for="phone">Telefon</label>
+                        <input name="phone"
+                               type="text"
+                               class="form-control"
+                               id="phone"
+                               aria-describedby="phone"
+                               pattern="5[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2}"
+                               placeholder="(5__) ___-__-__"
+                               readonly
+                               oninput="validatePhoneNumber(this)">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="form-group" style="width:100%">
+                        <label for="addressLine1">Fatura Adresi</label>
+                        <textarea name="AddressLine1" id="addressLine1" class="form-control" aria-describedby="addressLine1Help" placeholder="Adres Satırı 1" readonly></textarea>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="btnInvoiceTransfer" type="button" value="Submit" class="btn btn-primary" onclick="SubmitForm()">Onayla ve Nebime Aktar</button>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
+            Yükleniyor...
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/js/script.js"></script>
+
+    <script>
+         const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        // Menü aç/kapa
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+        });
+
+        // Overlay'e tıklayınca menüyü kapat
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.style.display = 'none';
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggles = document.querySelectorAll(".submenu-toggle");
+            toggles.forEach(toggle => {
+                toggle.addEventListener("click", function () {
+                    const submenu = this.nextElementSibling;
+                    submenu.classList.toggle("open");
+                });
+            });
+        });
+
+        function openPopup(popupId) {
+            var overlay = document.getElementById("overlay");
+            var popup = document.getElementById(popupId);
+
+            if (overlay && popup) {
+                overlay.style.display = "block";
+                popup.style.display = "block";
+
+                popup.style.width = "80%";
+                popup.style.height = "50%";
+
+                overlay.addEventListener("click", function () {
+                    closePopup(popupId);
+                });
+            }
+        }
+
+        function closePopup(popupId) {
+            var overlay = document.getElementById("overlay");
+            var popup = document.getElementById(popupId);
+
+            if (overlay && popup) {
+                overlay.style.display = "none";
+                popup.style.display = "none";
+                overlay.removeEventListener("click", function () {
+                    closePopup(popupId);
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
+<script>
+    function showSupplierDetail(id) {
+        $.ajax({
+            url: '/Provider/GetDetail',   // Controller route
+            type: 'GET',
+            data: { id: id },
+            success: function (res) {
+                if (!res.success) {
+                    alert(res.message || "Tedarikçi bilgisi alınamadı.");
+                    return;
+                }
+
+                var s = res.data;
+
+                $("#detailSupplierId").val(s.id);
+                $("#companyName").val(s.name);
+                $("#taxNumber").val(s.taxNumber || s.nationalIdNumber);
+                $("#phone").val(s.phoneNumber);
+                $("#email").val(s.email || "-");
+                $("#addressLine1").text(s.address);
+
+                 // İl
+                $("#cityId")
+                    .empty()
+                    .append($('<option>', {
+                        value: s.cityId,
+                        text: s.cityName
+                    }))
+                    .prop("disabled", true); // readonly yerine
+
+                // İlçe
+                $("#districtId")
+                    .empty()
+                    .append($('<option>', {
+                        value: s.districtId,
+                        text: s.districtName
+                    }))
+                    .prop("disabled", true);
+
+                // Vergi Dairesi
+                $("#taxAdministrationId")
+                    .empty()
+                    .append($('<option>', {
+                        value: s.taxOfficeCode,
+                        text: s.taxOfficeName
+                    }))
+                    .prop("disabled", true);
+
+                openPopup('supplierDetailModal');
+            },
+            error: function (err) {
+                console.log(err);
+                alert("Beklenmeyen bir hata oluştu.");
+            }
+        });
+    }
+
+    function approveSupplier() {
+        var id = $("#detailSupplierId").val();
+
+        if (!id) {
+            alert("Tedarikçi bulunamadı.");
+            return;
+        }
+
+        $.ajax({
+            url: '/Provider/Approve',
+            type: 'POST',
+            data: { id: id },
+            // Anti forgery token kullanıyorsan buraya ekleyebilirsin
+            success: function (res) {
+                if (res.success) {
+                    alert("Tedarikçi başarıyla onaylandı.");
+                    location.reload(); // Listeyi yenile
+                } else {
+                    alert(res.message || "Onaylama sırasında hata oluştu.");
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("Beklenmeyen bir hata oluştu.");
+            }
+        });
+    }
+</script>

@@ -1,12 +1,20 @@
 ﻿using Demand.Business.Abstract.InvoiceService;
 using Demand.Business.Abstract.PersonnelService;
+using Demand.Business.Abstract.ProductCategoryService;
+using Demand.Business.Abstract.Provider;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Domain.DTO;
 using Demand.Domain.Entities.InvoiceEntity;
 using Demand.Domain.NebimModels;
+using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
+using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
+using System.Data;
 using System.Security.Claims;
 
 namespace Demand.Presentation.Controllers
@@ -19,13 +27,15 @@ namespace Demand.Presentation.Controllers
         private readonly IInvoiceDetailService _invoiceDetailService;
         private readonly IInvoiceDemandService _invoiceDemandService;
         private readonly IPersonnelService _personnelService;
+        private readonly IProductCategoryService _productCategoryService;
 
-        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, DemandContext dbContext)
+        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, IProductCategoryService productCategoryService, DemandContext dbContext)
         {
             _logger = logger;
             _invoiceDetailService = invoiceDetailService;
             _invoiceDemandService = invoiceDemandService;
             _personnelService = personnelService;
+            _productCategoryService = productCategoryService;
             _dbContext = dbContext;
         }
 
@@ -107,6 +117,16 @@ namespace Demand.Presentation.Controllers
                     headerModel.InvoiceDetailEntity = matchingDetail;
                 }
             }
+
+            if (!IncomingEInvoiceHeaderModels.Any())
+                IncomingEInvoiceHeaderModels.Add(new IncomingEInvoiceHeaderModel());
+
+            IncomingEInvoiceHeaderModels[0].NebimCategoryModels = nebimConnection.GetNebimCategoryModels();
+            IncomingEInvoiceHeaderModels[0].NebimSubCategoryModels = nebimConnection.GetNebimSubCategoryModels();
+            IncomingEInvoiceHeaderModels[0].NebimProductModels = nebimConnection.GetNebimProductModels();
+
+            ViewBag.ProductCategories = _productCategoryService.GetAll().Data.ToList();
+
             return View(IncomingEInvoiceHeaderModels);
         }
 
@@ -160,6 +180,45 @@ namespace Demand.Presentation.Controllers
             return View(IncomingEInvoiceHeaderModels);
         }
 
+        public IActionResult NebimSend(Guid invoiceHeaderId)
+        {
+            ViewData["ActivePage"] = "NebimSend";
+
+            var nebimConnection = new NebimConnection();
+            var incomingEInvoiceHeaderModel = nebimConnection.GetIncomingEInvoiceHeaderModels(invoiceHeaderId).FirstOrDefault();
+            if (incomingEInvoiceHeaderModel == null)
+                return NotFound(new { success = false, message = "Invoice not found" });
+
+            var companyId = incomingEInvoiceHeaderModel.CompanyName == "DEM" ? 1 : 2;
+            ViewBag.NebimOfficeModels = nebimConnection.GetOfficeList(companyId);
+            ViewBag.NebimWareHouseModels = nebimConnection.GetWareHouseList(companyId);
+            ViewBag.NebimExpenseModels = nebimConnection.GetExpenseList(companyId);
+            ViewBag.NebimCostModels = nebimConnection.GetCostList(companyId);
+
+            return View(incomingEInvoiceHeaderModel);
+        }
+
+        public IActionResult NebimProductSend(Guid invoiceHeaderId)
+        {
+            ViewData["ActivePage"] = "NebimProductSend";
+
+            var nebimConnection = new NebimConnection();
+            var incomingEInvoiceHeaderModel = nebimConnection.GetIncomingEInvoiceHeaderModels(invoiceHeaderId).FirstOrDefault();
+            if (incomingEInvoiceHeaderModel == null)
+                return NotFound(new { success = false, message = "Invoice not found" });
+
+            var companyId = incomingEInvoiceHeaderModel.CompanyName == "DEM" ? 1 : 2;
+            ViewBag.NebimOfficeModels = nebimConnection.GetOfficeList(companyId);
+            ViewBag.NebimWareHouseModels = nebimConnection.GetWareHouseList(companyId);
+
+            ViewBag.NebimCategoryModels = nebimConnection.GetNebimCategoryModels();
+            ViewBag.NebimSubCategoryModels = nebimConnection.GetNebimSubCategoryModels();
+            ViewBag.NebimProductModels = nebimConnection.GetNebimProductModels().Where(x => x.CompanyName == incomingEInvoiceHeaderModel.CompanyName);
+
+            ViewBag.ProductCategories = _productCategoryService.GetAll().Data.ToList();
+            return View(incomingEInvoiceHeaderModel);
+        }
+
         [HttpGet]
         public IActionResult GetInvoiceDetail(Guid invoiceHeaderId)
         {
@@ -167,6 +226,24 @@ namespace Demand.Presentation.Controllers
             var IncomingEInvoiceLineModels = nebimConnection.GetIncomingEInvoiceLineModels(invoiceHeaderId);
 
             return Json(IncomingEInvoiceLineModels);
+        }
+
+        [HttpGet]
+        public IActionResult GetInvoiceDetails(Guid invoiceHeaderId)
+        {
+            var nebimConnection = new NebimConnection();
+            var incomingEInvoiceHeaderModel = nebimConnection.GetIncomingEInvoiceHeaderModels(invoiceHeaderId).FirstOrDefault();
+            if (incomingEInvoiceHeaderModel == null)
+                return NotFound(new { success = false, message = "Invoice not found" });
+
+            var incomingEInvoiceLineModels = nebimConnection.GetIncomingEInvoiceLineModels(invoiceHeaderId);
+            GetInvoiceDemandResponse getInvoiceDemandResponse = new GetInvoiceDemandResponse
+            {
+                Invoice = incomingEInvoiceHeaderModel,
+                InvoiceDetails = incomingEInvoiceLineModels
+            };
+
+            return Json(getInvoiceDemandResponse);
         }
 
         [HttpGet]

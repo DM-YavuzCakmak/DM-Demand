@@ -811,7 +811,7 @@ thead th.active, tbody td.active {
             background-color: #f4f4f4;
         }
 
-#addButton, #removeButton, #sendButton {
+#addButton, #removeButton, #sendButton, #invoiceDetailButton, #btnInvoiceTransfer {
     background-color: #4CAF50;
     border: none;
     color: white;
@@ -825,7 +825,7 @@ thead th.active, tbody td.active {
     border-radius: 5px;
 }
 
-    #addButton:hover, #removeButton, #sendButton:hover {
+    #addButton:hover, #removeButton:hover, #sendButton:hover, #invoiceDetailButton:hover, #btnInvoiceTransfer:hover {
         background-color: #45a049;
     }
 

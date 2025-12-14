@@ -34,7 +34,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <title>DEM MUSEUMS</title>
 </head>
 
@@ -121,28 +120,31 @@
         </nav>
         <main class="table" id="demandTable">
             <section class="table__header">
-                <h1>Fatura Listesi - Kontrol Bekleyen</h1>
+                <h1>Fatura Listesi - Reddedilen</h1>
             </section>
 
             <section class="content">
-                <div id="content-1">
+                <div id="content-3">
                     <section class="tableBody">
                         <table>
                             <thead>
                                 <tr>
                                     <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Firma <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Döviz Tipi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Eden <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Red Açıklama <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 0 && x.InvoiceDetailEntity.SentToUserId == null && x.InvoiceDetailEntity.ResponsiblePersonId == userId))
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
@@ -162,12 +164,18 @@
                                         <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                         <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
+                                        <td data-label="Red Eden">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td data-label="Red Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
+                                        <td data-label="Red Açıklama">@(invoice.InvoiceDetailEntity.RejectionNote)</td>
                                         <td class="action-buttons">
-                                            <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
-                                                <i class="fa fa-paper-plane"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Güncelle">
-                                                <i class="fa fa-edit"></i>
+                                            @if (userId == invoice.InvoiceDetailEntity.ResponsiblePersonId)
+                                            {
+                                                <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </a>
+                                            }
+                                            <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
+                                                <i class="fa fa-search"></i>
                                             </a>
                                             <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID"
                                                target="_blank" title="Fatura Detayı">
@@ -255,20 +263,19 @@
                 </div>
 
                 <!-- Satın Alma Talepleri -->
-                <h3 style="margin: 10px;">Eşleştirilebilir Satın Alma Talepleri</h3>
+                <h3 style="margin: 10px;">Eşleştirilen Satın Alma Talepleri</h3>
                 <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc;">
                     <table id="dataTable" border="1" style="width:100%; border-collapse: collapse;">
                         <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
                         <thead>
                             <tr>
-                                <th>Seç</th>
                                 <th>Id</th>
                                 <th>Başlık</th>
                                 <th>Departman</th>
                                 <th>Kur</th>
                                 <th>Toplam Tutar</th>
                                 <th>Kalan Tutar</th>
-                                <th>Tutar Gir</th>
+                                <th>Eşleşen Tutar</th>
                                 <th>Aksiyon</th>
                             </tr>
                         </thead>
@@ -276,9 +283,6 @@
                             <!-- JS ile doldurulacak -->
                         </tbody>
                     </table>
-                </div>
-                <div style="margin-top:10px; display:flex; justify-content:center;" id="saveInvoiceDemand">
-                    <a href="javascript:void(0)" class="update-button" onclick="SaveInvoceDemand()">Satın Alma Talepleri ile Eşle</a>
                 </div>
             </div>
         </div>
@@ -303,11 +307,12 @@
                     </div>
                     <input type="hidden" id="invoiceApprovedUpdatePopupInvoiceId" value="" />
                 </div>
-                <div class="form-group" style="width:auto !important;margin-top:10px; display:flex; justify-content:center;">
+                <div class="form-group" style="width:auto !important">
                     <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdate()">Onaya Gönder</a>
                 </div>
             </div>
         </div>
+
         <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
             Yükleniyor...
         </div>
@@ -535,7 +540,7 @@
         $.ajax({
             url: '/Invoice/GetInvoiceDemands',
             type: 'GET',
-            data: { invoiceHeaderId: invoiceHeaderId },
+            data: { invoiceHeaderId: invoiceHeaderId, isApproved: true },
             success: function (data) {
                 // Header bilgilerini doldur
                 $("#invoiceNo").val(data.invoice.eInvoiceNumber);
@@ -590,12 +595,7 @@
                         </tr>
                     `);
 
-                    const div = document.getElementById("saveInvoiceDemand");
-                    div.style.display = "none";
                 } else {
-                    const div = document.getElementById("saveInvoiceDemand");
-                    div.style.display = "block";
-
                     $.each(data.demands, function (i, line) {
                         // matchingPrice dolu mu kontrol et
                         var isMatched = line.matchingPrice != null && line.matchingPrice !== "";
@@ -604,30 +604,19 @@
                         var rowClass = isMatched ? "matched-row" : "";
 
                         table.append(`
-                            <tr class="${rowClass}"
+                            <tr
                                 data-total="${line.remainingPrice}"
                                 data-id="${line.demandId}"
                                 data-invoicetotal="${data.invoice.payableAmount}"
                                 data-currency="${line.currencySymbol}">
 
-                                <td data-label="Seç">
-                                    <input type="checkbox" class="chk-select" ${checkboxChecked} />
-                                </td>
                                 <td data-label="Id">${line.demandId}</td>
                                 <td data-label="Başlık">${line.demandTitle}</td>
                                 <td data-label="Departman">${line.departmentName}</td>
                                 <td data-label="Kur">${formatPrice(line.exchangeRate)}</td>
                                 <td data-label="Toplam Tutar">${formatPrice(line.totalPrice)} ${line.currencySymbol}</td>
                                 <td data-label="Kalan Tutar">${formatPrice(line.remainingPrice)} ${line.currencySymbol}</td>
-                                <td data-label="Tutar Giriş">
-                                    <input type="number"
-                                           class="txt-tutar"
-                                           min="0"
-                                           max="${line.remainingPrice}"
-                                           value="${inputValue}"
-                                           step="0.01"
-                                           style="width:80px;" />${line.currencySymbol}
-                                </td>
+                                <td data-label="Eşleşen Tutar">${formatPrice(inputValue)} ${line.currencySymbol}</td>
                                 <td data-label="Aksiyon">
                                     <a target="_blank"
                                        href="../api/Demands/DemandOfferDetail?DemandId=${line.demandId}"

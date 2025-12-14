@@ -1,6 +1,7 @@
 ﻿using Demand.Domain.NebimModels;
 using Kep.Helpers.Extensions;
 using Microsoft.Data.SqlClient;
+using System;
 using System.Data;
 
 namespace Demand.Core.DatabaseConnection.NebimConnection
@@ -9,6 +10,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
     {
         private string connectionStringDEM = "Data Source=172.30.196.11;Initial Catalog=Dem_V3;User Id=sa;Password=Asist@1489;TrustServerCertificate=true;";
         private string connectionStringKEP = "Data Source=172.30.196.11;Initial Catalog=KEP_V3;User Id=sa;Password=Asist@1489;TrustServerCertificate=true;";
+
         public List<NebimCategoryModel> GetNebimCategoryModels()
         {
             List<NebimCategoryModel> nebimCategoryModels = new List<NebimCategoryModel>();
@@ -106,6 +108,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimCategoryModels;
         }
+
         public List<NebimSubCategoryModel> GetNebimSubCategoryModels()
         {
             List<NebimSubCategoryModel> nebimSubCategoryModels = new List<NebimSubCategoryModel>();
@@ -209,6 +212,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimSubCategoryModels;
         }
+
         public List<NebimProductModel> GetNebimProductModels()
         {
             List<NebimProductModel> nebimProductModels = new List<NebimProductModel>();
@@ -221,13 +225,16 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                     string sqlQuery = @"SELECT
                                         	ISNULL(cphld1.ProductHierarchyLevelCode,
                                         	0) as ProductHierarchyLevel01Code ,
+                                            cphld1.ProductHierarchyLevelDescription as ProductHierarchyLevel01Description,
                                         	ISNULL(cphld2.ProductHierarchyLevelCode,
                                         	0) as ProductHierarchyLevel02Code,
+                                            cphld2.ProductHierarchyLevelDescription as ProductHierarchyLevel02Description,
                                         	ci.ItemCode as ProductCode ,
                                         	ISNULL(cdItemDesc.ItemDescription,
                                         	SPACE(0)) as ProductDescription,
                                         	(case when prItemCompanyBrand.CompanyBrandCode = 'AstelH' then 1 else 0 end) as CompanyBrandCode,
-                                        	'1' as CompanyCode
+                                        	'1' as CompanyCode,
+                                            ci.ItemTaxGrCode
                                         from
                                         	cdItem ci WITH(NOLOCK)
                                         LEFT OUTER JOIN cdItemDesc WITH(NOLOCK) ON
@@ -257,13 +264,16 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                             while (reader.Read())
                             {
                                 NebimProductModel nebimProductModel = new NebimProductModel();
+                                nebimProductModel.CompanyName = "DEM";
                                 nebimProductModel.ProductHierarchyLevel01Code = reader["ProductHierarchyLevel01Code"].IsNotNull() ? reader["ProductHierarchyLevel01Code"].ToString() : "";
+                                nebimProductModel.ProductHierarchyLevel01Description = reader["ProductHierarchyLevel01Description"].IsNotNull() ? reader["ProductHierarchyLevel01Description"].ToString() : "";
                                 nebimProductModel.ProductHierarchyLevel02Code = reader["ProductHierarchyLevel02Code"].IsNotNull() ? reader["ProductHierarchyLevel02Code"].ToString() : "";
+                                nebimProductModel.ProductHierarchyLevel02Description = reader["ProductHierarchyLevel02Description"].IsNotNull() ? reader["ProductHierarchyLevel02Description"].ToString() : "";
                                 nebimProductModel.CompanyBrandCode = reader["CompanyBrandCode"].IsNotNull() ? reader["CompanyBrandCode"].ToString() : "";
                                 nebimProductModel.CompanyCode = reader["CompanyCode"].IsNotNull() ? reader["CompanyCode"].ToString() : "";
                                 nebimProductModel.ProductCode = reader["ProductCode"].IsNotNull() ? reader["ProductCode"].ToString() : "";
                                 nebimProductModel.ProductDescription = reader["ProductDescription"].IsNotNull() ? reader["ProductDescription"].ToString() : "";
-
+                                nebimProductModel.ItemTaxGrCode = reader["ItemTaxGrCode"].IsNotNull() ? reader["ItemTaxGrCode"].ToString() : "";
                                 nebimProductModels.Add(nebimProductModel);
                             }
 
@@ -277,13 +287,16 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                     string sqlQuery = @"SELECT
                                         	ISNULL(cphld1.ProductHierarchyLevelCode,
                                         	0) as ProductHierarchyLevel01Code ,
+                                            cphld1.ProductHierarchyLevelDescription as ProductHierarchyLevel01Description,
                                         	ISNULL(cphld2.ProductHierarchyLevelCode,
                                         	0) as ProductHierarchyLevel02Code,
+                                            cphld2.ProductHierarchyLevelDescription as ProductHierarchyLevel02Description,
                                         	ci.ItemCode as ProductCode ,
                                         	ISNULL(cdItemDesc.ItemDescription,
                                         	SPACE(0)) as ProductDescription,
                                         	(case when prItemCompanyBrand.CompanyBrandCode = 'AH' then 1 else 0 end) as CompanyBrandCode,
-                                        	'2' as CompanyCode
+                                        	'2' as CompanyCode,
+                                            ci.ItemTaxGrCode
                                         from
                                         	cdItem ci WITH(NOLOCK)
                                         LEFT OUTER JOIN cdItemDesc WITH(NOLOCK) ON
@@ -313,12 +326,14 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                             while (reader.Read())
                             {
                                 NebimProductModel nebimProductModel = new NebimProductModel();
+                                nebimProductModel.CompanyName = "KEP";
                                 nebimProductModel.ProductHierarchyLevel01Code = reader["ProductHierarchyLevel01Code"].IsNotNull() ? reader["ProductHierarchyLevel01Code"].ToString() : "";
                                 nebimProductModel.ProductHierarchyLevel02Code = reader["ProductHierarchyLevel02Code"].IsNotNull() ? reader["ProductHierarchyLevel02Code"].ToString() : "";
                                 nebimProductModel.CompanyBrandCode = reader["CompanyBrandCode"].IsNotNull() ? reader["CompanyBrandCode"].ToString() : "";
                                 nebimProductModel.CompanyCode = reader["CompanyCode"].IsNotNull() ? reader["CompanyCode"].ToString() : "";
                                 nebimProductModel.ProductCode = reader["ProductCode"].IsNotNull() ? reader["ProductCode"].ToString() : "";
                                 nebimProductModel.ProductDescription = reader["ProductDescription"].IsNotNull() ? reader["ProductDescription"].ToString() : "";
+                                nebimProductModel.ItemTaxGrCode = reader["ItemTaxGrCode"].IsNotNull() ? reader["ItemTaxGrCode"].ToString() : "";
 
                                 nebimProductModels.Add(nebimProductModel);
                             }
@@ -334,6 +349,179 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return nebimProductModels;
         }
+
+        //Şirket Ofisleri
+        public List<NebimOfficeModel> GetOfficeList(int companyId)
+        {
+            List<NebimOfficeModel> nebimOfficeModels = new();
+            try
+            {
+                using SqlConnection connection = new(companyId == 1 ? connectionStringDEM : connectionStringKEP);
+                using SqlCommand command = new("usp_Entegrasyon_OfficeList", connection);
+
+                command.CommandType = CommandType.StoredProcedure;
+
+                connection.Open();
+
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var invoice = new NebimOfficeModel
+                    {
+                        CompanyName = "DEM",
+                        OfficeCode = reader["OfficeCode"]?.ToString(),
+                        OfficeDescription = reader["OfficeDescription"]?.ToString()
+                    };
+
+                    nebimOfficeModels.Add(invoice);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return nebimOfficeModels;
+        }
+
+        //Depolar
+        public List<NebimWarehouseModel> GetWareHouseList(int companyId)
+        {
+            List<NebimWarehouseModel> nebimWarehouseModels = new();
+            try
+            {
+                using SqlConnection connection = new(companyId == 1 ? connectionStringDEM : connectionStringKEP);
+                using SqlCommand command = new("usp_Entegrasyon_WareHouseList", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                connection.Open();
+
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var warehouseModel = new NebimWarehouseModel
+                    {
+                        CompanyName = "DEM",
+                        OfficeCode = reader["OfficeCode"]?.ToString(),
+                        OfficeDescription = reader["OfficeDescription"]?.ToString(),
+                        WarehouseCode = reader["WarehouseCode"]?.ToString(),
+                        WarehouseDescription = reader["WarehouseDescription"]?.ToString()
+                    };
+
+                    nebimWarehouseModels.Add(warehouseModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return nebimWarehouseModels.ToList();
+        }
+
+        //Maliyet Merkezleri
+        public List<NebimCostModel> GetCostList(int companyId)
+        {
+            List<NebimCostModel> nebimCostModels = new();
+            try
+            {
+                using SqlConnection connection = new(companyId == 1 ? connectionStringDEM : connectionStringKEP);
+                using SqlCommand command = new("usp_Entegrasyon_CostList", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                connection.Open();
+
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var costModel = new NebimCostModel
+                    {
+                        CostCenterCode = reader["CostCenterCode"]?.ToString(),
+                        CostCenterDescription = reader["CostCenterDescription"]?.ToString()
+                    };
+
+                    nebimCostModels.Add(costModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return nebimCostModels.ToList();
+        }
+
+        //Masraf Kartları
+        public List<NebimExpenseModel> GetExpenseList(int companyId)
+        {
+            List<NebimExpenseModel> nebimExpenseModels = new();
+            try
+            {
+                using SqlConnection connection = new(companyId == 1 ? connectionStringDEM : connectionStringKEP);
+                using SqlCommand command = new("usp_Entegrasyon_ExpenseList", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                connection.Open();
+
+                using SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var invoice = new NebimExpenseModel
+                    {
+                        ExpenseCode = reader["ExpenseCode"]?.ToString(),
+                        ExpenseDescription = reader["ExpenseDescription"]?.ToString(),
+                        ItemTaxGrCode = reader["ItemTaxGrCode"]?.ToString(),
+                        ItemTaxGrDescription = reader["ItemTaxGrDescription"]?.ToString(),
+                        IsBlocked = reader["IsBlocked"] != DBNull.Value && Convert.ToBoolean(reader["IsBlocked"])
+                    };
+
+                    nebimExpenseModels.Add(invoice);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata: " + ex.Message);
+            }
+            return nebimExpenseModels.ToList();
+        }
+
+        //Tedarikçiler
+        //public List<IncomingEInvoiceLineModel> GetVendorList(int companyId)
+        //{
+        //    List<IncomingEInvoiceLineModel> eInvoiceHeaderModels = new List<IncomingEInvoiceLineModel>();
+        //    try
+        //    {
+        //        using (SqlConnection connection = new SqlConnection(companyId == 1 ? connectionStringDEM : connectionStringKEP))
+        //        {
+        //            using (SqlCommand command = new SqlCommand("usp_Entegrasyon_VendorList", connection))
+        //            {
+        //                command.CommandType = CommandType.StoredProcedure;
+
+        //                connection.Open();
+
+        //                using (SqlDataReader reader = command.ExecuteReader())
+        //                {
+        //                    while (reader.Read())
+        //                    {
+        //                        var invoice = new IncomingEInvoiceLineModel
+        //                        {
+        //                            // ===== Invoice Header =====
+        //                            InvoiceHeaderID = reader.GetGuid(reader.GetOrdinal("InvoiceHeaderID")),
+        //                            EInvoiceNumber = reader["EInvoiceNumber"]?.ToString(),
+        //                            ProcessCode = reader["ProcessCode"]?.ToString(),
+        //                            IsReturn = reader["IsReturn"] != DBNull.Value && Convert.ToBoolean(reader["IsReturn"]),
+        //                            InvoiceDate = reader.GetDateTime(reader.GetOrdinal("InvoiceDate")),
+        //                        };
+
+        //                        eInvoiceHeaderModels.Add(invoice);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Hata: " + ex.Message);
+        //    }
+        //    return eInvoiceHeaderModels.OrderBy(x => x.SortOrder).ToList();
+        //}
 
         public List<IncomingEInvoiceHeaderModel> GetIncomingEInvoiceHeaderModels(Guid? uuid = null)
         {
@@ -453,6 +641,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
             }
             return eInvoiceHeaderModels.OrderByDescending(x=>x.InvoiceDate).ToList();
         }
+
         public List<IncomingEInvoiceLineModel> GetIncomingEInvoiceLineModels(Guid uuid)
         {
             List<IncomingEInvoiceLineModel> eInvoiceHeaderModels = new List<IncomingEInvoiceLineModel>();

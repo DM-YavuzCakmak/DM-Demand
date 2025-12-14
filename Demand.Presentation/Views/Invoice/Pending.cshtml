@@ -95,6 +95,26 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
+                        <li>
+                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
+                                Yeni Başvuru
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
+                                Onaylı Tedarikçi Listesi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
+                                Onay Bekleyenler
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
             </ul>
         </nav>

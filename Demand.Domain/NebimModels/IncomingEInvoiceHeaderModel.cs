@@ -39,5 +39,11 @@ namespace Demand.Domain.NebimModels
         public int Status { get; set; } = -1;
         [NotMapped]
         public InvoiceDetailEntity? InvoiceDetailEntity { get; set; }
+        [NotMapped]
+        public List<NebimCategoryModel>? NebimCategoryModels { get; set; }
+        [NotMapped]
+        public List<NebimProductModel>? NebimProductModels { get; set; }
+        [NotMapped]
+        public List<NebimSubCategoryModel>? NebimSubCategoryModels { get; set; }
     }
 }

@@ -58,7 +58,9 @@
         <div id="overlay"></div>
         <nav class="sidebar" id="sidebar">
             <ul>
-                <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a>
+                </li>
                 <li>
                     <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
                     <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
@@ -95,7 +97,26 @@
                         </li>
                     </ul>
                 </li>
-
+                <li>
+                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
+                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
+                        <li>
+                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
+                                Yeni Başvuru
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
+                                Onaylı Tedarikçi Listesi
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
+                                Onay Bekleyenler
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </nav>
         <main class="table" id="demandTable">
@@ -113,9 +134,9 @@
                                     <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Döviz Tipi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Onaylayan <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Onay Tarihi <span class="icon-arrow">&UpArrow;</span></th>
@@ -146,6 +167,18 @@
                                         <td data-label="Onaylayan">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
                                         <td data-label="Onay Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                         <td class="action-buttons">
+                                            @if (invoice.InvoiceDetailEntity.InvoiceType == 2)
+                                            {
+                                                <a href="/Invoice/NebimSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="/Invoice/NebimProductSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </a>
+                                            }
                                             <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
                                                 <i class="fa fa-search"></i>
                                             </a>
@@ -217,7 +250,6 @@
                 <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc;">
                     <table id="dataTableInvoiceDetail" border="1" style="width:100%; border-collapse: collapse;">
                         <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
-                        <thead>
                             <tr>
                                 <th>Adı</th>
                                 <th>Adet</th>
@@ -234,10 +266,31 @@
                     </table>
                 </div>
 
+                <!-- Fatura Kalemleri -->
+                <h3 style="margin: 10px;">Fatura Aktarım</h3>
+                <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc;">
+                    <table id="dataTableNebim" border="1">
+                        <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
+                            <tr>
+                                <th>Ürün Kod</th>
+                                <th>Ürün Açıklama</th>
+                                <th>Miktar</th>
+                                <th>Birim</th>
+                                <th>KDV</th>
+                                <th>Birim Fiyat</th>
+                                <th>İskonto Değeri</th>
+                                <th>KDV Tutarı</th>
+                                <th>Tutar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
                 <!-- Satın Alma Talepleri -->
                 <h3 style="margin: 10px;">Eşleştirilen Satın Alma Talepleri</h3>
                 <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ccc;">
-                    <table id="dataTable" border="1" style="width:100%; border-collapse: collapse;">
+                    <table id="dataTableDemands" border="1" style="width:100%; border-collapse: collapse;">
                         <thead style="position: sticky; top: 0; background-color: #f9f9f9;">
                         <thead>
                             <tr>
@@ -256,10 +309,10 @@
                         </tbody>
                     </table>
                 </div>
-                
+
             </div>
         </div>
-        
+
         <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
             Yükleniyor...
         </div>
@@ -529,7 +582,18 @@
                 }
 
                 // Line bilgilerini tabloya bas
-                var table = $("#dataTable tbody");
+                var tableNebim = $("#dataTableNebim tbody");
+                tableNebim.empty();
+                tableNebim.append(`
+                    <tr>
+                        <td colspan="10" style="text-align:center; color:#666; padding:10px;">
+                            Faturaya ait Nebim Aktarım Kaydı Bulunamamıştır.
+                        </td>
+                    </tr>
+                `);
+
+                // Line bilgilerini tabloya bas
+                var table = $("#dataTableDemands tbody");
                 table.empty();
 
                 if (!data.demands || data.demands.length === 0) {
@@ -541,7 +605,7 @@
                             </td>
                         </tr>
                     `);
-                    
+
                 } else {
                     $.each(data.demands, function (i, line) {
                         // matchingPrice dolu mu kontrol et
@@ -549,7 +613,7 @@
                         var inputValue = isMatched ? line.matchingPrice : line.remainingPrice;
 
                         table.append(`
-                            <tr 
+                            <tr
                                 data-total="${line.remainingPrice}"
                                 data-id="${line.demandId}"
                                 data-invoicetotal="${data.invoice.payableAmount}"
@@ -574,6 +638,8 @@
                     });
                 }
 
+
+
                 // Popup aç
                 openPopup("invoiceDetailPopup");
             }
@@ -587,7 +653,7 @@
         var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
         var selectedInvoiceTotal = 0;
 
-        $("#dataTable tbody tr").each(function () {
+        $("#dataTableDemands tbody tr").each(function () {
             debugger;
             var checkbox = $(this).find(".chk-select");
             if (checkbox.is(":checked")) {
@@ -683,7 +749,6 @@
         }
     }
 </script>
-
 @functions {
     string GetInvoiceType(int type)
     {

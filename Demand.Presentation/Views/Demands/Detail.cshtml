@@ -1,77 +1,102 @@
 ﻿@using Demand.Domain.ViewModels
 @model DemandViewModel
 
-
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Talep Detayı</title>
+
     <link href="~/css/index.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
     <style>
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+        html {
+            max-width: 100%;
         }
 
         body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding-top: 70px;
             min-height: 100vh;
+            display: flex;
             flex-direction: column;
-        }
-
-        main {
-            margin-top: 20px;
-            width: 80%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
             overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .button-group {
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+            }
+
+        .header {
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .decline-button, .approve-button {
-            width: calc(50% - 5px);
+            align-items: center;
+            padding: 10px 20px;
+            box-sizing: border-box;
         }
 
         .popup-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 20px 0 10px 0;
+        }
+
+            .popup-header h2 {
+                margin: 0;
+                color: white;
+            }
+
+        main#demandTable {
+            margin-top: 10px;
+            width: 100%;
+            max-width: 800px;
+            padding: 24px 22px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-x: hidden;
+            overflow-y: visible; 
+            box-sizing: border-box;
         }
 
         .form-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .form-group {
             width: 48%;
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
+
+            .form-group.full-width {
+                width: 100% !important;
+            }
 
             .form-group label {
                 display: block;
-                margin-bottom: 5px;
+                margin-bottom: 6px;
                 color: white;
             }
 
@@ -85,23 +110,88 @@
                 border-radius: 5px;
             }
 
-
-
-        #requestDate {
-            background-color: lightgray;
-            pointer-events: none;
-        }
-
+        #requestDate,
         #requirementDate {
             background-color: lightgray;
-            pointer-events: none;
         }
 
-        #Description {
-            height: 55px;
+        #description {
             width: 100%;
+            max-width: 100%;
+            height: 220px; 
+            padding: 14px 16px;
+            font-size: 15px;
+            line-height: 1.6;
             resize: none;
-            margin-top: 10px;
+            background-color: lightgray;
+            overflow-y: scroll; 
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-sizing: border-box;
+        }
+
+            #description::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #description::-webkit-scrollbar-thumb {
+                background: #999;
+                border-radius: 6px;
+            }
+
+        #Description {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .offer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .decline-button, .approve-button {
+            width: calc(50% - 5px);
+        }
+
+        .decline-button {
+            background-color: #d9534f;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .approve-button {
+            background-color: #5cb85c;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .decline-button:hover {
+            background-color: #c9302c;
+        }
+
+        .approve-button:hover {
+            background-color: #4cae4c;
         }
 
         .popup-container {
@@ -116,6 +206,7 @@
             border-radius: 10px;
             padding: 30px;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .popup-message {
@@ -138,26 +229,40 @@
                 background-color: #45a049;
             }
 
-        .header {
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
+        @@media (max-width: 768px) {
+            main#demandTable {
+                padding: 18px 16px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+            .offer-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .decline-button, .approve-button {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="logo">
             <a href="@Url.Action("Index", "Home")">
-                <img id="logo" src="~/images/dem_logo.png" alt="Logo">
+                <img id="logo" src="~/images/dem_logo.png" alt="Logo" />
             </a>
         </div>
     </div>
@@ -165,8 +270,9 @@
     <div class="popup-header">
         <h2>Talep Detayı</h2>
     </div>
+
     <form id="siteform" enctype="multipart/form-data">
-        <main class="table" id="demandTable" style="overflow-y: auto !important;">
+        <main class="table" id="demandTable">
             <div class="form-row">
                 <div class="form-group">
                     <label for="companyName">Şirket Adı:</label>
@@ -174,6 +280,7 @@
                         <option value="@Model.CompanyId" selected="selected">@Model.CompanyName</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="location">Lokasyon:</label>
                     <select id="location" name="location" disabled>
@@ -182,14 +289,16 @@
                     <input type="hidden" id="locationId" name="locationId" value="@Model.CompanyLocationId" />
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="requestDate">Talep Tarihi:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate.Value.ToShortDateString()" readonly>
+                    <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate?.ToShortDateString()" readonly />
                 </div>
+
                 <div class="form-group">
                     <label for="requirementDate">Gereklilik Tarihi:</label>
-                    <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate.Value.ToShortDateString()" readonly>
+                    <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate?.ToShortDateString()" readonly />
                 </div>
             </div>
 
@@ -201,330 +310,188 @@
                     </select>
                 </div>
             </div>
+
             <div class="form-row">
-                <table class="offer-table">
-                    <thead>
-                        <tr>
-                            <th>Malzeme</th>
-                            <th>Miktar</th>
-                            <th>Birim</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var requsetInfo in Model.requestInfoViewModels)
-                        {
+                <div class="form-group full-width">
+                    <table class="offer-table">
+                        <thead>
                             <tr>
-                                <td>@requsetInfo.Metarial</td>
-                                <td>@requsetInfo.Quantity</td>
-                                <td>@requsetInfo.Unit</td>
+                                <th>Malzeme</th>
+                                <th>Miktar</th>
+                                <th>Birim</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="description">Açıklama:</label>
-                    <textarea id="description" name="description" style="overflow-y: auto !important;">@Model.Description</textarea>
+                        </thead>
+                        <tbody>
+                            @foreach (var requsetInfo in Model.requestInfoViewModels)
+                            {
+                                <tr>
+                                    <td>@requsetInfo.Metarial</td>
+                                    <td>@requsetInfo.Quantity</td>
+                                    <td>@requsetInfo.Unit</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
             <div class="form-row">
-                @if (Model.File1Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.File1Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.File1Name" class="btn btn-primary">Dosya Eki İndir</a>
-                }
-                @if (Model.File2Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.File2Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.File2Name" class="btn btn-primary">Dosya Eki İndir</a>
-                }
-                @if (Model.File3Path != null)
-                {
-                    var base64 = Convert.ToBase64String(Model.File3Path);
-                    var pdfSrc = $"data:application/pdf;base64,{base64}";
-                    <a href="@pdfSrc" download="@Model.File3Name" class="btn btn-primary">Dosya Eki İndir</a>
-                }
+                <div class="form-group full-width">
+                    <label for="description">Açıklama:</label>
+                    <textarea id="description" name="description" readonly>@Model.Description</textarea>
+                </div>
             </div>
+
+            <div class="form-row">
+                <div class="form-group full-width">
+                    @if (Model.File1Path != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.File1Path);
+                        var pdfSrc = $"data:application/pdf;base64,{base64}";
+                        <a href="@pdfSrc" download="@Model.File1Name" class="btn btn-primary">Dosya Eki İndir</a>
+                    }
+                    @if (Model.File2Path != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.File2Path);
+                        var pdfSrc = $"data:application/pdf;base64,{base64}";
+                        <a href="@pdfSrc" download="@Model.File2Name" class="btn btn-primary">Dosya Eki İndir</a>
+                    }
+                    @if (Model.File3Path != null)
+                    {
+                        var base64 = Convert.ToBase64String(Model.File3Path);
+                        var pdfSrc = $"data:application/pdf;base64,{base64}";
+                        <a href="@pdfSrc" download="@Model.File3Name" class="btn btn-primary">Dosya Eki İndir</a>
+                    }
+                </div>
+            </div>
+
             @if (Model.isApprovedActive == true)
             {
-                <div class="form-group">
-                    <label for="Description">Red Gerekçesi Veya Onay Notu (Zorunlu):</label>
-                    <textarea id="Description" name="Description" placeholder="Lütfen Bu Alanı Doldurun."></textarea>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="Description">Red Gerekçesi Veya Onay Notu (Zorunlu):</label>
+                        <textarea id="Description" name="Description" placeholder="Lütfen Bu Alanı Doldurun."></textarea>
+                    </div>
                 </div>
             }
-            @if (Model.isApprovedActive == false && Model.Status != 0  )
+
+            @if (Model.isApprovedActive == false && Model.Status != 0)
             {
                 <div style="text-align: center; color: white; font-weight: bold; font-size: 24px; margin-top: 20px;">
-                    Talep <span style="color: red;">"@Model.ProcessDescription"</span>Gerekçesi İle Reddedilmiştir.
+                    Talep <span style="color: red;">"@Model.ProcessDescription"</span> gerekçesi ile reddedilmiştir.
                 </div>
             }
+
             @if (Model.isApprovedActive == true && Model.isWhoPersonnel == true)
             {
                 <div class="button-group">
-                    <button onclick="declineStatus(@Model.DemandId)" type="button" class="decline-button">Reddet</button>
-                    <button onclick="changeStatus(@Model.DemandId)" type="button" class="approve-button">Onayla</button>
+                    <button type="button" class="decline-button" onclick="declineStatus(@Model.DemandId)">Reddet</button>
+                    <button type="button" class="approve-button" onclick="changeStatus(@Model.DemandId)">Onayla</button>
                 </div>
             }
-            <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white; font-size:24px; line-height:100vh;">
+
+            <div id="loadingOverlay"
+                 style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+                        background:rgba(0,0,0,0.5); z-index:9999; text-align:center; color:white;
+                        font-size:24px; line-height:100vh;">
                 Yükleniyor...
             </div>
         </main>
     </form>
+
     <div id="overlay"></div>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="script.js"></script>
-</body>
 
-</html>
-<style>
-    .popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        padding: 20px;
-        width: 80%;
-        height: 80%;
-        border-radius: 15px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 1001;
-    }
-
-    .popup-header h2 {
-        margin: 0;
-        color: white;
-    }
-
-    .file-group input[type="file"] {
-        display: none;
-    }
-
-    .file-group label {
-        background-color: #27ae60;
-        color: #fff;
-        font-weight: bold;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        display: inline-block;
-    }
-
-        .file-group label:hover {
-            background-color: #218c53;
-        }
-
-    .file-group .file-name {
-        margin-top: 10px;
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        max-width: 200px;
-    }
-
-    .file-group input[type="file"]:focus + label,
-    .file-group input[type="file"]:not(:focus) + label {
-        background-color: #27ae60;
-    }
-
-        .file-group input[type="file"]:focus + label:hover,
-        .file-group input[type="file"]:not(:focus) + label:hover {
-            background-color: #218c53;
-        }
-
-    .file-group input[type="file"] {
-        opacity: 0;
-        position: absolute;
-        z-index: -1;
-    }
-
-        .file-group input[type="file"]:focus + label .file-name,
-        .file-group input[type="file"]:not(:focus) + label .file-name {
-            display: inline-block;
-        }
-
-        .file-group input[type="file"]:focus + label:before,
-        .file-group input[type="file"]:not(:focus) + label:before {
-            content: "Select File";
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-
-    .button-group {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 20px;
-    }
-
-    .decline-button {
-        background-color: #d9534f;
-        color: #fff;
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-right: 10px;
-    }
-
-    .approve-button {
-        background-color: #5cb85c;
-        color: #fff;
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .decline-button:hover {
-        background-color: #c9302c;
-    }
-
-    .approve-button:hover {
-        background-color: #4cae4c;
-    }
-
-    #description {
-        height: 250px;
-        width: 740px;
-        resize: none;
-        background-color: lightgray;
-        overflow-y: auto;
-        pointer-events: none;
-    }
-</style>
-<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-
-<script>
-     $(document).ready(function () {
-        $("#logo").click(function () {
-            window.location.href = "@Url.Action("Index", "Home")";
+    <script>
+        $(document).ready(function () {
+            $("#logo").click(function () {
+                window.location.href = "@Url.Action("Index", "Home")";
+            });
         });
-    });
 
-    function changeStatus() {
-        document.getElementById("loadingOverlay").style.display = "block";
+        function changeStatus(demandId) {
+            document.getElementById("loadingOverlay").style.display = "block";
 
-        var demandId = @Model.DemandId;
-        var Description = document.getElementById("Description").value.trim();
+            var Description = document.getElementById("Description") ? document.getElementById("Description").value.trim() : "";
 
-        if (!Description) {
-            toastr.error("Lütfen 'Red Gerekçesi Veya Onay Notu' alanını doldurun.", "Hata");
-            document.getElementById("loadingOverlay").style.display = "none";
-            return;
-        }
-        var demandId = @Model.DemandId;
-        var demandStatusChangeViewModel = {
-            DemandId: demandId,
-            Status: 2,
-            Description: Description
-        };
+            if (!Description) {
+                toastr.error("Lütfen 'Red Gerekçesi Veya Onay Notu' alanını doldurun.", "Hata");
+                document.getElementById("loadingOverlay").style.display = "none";
+                return;
+            }
 
-        $.ajax({
-            url: 'Demands/ChangeStatus',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(demandStatusChangeViewModel),
-            success: function (statusResult) {
-                console.log(statusResult);
-                var popupMessage = "Talep durumu başarıyla değiştirildi.";
-                var popup = $("<div></div>").addClass("popup-container");
-                var message = $("<p></p>").addClass("popup-message").text(popupMessage);
-                popup.append(message);
-                var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
-                    popup.fadeOut(200, function () {
-                        $(this).remove();
+            var demandStatusChangeViewModel = {
+                DemandId: demandId,
+                Status: 2,
+                Description: Description
+            };
+
+            $.ajax({
+                url: 'Demands/ChangeStatus',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(demandStatusChangeViewModel),
+                success: function () {
+                    var popupMessage = "Talep durumu başarıyla değiştirildi.";
+                    var popup = $("<div></div>").addClass("popup-container");
+                    popup.append($("<p></p>").addClass("popup-message").text(popupMessage));
+
+                    var closeButton = $("<button>Tamam</button>").addClass("popup-button").click(function () {
+                        popup.fadeOut(200, function () { $(this).remove(); });
+                        window.location.href = '/Home/Index';
                     });
+
+                    popup.append(closeButton);
+                    $('body').append(popup);
+                    popup.hide().fadeIn(300);
+                },
+                error: function () {
+                    toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
+                },
+                complete: function () {
+                    document.getElementById("loadingOverlay").style.display = "none";
+                }
+            });
+        }
+
+        function declineStatus(demandId) {
+            document.getElementById("loadingOverlay").style.display = "block";
+
+            var Description = document.getElementById("Description") ? document.getElementById("Description").value.trim() : "";
+
+            if (!Description) {
+                toastr.error("Lütfen 'Red Gerekçesi Veya Onay Notu' alanını doldurun.", "Hata");
+                document.getElementById("loadingOverlay").style.display = "none";
+                return;
+            }
+
+            var demandStatusChangeViewModel = {
+                DemandId: demandId,
+                Status: 1,
+                Description: Description
+            };
+
+            $.ajax({
+                url: 'Demands/ChangeStatus',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(demandStatusChangeViewModel),
+                success: function () {
+                    toastr.success("Status Changed", "Success");
                     window.location.href = '/Home/Index';
-                });
-                popup.append(closeButton);
-                $('body').append(popup);
-                popup.hide().fadeIn(300);
-            },
-            error: function (error) {
-                console.error('Talep durumu değiştirme hatası:', error);
-                toastr.error("Beklenmeyen bir hata oluştu.", "Hata");
-            },
-            complete: function () {
-                document.getElementById("loadingOverlay").style.display = "none";
-            }
-        });
-    }
-
-    function declineStatus() {
-        document.getElementById("loadingOverlay").style.display = "block";
-
-        var demandId = @Model.DemandId;
-        var Description = document.getElementById("Description").value;
-
-        if (!Description) {
-            toastr.error("Lütfen 'Red Gerekçesi Veya Onay Notu' alanını doldurun.", "Hata");
-            document.getElementById("loadingOverlay").style.display = "none";
-            return;
+                },
+                error: function () {
+                    toastr.error("Unexpected Error", "Error");
+                },
+                complete: function () {
+                    document.getElementById("loadingOverlay").style.display = "none";
+                }
+            });
         }
-
-        var demandStatusChangeViewModel = {
-            DemandId: demandId,
-            Status: 1,
-            Description: Description
-        };
-
-        $.ajax({
-            url: 'Demands/ChangeStatus',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(demandStatusChangeViewModel),
-            success: function (statusResult) {
-                console.log(statusResult);
-                toastr.success("Status Changed", "Success");
-                window.location.href = '/Home/Index';
-            },
-            error: function (error) {
-                console.error('Talep durumu değiştirme hatası:', error);
-                toastr.error("Unexpected Error", "Error");
-
-            },
-            complete: function () {
-                document.getElementById("loadingOverlay").style.display = "none";
-            }
-        });
-    }
-</script>
-@functions {
-    string GetStatusClass(int status)
-    {
-        switch (status)
-        {
-            case 0: return "pending";
-            case 1: return "cancelled";
-            case 2: return "approved";
-            default: return "";
-        }
-    }
-
-    string GetStatusText(int status)
-    {
-        switch (status)
-        {
-            case 0: return "Beklemede";
-            case 1: return "Reddedildi";
-            case 2: return "Onaylandı";
-            default: return "";
-        }
-    }
-}
+    </script>
+</body>
+</html>

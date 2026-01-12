@@ -19,7 +19,7 @@ namespace Demand.Presentation.Utilities.Email
             mail.Body = text;
             mail.IsBodyHtml = true;
             smtpServer.Port = 587;
-            smtpServer.Credentials = new System.Net.NetworkCredential("booking@demmuseums.com", "Boo212**C");
+            smtpServer.Credentials = new System.Net.NetworkCredential("booking@demmuseums.com", "Sat212**A");
             smtpServer.EnableSsl = true;
             smtpServer.Send(mail);
         }

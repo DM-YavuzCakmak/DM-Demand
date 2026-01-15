@@ -983,12 +983,38 @@ namespace Demand.Presentation.Controllers
                 List<DemandOfferEntity> demandOfferEntities = _demandOfferService.GetList(x => x.DemandId == DemandId).Data.ToList();
                 List<long> supplierIds = demandOfferEntities.Select(x => x.SupplierId.Value).ToList();
                 List<ProviderEntity> providerEntities = _providerService.GetList(x => supplierIds.Contains(x.Id)).Data.ToList();
-                DemandProcessEntity demandProcess = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.DemandId == DemandId).Data.FirstOrDefault();
 
-                DemandProcessEntity PurchasingDepartmentNote = _demandProcessService.GetList(x => x.Desciription != null && x.Desciription != "" && x.ManagerId==10 && x.DemandId == DemandId).Data.FirstOrDefault();
-                List<DemandProcessEntity> demandProcessHistory = _demandProcessService.GetList(x => x.DemandId == demand.Id).Data.ToList();
 
-                DemandProcessEntity isApprovedActiveProcess = _demandProcessService.GetList(x => x.ManagerId == userId && x.Status == 0 && x.DemandId == demand.Id).Data.FirstOrDefault();
+
+                List<DemandProcessEntity> demandProcessList =
+    _demandProcessService
+        .GetList(x =>
+            x.DemandId == DemandId &&
+            x.Desciription != null &&
+            x.Desciription != "")
+        .Data
+        .ToList();
+
+                var managerNotes = demandProcessList
+                    .Where(x => x.ManagerId == 11)
+                    .OrderBy(x => x.Id)
+                    .ToList();
+
+                DemandProcessEntity PurchasingDepartmentNote =
+                    demandProcessList
+                        .FirstOrDefault(x => x.ManagerId == 10);
+
+                List<DemandProcessEntity> demandProcessHistory =
+                    _demandProcessService
+                        .GetList(x => x.DemandId == demand.Id)
+                        .Data
+                        .ToList();
+
+                DemandProcessEntity isApprovedActiveProcess =
+                    _demandProcessService
+                        .GetList(x => x.ManagerId == userId && x.Status == 0 && x.DemandId == demand.Id)
+                        .Data
+                        .FirstOrDefault();
 
 
                 DemandViewModel demandViewModel = new DemandViewModel
@@ -1010,11 +1036,18 @@ namespace Demand.Presentation.Controllers
                     UpdatedDate = demand.UpdatedDate,
                     CompanyName = company.Name,
                     DepartmentName = department.Name,
-                    ConfirmingNote = demandProcess.IsNotNull() ? demandProcess.Desciription : "",
-                    PurchasingDepartmentNote = PurchasingDepartmentNote.IsNotNull()? PurchasingDepartmentNote.Desciription : "",
-                    isApprovedActive = isApprovedActiveProcess.IsNotNull() && demand.Status != (int)DemandStatusEnum.decline && isApprovedActiveProcess.ManagerId == userId ? true : false
 
+                    ConfirmingNote = managerNotes.ElementAtOrDefault(0)?.Desciription ?? "",
+                    PurchasingDepartmentNote = PurchasingDepartmentNote?.Desciription ?? "",
+                    ManagerialProposalsNote = managerNotes.ElementAtOrDefault(1)?.Desciription ?? "",
+
+                    isApprovedActive =
+                        isApprovedActiveProcess.IsNotNull() &&
+                        demand.Status != (int)DemandStatusEnum.decline &&
+                        isApprovedActiveProcess.ManagerId == userId
                 };
+
+
                 if (requestInfos.IsNotNullOrEmpty())
                 {
                     demandViewModel.Material1 = requestInfos[0].ProductName;

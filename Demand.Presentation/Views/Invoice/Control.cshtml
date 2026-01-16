@@ -292,12 +292,12 @@
                 <!-- Header Bilgileri -->
                 <div class="form-row">
                     <div class="form-group" style="width:auto !important">
-                        <label for="approvedPersonId">Onay Verecek Kişi:</label>
-                        <select id="approvedPersonId" name="approvedPersonId">
-                            <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
-                            @foreach (var personnel in ViewBag.PersonnelList)
+                        <label for="approvedDepartmentId">Onay Verecek Departman:</label>
+                        <select id="approvedDepartmentId" name="approvedDepartmentId">
+                            <option value="Please Select Responsible Department">Lütfen departman seçin...</option>
+                            @foreach (var department in ViewBag.DepartmentList)
                             {
-                                <option value="@personnel.Id">@(personnel.FirstName + " " + personnel.LastName)</option>
+                                <option value="@department.Id">@(department.Name)</option>
                             }
                         </select>
                     </div>
@@ -426,11 +426,11 @@
 
      function invoiceApprovedUpdate() {
         var invoiceId = $("#invoiceApprovedUpdatePopupInvoiceId").val();
-        var approvedPersonId = $("#approvedPersonId").val();
+        var approvedDepartmentId = $("#approvedDepartmentId").val();
 
         var data = {
             id: invoiceId,
-            approvedPersonId: parseInt(approvedPersonId)
+            approvedDepartmentId: parseInt(approvedDepartmentId)
         };
 
         $.ajax({

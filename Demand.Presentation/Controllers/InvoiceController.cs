@@ -1,7 +1,9 @@
-﻿using Demand.Business.Abstract.InvoiceService;
+﻿using Demand.Business.Abstract.Department;
+using Demand.Business.Abstract.InvoiceService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.ProductCategoryService;
 using Demand.Business.Abstract.Provider;
+using Demand.Business.Concrete.DepartmentService;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Domain.DTO;
@@ -26,16 +28,18 @@ namespace Demand.Presentation.Controllers
         private readonly ILogger<InvoiceController> _logger;
         private readonly IInvoiceDetailService _invoiceDetailService;
         private readonly IInvoiceDemandService _invoiceDemandService;
+        private readonly IDepartmentService _departmentService;
         private readonly IPersonnelService _personnelService;
         private readonly IProductCategoryService _productCategoryService;
 
-        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, IProductCategoryService productCategoryService, DemandContext dbContext)
+        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, IProductCategoryService productCategoryService, IDepartmentService departmentService, DemandContext dbContext)
         {
             _logger = logger;
             _invoiceDetailService = invoiceDetailService;
             _invoiceDemandService = invoiceDemandService;
             _personnelService = personnelService;
             _productCategoryService = productCategoryService;
+            _departmentService = departmentService;
             _dbContext = dbContext;
         }
 
@@ -77,7 +81,9 @@ namespace Demand.Presentation.Controllers
             var IncomingEInvoiceHeaderModels = nebimConnection.GetIncomingEInvoiceHeaderModels();
 
             var personnelList = _personnelService.GetList()?.Data;
-            ViewBag.PersonnelList = personnelList;
+
+            var departmentEntities = _departmentService.GetAll()?.Data;
+            ViewBag.DepartmentList = departmentEntities;
 
             var invoiceDetails = _invoiceDetailService.GetAll()?.Data;
             foreach (var headerModel in IncomingEInvoiceHeaderModels)
@@ -335,7 +341,7 @@ namespace Demand.Presentation.Controllers
             if (invoice == null)
                 return NotFound(new { success = false, message = "Invoice not found" });
 
-            invoice.SentToUserId = dto.ApprovedPersonId;
+            invoice.SentToDeparmentId = dto.ApprovedDepartmentId;
             invoice.Status = 0;
             invoice.UpdatedAt = GetUserId();
             invoice.UpdatedDate = DateTime.Now;
@@ -403,7 +409,7 @@ namespace Demand.Presentation.Controllers
     public class InvoiceApprovedUpdateDto
     {
         public Guid Id { get; set; }
-        public long ApprovedPersonId { get; set; }
+        public long ApprovedDepartmentId { get; set; }
     }
 
     // DTO

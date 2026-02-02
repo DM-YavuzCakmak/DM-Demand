@@ -2,6 +2,7 @@
 @using Demand.Domain.ViewModels
 @using System.Security.Claims
 @using System.Globalization
+@using Kep.Helpers.Extensions
 @using Newtonsoft.Json
 @model DemandViewModel
 
@@ -579,8 +580,27 @@
             </div>
 
             <div class="pricing-tables">
-                <h2 style="color:white;font-weight:bold;text-align:center">Birim Yöneticisi Notu: @Model.ConfirmingNote</h2>
-                <h2 style="color:white;font-weight:bold;text-align:center">Satın Alma Departmanı Notu: @Model.PurchasingDepartmentNote</h2>
+
+                @if (!string.IsNullOrEmpty(Model?.ConfirmingNote))
+                {
+                    <h3 style="color:white;font-weight:bold;text-align:center">
+                        Birim Yöneticisi Notu: @Model.ConfirmingNote
+                    </h3>
+                }
+
+                @if (!string.IsNullOrEmpty(Model?.PurchasingDepartmentNote))
+                {
+                    <h3 style="color:white;font-weight:bold;text-align:center">
+                        Satın Alma Departmanı Notu: @Model.PurchasingDepartmentNote
+                    </h3>
+                }
+
+                @if (!string.IsNullOrEmpty(Model?.ManagerialProposalsNote))
+                {
+                    <h3 style="color:white;font-weight:bold;text-align:center">
+                        Birim Yöneticisi Teklif Notu: @Model.ManagerialProposalsNote
+                    </h3>
+                }
 
                 <div class="row">
                     @if (@Model.DemandOffers.Count > 0)

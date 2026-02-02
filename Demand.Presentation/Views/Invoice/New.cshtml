@@ -187,7 +187,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                         </td>
-                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToString("yyyy-MM-dd"))</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                         <td class="action-buttons">
                                             <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID"

@@ -533,7 +533,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                     using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoiceHeaders", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
+                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddMonths(-1)));
                         command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
                         if(uuid != null)
                             command.Parameters.Add(new SqlParameter("@UUID", uuid));
@@ -586,7 +586,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                     using (SqlCommand command = new SqlCommand("usp_AcceptIncomingEInvoiceHeaders", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddYears(-10)));
+                        command.Parameters.Add(new SqlParameter("@StartDate", DateTime.Now.AddMonths(-1)));
                         command.Parameters.Add(new SqlParameter("@EndDate", DateTime.Now.AddDays(1)));
                         if (uuid != null)
                             command.Parameters.Add(new SqlParameter("@UUID", uuid));

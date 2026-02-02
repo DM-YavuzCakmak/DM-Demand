@@ -160,6 +160,91 @@
             }
 
     </style>
+    <style>
+        .file-upload-card {
+            margin-top: 18px;
+            padding: 16px 18px;
+            border: 1px dashed #d1d5db;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+            .file-row:last-child {
+                border-bottom: none;
+            }
+
+        .file-row-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 220px;
+        }
+
+            .file-row-left i {
+                color: #72006F;
+            }
+
+        .file-row-title {
+            font-weight: 700;
+            color: #1f2933;
+        }
+
+        .file-name {
+            color: #374151;
+            font-size: .9rem;
+            margin-left: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 420px;
+        }
+
+        .file-upload-btn {
+            border: 1px solid #72006F;
+            color: #72006F;
+            background: #fff;
+            border-radius: 999px;
+            padding: 0.45rem 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .15s ease;
+            white-space: nowrap;
+        }
+
+            .file-upload-btn:hover {
+                background: #72006F;
+                color: #fff;
+            }
+
+        .file-clear-btn {
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 999px;
+            padding: 0.45rem 0.9rem;
+            cursor: pointer;
+        }
+
+            .file-clear-btn:hover {
+                border-color: #72006F;
+                color: #72006F;
+            }
+
+        .file-hint {
+            margin-top: 8px;
+            color: #6b7280;
+            font-size: .78rem;
+        }
+    </style>
+
     <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
@@ -341,6 +426,67 @@
                                 <textarea name="AddressLine1" id="addressLine1" class="form-control" aria-describedby="addressLine1Help" placeholder="Adres Satırı 1" required></textarea>
                             </div>
                         </div>
+                        <!-- PDF Upload Area (3 ayrı buton) -->
+                        <div class="file-upload-card">
+                            <div class="file-row">
+                                <div class="file-row-left">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span class="file-row-title">Vergi Levhası</span>
+                                    <span id="pdfName1" class="file-name">Seçilmedi</span>
+                                </div>
+
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <input id="pdfFile1" name="PdfFile1" type="file" style="display:none;" />
+                                    <button type="button" class="file-upload-btn" onclick="document.getElementById('pdfFile1').click()">Dosya Seç</button>
+                                    <button type="button" class="file-clear-btn" onclick="clearPdf('pdfFile1','pdfName1')">Temizle</button>
+                                </div>
+                            </div>
+
+                            <div class="file-row">
+                                <div class="file-row-left">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span class="file-row-title">İmza Sirküleri</span>
+                                    <span id="pdfName2" class="file-name">Seçilmedi</span>
+                                </div>
+
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <input id="pdfFile2" name="PdfFile2" type="file"  style="display:none;" />
+                                    <button type="button" class="file-upload-btn" onclick="document.getElementById('pdfFile2').click()">Dosya Seç</button>
+                                    <button type="button" class="file-clear-btn" onclick="clearPdf('pdfFile2','pdfName2')">Temizle</button>
+                                </div>
+                            </div>
+
+                            <div class="file-row">
+                                <div class="file-row-left">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span class="file-row-title">Ticaret Sicil Gazetesi</span>
+                                    <span id="pdfName3" class="file-name">Seçilmedi</span>
+                                </div>
+
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <input id="pdfFile3" name="PdfFile3" type="file" style="display:none;" />
+                                    <button type="button" class="file-upload-btn" onclick="document.getElementById('pdfFile3').click()">Dosya Seç</button>
+                                    <button type="button" class="file-clear-btn" onclick="clearPdf('pdfFile3','pdfName3')">Temizle</button>
+                                </div>
+                            </div>
+
+                            <div class="file-row">
+                                <div class="file-row-left">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span class="file-row-title">Banka Bilgileri</span>
+                                    <span id="pdfName4" class="file-name">Seçilmedi</span>
+                                </div>
+
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <input id="pdfFile4" name="PdfFile4" type="file" style="display:none;" />
+                                    <button type="button" class="file-upload-btn" onclick="document.getElementById('pdfFile4').click()">Dosya Seç</button>
+                                    <button type="button" class="file-clear-btn" onclick="clearPdf('pdfFile4','pdfName4')">Temizle</button>
+                                </div>
+                            </div>
+
+                            <div class="file-hint">Her alan sadece 1 Dosya kabul eder. Yanlış seçersen “Temizle” ile kaldırabilirsin.</div>
+                        </div>
+
                         <div class="text-center">
                             <button type="button" value="Submit" class="btn btn-primary" onclick="SubmitForm()">Kaydet</button>
                         </div>
@@ -359,6 +505,52 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        function isPdf(file) {
+            if (!file) return true;
+            return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+        }
+
+        function wireSinglePdf(inputId, nameId) {
+            const input = document.getElementById(inputId);
+            const nameEl = document.getElementById(nameId);
+
+            input.addEventListener("change", function () {
+                const file = (this.files && this.files[0]) ? this.files[0] : null;
+
+                if (!file) {
+                    nameEl.textContent = "Seçilmedi";
+                    return;
+                }
+
+                // if (!isPdf(file)) {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Hatalı dosya',
+                //         text: 'Sadece PDF dosyası seçebilirsiniz.'
+                //     });
+                //     this.value = "";
+                //     nameEl.textContent = "Seçilmedi";
+                //     return;
+                // }
+
+                nameEl.textContent = file.name;
+            });
+        }
+
+        function clearPdf(inputId, nameId) {
+            const input = document.getElementById(inputId);
+            const nameEl = document.getElementById(nameId);
+            input.value = "";
+            nameEl.textContent = "Seçilmedi";
+        }
+
+        // bağla
+        wireSinglePdf("pdfFile1", "pdfName1");
+        wireSinglePdf("pdfFile2", "pdfName2");
+        wireSinglePdf("pdfFile3", "pdfName3");
+        wireSinglePdf("pdfFile4", "pdfName4");
+    </script>
 
     <script>
         const hamburger = document.getElementById('hamburger');

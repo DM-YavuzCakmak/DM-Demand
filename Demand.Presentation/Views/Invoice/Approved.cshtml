@@ -29,6 +29,27 @@
             .matched-row:hover {
                 background-color: #b3f0aa !important; /* hover olduğunda biraz daha koyu */
             }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+            .filter-bar input {
+                padding: 6px 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .filter-bar button {
+                padding: 6px 14px;
+                border: none;
+                border-radius: 6px;
+                background: #444;
+                color: white;
+                cursor: pointer;
+            }
     </style>
     <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
@@ -122,6 +143,20 @@
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Onaylanan</h1>
+
+                <div class="filter-bar">
+                    <input type="text" id="filterInvoiceNo" placeholder="Fatura No" />
+                    <input type="text" id="filterSupplier" placeholder="Tedarikçi / Firma" />
+                    <input type="text" id="filterVkn" placeholder="VKN / TCKN" />
+
+                    <button onclick="clearFilters()">Temizle</button>
+                    <button type="button"
+                            class="excel-btn"
+                            onclick="exportTableToExcel()">
+                        <i class="fa fa-file-excel"></i> Excel’e Aktar
+                    </button>
+
+                </div>
             </section>
 
             <section class="content">
@@ -144,7 +179,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 2 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 2 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.SentToManagerId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
@@ -167,17 +202,20 @@
                                         <td data-label="Onaylayan">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
                                         <td data-label="Onay Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                         <td class="action-buttons">
-                                            @if (invoice.InvoiceDetailEntity.InvoiceType == 2)
+                                            @if (invoice.InvoiceDetailEntity.ResponsiblePersonId == userId)
                                             {
-                                                <a href="/Invoice/NebimSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
-                                                    <i class="fa fa-paper-plane"></i>
-                                                </a>
-                                            }
-                                            else
-                                            {
-                                                <a href="/Invoice/NebimProductSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
-                                                    <i class="fa fa-paper-plane"></i>
-                                                </a>
+                                                @if (invoice.InvoiceDetailEntity.InvoiceType == 2)
+                                                {
+                                                    <a href="/Invoice/NebimSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
+                                                        <i class="fa fa-paper-plane"></i>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/Invoice/NebimProductSend?invoiceHeaderId=@invoice.InvoiceHeaderID" title="Nebime Aktar" target="_self">
+                                                        <i class="fa fa-paper-plane"></i>
+                                                    </a>
+                                                }
                                             }
                                             <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
                                                 <i class="fa fa-search"></i>
@@ -343,7 +381,81 @@
 
 </html>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+    function exportTableToExcel() {
+        const table = document.querySelector("#demandTable table");
+        if (!table) return;
+
+        // Sadece görünen satırları export etmek için geçici bir tablo kopyası oluşturuyoruz
+        const clonedTable = table.cloneNode(true);
+
+        // Aksiyon kolonu (son kolon) export edilmesin istersen kaldır
+        // (İstersen bu kısmı yorum satırı yapabilirsin)
+        const headerRow = clonedTable.querySelector("thead tr");
+        if (headerRow && headerRow.lastElementChild) headerRow.lastElementChild.remove();
+
+        // Filtre sonrası gizlenen satırları kaldır
+        const bodyRows = Array.from(clonedTable.querySelectorAll("tbody tr"));
+        bodyRows.forEach(r => {
+            // Orijinal tablodaki karşılığının display durumuna bak
+            const index = bodyRows.indexOf(r);
+            const originalRow = table.querySelectorAll("tbody tr")[index];
+            const isHidden = originalRow && window.getComputedStyle(originalRow).display === "none";
+
+            // Aksiyon kolonu kaldır
+            if (r.lastElementChild) r.lastElementChild.remove();
+
+            if (isHidden) r.remove();
+        });
+
+        // Excel'e çevir
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(clonedTable);
+        XLSX.utils.book_append_sheet(wb, ws, "OnaylananFaturalar");
+
+        const fileName = `Onaylanan_Faturalar_${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+    }
+</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
+<script>
+    const invoiceInput = document.getElementById("filterInvoiceNo");
+    const supplierInput = document.getElementById("filterSupplier");
+    const vknInput = document.getElementById("filterVkn");
+
+    const rows = document.querySelectorAll("tbody tr");
+
+    function filterTable() {
+        const invoiceVal = invoiceInput.value.toLowerCase();
+        const supplierVal = supplierInput.value.toLowerCase();
+        const vknVal = vknInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const invoiceNo = row.children[1].innerText.toLowerCase();
+            const supplier = row.children[2].innerText.toLowerCase();
+            const vkn = row.children[3].innerText.toLowerCase();
+
+            const visible =
+                invoiceNo.includes(invoiceVal) &&
+                supplier.includes(supplierVal) &&
+                vkn.includes(vknVal);
+
+            row.style.display = visible ? "" : "none";
+        });
+    }
+
+    invoiceInput.addEventListener("keyup", filterTable);
+    supplierInput.addEventListener("keyup", filterTable);
+    vknInput.addEventListener("keyup", filterTable);
+
+    function clearFilters() {
+        invoiceInput.value = "";
+        supplierInput.value = "";
+        vknInput.value = "";
+        filterTable();
+    }
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggles = document.querySelectorAll(".submenu-toggle");

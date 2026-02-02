@@ -125,6 +125,9 @@ builder.Services.AddScoped<IDemandService, DemandService>();
 builder.Services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
 builder.Services.AddScoped<IInvoiceDetailService, InvoiceDetailService>();
 
+builder.Services.AddScoped<IInvoiceProcessRepository, InvoiceProcessRepository>();
+builder.Services.AddScoped<IInvoiceProcessService, InvoiceProcessService>();
+
 builder.Services.AddScoped<IInvoiceDemandRepository, InvoiceDemandRepository>();
 builder.Services.AddScoped<IInvoiceDemandService, InvoiceDemandService>();
 #endregion

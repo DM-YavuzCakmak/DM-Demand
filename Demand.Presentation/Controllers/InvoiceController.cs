@@ -2,20 +2,14 @@
 using Demand.Business.Abstract.InvoiceService;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.ProductCategoryService;
-using Demand.Business.Abstract.Provider;
-using Demand.Business.Concrete.DepartmentService;
 using Demand.Core.Attribute;
 using Demand.Core.DatabaseConnection.NebimConnection;
 using Demand.Domain.DTO;
 using Demand.Domain.Entities.InvoiceEntity;
+using Demand.Domain.Enums;
 using Demand.Domain.NebimModels;
-using Demand.Domain.ViewModels;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts;
-using DocumentFormat.OpenXml.Bibliography;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
 using System.Data;
 using System.Security.Claims;
 
@@ -27,15 +21,17 @@ namespace Demand.Presentation.Controllers
         private readonly DemandContext _dbContext;
         private readonly ILogger<InvoiceController> _logger;
         private readonly IInvoiceDetailService _invoiceDetailService;
+        private readonly IInvoiceProcessService _invoiceProcessService;
         private readonly IInvoiceDemandService _invoiceDemandService;
         private readonly IDepartmentService _departmentService;
         private readonly IPersonnelService _personnelService;
         private readonly IProductCategoryService _productCategoryService;
 
-        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, IProductCategoryService productCategoryService, IDepartmentService departmentService, DemandContext dbContext)
+        public InvoiceController(ILogger<InvoiceController> logger, IInvoiceDetailService invoiceDetailService, IInvoiceProcessService invoiceProcessService, IInvoiceDemandService invoiceDemandService, IPersonnelService personnelService, IProductCategoryService productCategoryService, IDepartmentService departmentService, DemandContext dbContext)
         {
             _logger = logger;
             _invoiceDetailService = invoiceDetailService;
+            _invoiceProcessService = invoiceProcessService;
             _invoiceDemandService = invoiceDemandService;
             _personnelService = personnelService;
             _productCategoryService = productCategoryService;
@@ -55,6 +51,9 @@ namespace Demand.Presentation.Controllers
             var nebimConnection = new NebimConnection();
             var IncomingEInvoiceHeaderModels = nebimConnection.GetIncomingEInvoiceHeaderModels();
 
+            var departmentList = _departmentService.GetAll()?.Data;
+            ViewBag.DepartmentList = departmentList;
+
             var personnelList = _personnelService.GetList()?.Data;
             ViewBag.PersonnelList = personnelList;
 
@@ -65,7 +64,9 @@ namespace Demand.Presentation.Controllers
                 if (matchingDetail != null)
                 {
                     matchingDetail.ResponsiblePerson = personnelList.FirstOrDefault(x => x.Id == matchingDetail.ResponsiblePersonId);
+                    matchingDetail.SentToDepartment = matchingDetail.SentToDepartmentId != null ? departmentList.FirstOrDefault(x => x.Id == matchingDetail.SentToDepartmentId.Value) : null;
                     matchingDetail.SentToUser = matchingDetail.SentToUserId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToUserId.Value) : null;
+                    matchingDetail.SentToManager = matchingDetail.SentToManagerId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToManagerId.Value) : null;
                     headerModel.Status = matchingDetail.Status;
 
                     headerModel.InvoiceDetailEntity = matchingDetail;
@@ -81,6 +82,7 @@ namespace Demand.Presentation.Controllers
             var IncomingEInvoiceHeaderModels = nebimConnection.GetIncomingEInvoiceHeaderModels();
 
             var personnelList = _personnelService.GetList()?.Data;
+            ViewBag.PersonnelList = personnelList;
 
             var departmentEntities = _departmentService.GetAll()?.Data;
             ViewBag.DepartmentList = departmentEntities;
@@ -92,7 +94,9 @@ namespace Demand.Presentation.Controllers
                 if (matchingDetail != null)
                 {
                     matchingDetail.ResponsiblePerson = personnelList.FirstOrDefault(x => x.Id == matchingDetail.ResponsiblePersonId);
+                    matchingDetail.SentToDepartment = matchingDetail.SentToDepartmentId != null ? departmentEntities.FirstOrDefault(x => x.Id == matchingDetail.SentToDepartmentId.Value) : null;
                     matchingDetail.SentToUser = matchingDetail.SentToUserId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToUserId.Value) : null;
+                    matchingDetail.SentToManager = matchingDetail.SentToManagerId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToManagerId.Value) : null;
                     headerModel.Status = matchingDetail.Status;
 
                     headerModel.InvoiceDetailEntity = matchingDetail;
@@ -110,6 +114,9 @@ namespace Demand.Presentation.Controllers
             var personnelList = _personnelService.GetList()?.Data;
             ViewBag.PersonnelList = personnelList;
 
+            var departmentEntities = _departmentService.GetAll()?.Data;
+            ViewBag.DepartmentList = departmentEntities;
+
             var invoiceDetails = _invoiceDetailService.GetAll()?.Data;
             foreach (var headerModel in IncomingEInvoiceHeaderModels)
             {
@@ -117,7 +124,9 @@ namespace Demand.Presentation.Controllers
                 if (matchingDetail != null)
                 {
                     matchingDetail.ResponsiblePerson = personnelList.FirstOrDefault(x => x.Id == matchingDetail.ResponsiblePersonId);
+                    matchingDetail.SentToDepartment = matchingDetail.SentToDepartmentId != null ? departmentEntities.FirstOrDefault(x => x.Id == matchingDetail.SentToDepartmentId.Value) : null;
                     matchingDetail.SentToUser = matchingDetail.SentToUserId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToUserId.Value) : null;
+                    matchingDetail.SentToManager = matchingDetail.SentToManagerId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToManagerId.Value) : null;
                     headerModel.Status = matchingDetail.Status;
 
                     headerModel.InvoiceDetailEntity = matchingDetail;
@@ -145,6 +154,9 @@ namespace Demand.Presentation.Controllers
             var personnelList = _personnelService.GetList()?.Data;
             ViewBag.PersonnelList = personnelList;
 
+            var departmentEntities = _departmentService.GetAll()?.Data;
+            ViewBag.DepartmentList = departmentEntities;
+
             var invoiceDetails = _invoiceDetailService.GetAll()?.Data;
             foreach (var headerModel in IncomingEInvoiceHeaderModels)
             {
@@ -152,7 +164,9 @@ namespace Demand.Presentation.Controllers
                 if (matchingDetail != null)
                 {
                     matchingDetail.ResponsiblePerson = personnelList.FirstOrDefault(x => x.Id == matchingDetail.ResponsiblePersonId);
+                    matchingDetail.SentToDepartment = matchingDetail.SentToDepartmentId != null ? departmentEntities.FirstOrDefault(x => x.Id == matchingDetail.SentToDepartmentId.Value) : null;
                     matchingDetail.SentToUser = matchingDetail.SentToUserId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToUserId.Value) : null;
+                    matchingDetail.SentToManager = matchingDetail.SentToManagerId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToManagerId.Value) : null;
                     headerModel.Status = matchingDetail.Status;
 
                     headerModel.InvoiceDetailEntity = matchingDetail;
@@ -170,6 +184,9 @@ namespace Demand.Presentation.Controllers
             var personnelList = _personnelService.GetList()?.Data;
             ViewBag.PersonnelList = personnelList;
 
+            var departmentEntities = _departmentService.GetAll()?.Data;
+            ViewBag.DepartmentList = departmentEntities;
+
             var invoiceDetails = _invoiceDetailService.GetAll()?.Data;
             foreach (var headerModel in IncomingEInvoiceHeaderModels)
             {
@@ -177,7 +194,9 @@ namespace Demand.Presentation.Controllers
                 if (matchingDetail != null)
                 {
                     matchingDetail.ResponsiblePerson = personnelList.FirstOrDefault(x => x.Id == matchingDetail.ResponsiblePersonId);
+                    matchingDetail.SentToDepartment = matchingDetail.SentToDepartmentId != null ? departmentEntities.FirstOrDefault(x => x.Id == matchingDetail.SentToDepartmentId.Value) : null;
                     matchingDetail.SentToUser = matchingDetail.SentToUserId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToUserId.Value) : null;
+                    matchingDetail.SentToManager = matchingDetail.SentToManagerId != null ? personnelList.FirstOrDefault(x => x.Id == matchingDetail.SentToManagerId.Value) : null;
                     headerModel.Status = matchingDetail.Status;
 
                     headerModel.InvoiceDetailEntity = matchingDetail;
@@ -309,6 +328,16 @@ namespace Demand.Presentation.Controllers
                 _invoiceDemandService.Add(invoiceDemand);
             }
 
+            InvoiceProcessEntity invoiceProcess = new InvoiceProcessEntity
+            {
+                InvoiceDetailId = invoice.Id,
+                ProcessType = (int)InvoiceProcessTypeEnum.MatchingToDemand,
+                CreatedAt = GetUserId(),
+                CreatedDate = DateTime.Now
+            };
+
+            _invoiceProcessService.Add(invoiceProcess);
+
             return Ok(new { success = true, message = "Invoice demands saved successfully" });
         }
 
@@ -331,8 +360,57 @@ namespace Demand.Presentation.Controllers
 
             _invoiceDetailService.Add(invoice);
 
+            InvoiceProcessEntity invoiceProcess = new InvoiceProcessEntity
+            {
+                InvoiceDetailId = invoice.Id,
+                ProcessType = (int)InvoiceProcessTypeEnum.InvoiceTypeChange,
+                CreatedAt = GetUserId(),
+                CreatedDate = DateTime.Now
+            };
+
+            _invoiceProcessService.Add(invoiceProcess);
+
             return Ok(new { success = true, message = "Invoice updated successfully" });
         }
+
+        [HttpGet]
+        public IActionResult GetUsersByDepartment(int departmentId)
+        {
+            if (departmentId <= 0)
+                return BadRequest("Invalid departmentId");
+
+            var users = _personnelService
+                .GetList(x => x.DepartmentId == departmentId && !x.IsDeleted && x.ParentId != null && x.ParentId != 18 && x.ParentId != 12).Data
+                .OrderBy(x => x.FirstName)
+                .Select(x => new SelectItemDto { Id = x.Id, Text = x.FirstName + " " + x.LastName, IsFirstCheck = x.IsFirstApprove ?? false })
+                .ToList();
+
+            var managers = _personnelService
+                .GetList(x => x.DepartmentId == departmentId && !x.IsDeleted && (x.ParentId == 18 || x.ParentId == 12)).Data
+                .OrderBy(x => x.FirstName)
+                .Select(x => new SelectItemDto { Id = x.Id, Text = x.FirstName + " " + x.LastName, IsFirstCheck = x.IsFirstApprove ?? false })
+                .ToList();
+
+            return Json(new DepartmentUsersResponseDto
+            {
+                Users = users,
+                Managers = managers
+            });
+        }
+
+        public class DepartmentUsersResponseDto
+        {
+            public List<SelectItemDto> Users { get; set; } = new();
+            public List<SelectItemDto> Managers { get; set; } = new();
+        }
+
+        public class SelectItemDto
+        {
+            public long Id { get; set; }
+            public string Text { get; set; } = "";
+            public bool IsFirstCheck { get; set; }
+        }
+
 
         [HttpPut]
         public async Task<IActionResult> InvoiceApprovedUpdate([FromBody] InvoiceApprovedUpdateDto dto)
@@ -341,12 +419,24 @@ namespace Demand.Presentation.Controllers
             if (invoice == null)
                 return NotFound(new { success = false, message = "Invoice not found" });
 
-            invoice.SentToDeparmentId = dto.ApprovedDepartmentId;
+            invoice.SentToDepartmentId = dto.ApprovedDepartmentId;
+            invoice.SentToUserId = dto.ApprovedUserId;
+            invoice.SentToManagerId = dto.ApprovedManagerId;
             invoice.Status = 0;
             invoice.UpdatedAt = GetUserId();
             invoice.UpdatedDate = DateTime.Now;
 
             _invoiceDetailService.Update(invoice);
+
+            InvoiceProcessEntity invoiceProcess = new InvoiceProcessEntity
+            {
+                InvoiceDetailId = invoice.Id,
+                ProcessType = (int)InvoiceProcessTypeEnum.SentToDepartment,
+                CreatedAt = GetUserId(),
+                CreatedDate = DateTime.Now
+            };
+
+            _invoiceProcessService.Add(invoiceProcess);
 
             return Ok(new { success = true, message = "Invoice updated approved user successfully" });
         }
@@ -367,6 +457,16 @@ namespace Demand.Presentation.Controllers
 
             _invoiceDetailService.Update(invoice);
 
+            InvoiceProcessEntity invoiceProcess = new InvoiceProcessEntity
+            {
+                InvoiceDetailId = invoice.Id,
+                ProcessType = (int)InvoiceProcessTypeEnum.Reject,
+                CreatedAt = GetUserId(),
+                CreatedDate = DateTime.Now
+            };
+
+            _invoiceProcessService.Add(invoiceProcess);
+
             return Ok(new { success = true, message = "Invoice rejection successfully" });
         }
 
@@ -377,13 +477,23 @@ namespace Demand.Presentation.Controllers
             if (invoice == null)
                 return NotFound(new { success = false, message = "Invoice not found" });
 
-            invoice.Status = 2;
+            invoice.Status = invoice.Status == 0 && invoice.SentToUserId != null && invoice.SentToManagerId != null ? 3 : 2;
             invoice.IsDeleted = false;
             invoice.ReturnDate = DateTime.Now;
             invoice.UpdatedAt = GetUserId();
             invoice.UpdatedDate = DateTime.Now;
 
             _invoiceDetailService.Update(invoice);
+
+            InvoiceProcessEntity invoiceProcess = new InvoiceProcessEntity
+            {
+                InvoiceDetailId = invoice.Id,
+                ProcessType = (int)InvoiceProcessTypeEnum.Approve,
+                CreatedAt = GetUserId(),
+                CreatedDate = DateTime.Now
+            };
+
+            _invoiceProcessService.Add(invoiceProcess);
 
             return Ok(new { success = true, message = "Invoice approved successfully" });
         }
@@ -410,6 +520,8 @@ namespace Demand.Presentation.Controllers
     {
         public Guid Id { get; set; }
         public long ApprovedDepartmentId { get; set; }
+        public long ApprovedUserId { get; set; }
+        public long ApprovedManagerId { get; set; }
     }
 
     // DTO

@@ -57,6 +57,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<ProductCategoryEntity> ProductCategories{ get; set; }
         public virtual DbSet<CompanyLocationUnitsEntity>  CompanyLocationUnits{ get; set; }
         public virtual DbSet<InvoiceDetailEntity> InvoiceDetails { get; set; }
+        public virtual DbSet<InvoiceProcessEntity> InvoiceProcesses { get; set; }
         public virtual DbSet<InvoiceDemandEntity> InvoiceDemands { get; set; }
         public virtual DbSet<DemandsByTaxNumberDto> DemandsByTaxNumberDto { get; set; }
 

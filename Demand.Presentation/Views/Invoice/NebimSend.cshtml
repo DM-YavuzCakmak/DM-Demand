@@ -601,7 +601,7 @@
                     expenseModels.forEach(function (expenseModel) {
                         var option = document.createElement('option');
                         option.value = expenseModel.expenseCode;
-                        option.textContent = expenseModel.expenseDescription + ' - ' + expenseModel.expenseCode;
+                        option.textContent = expenseModel.expenseCode + ' - ' + expenseModel.expenseDescription;
 
                         option.setAttribute("data-taxvalue", expenseModel.itemTaxGrCode);
                         select.appendChild(option);

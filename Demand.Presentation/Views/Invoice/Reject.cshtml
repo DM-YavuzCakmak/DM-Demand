@@ -29,6 +29,28 @@
             .matched-row:hover {
                 background-color: #b3f0aa !important; /* hover olduğunda biraz daha koyu */
             }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+            .filter-bar input {
+                padding: 6px 10px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .filter-bar button {
+                padding: 6px 14px;
+                border: none;
+                border-radius: 6px;
+                background: #444;
+                color: white;
+                cursor: pointer;
+            }
+
     </style>
     <link rel="stylesheet" href="https://use.typekit.net/ovt6ynt.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap" />
@@ -121,6 +143,20 @@
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Reddedilen</h1>
+
+                <div class="filter-bar">
+                    <input type="text" id="filterInvoiceNo" placeholder="Fatura No" />
+                    <input type="text" id="filterSupplier" placeholder="Tedarikçi / Firma" />
+                    <input type="text" id="filterVkn" placeholder="VKN / TCKN" />
+
+                    <button onclick="clearFilters()">Temizle</button>
+                    <button type="button"
+                            class="excel-btn"
+                            onclick="exportTableToExcel()">
+                        <i class="fa fa-file-excel"></i> Excel’e Aktar
+                    </button>
+
+                </div>
             </section>
 
             <section class="content">
@@ -144,7 +180,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.SentToManagerId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
@@ -296,18 +332,30 @@
                 <!-- Header Bilgileri -->
                 <div class="form-row">
                     <div class="form-group" style="width:auto !important">
-                        <label for="approvedPersonId">Onay Verecek Kişi:</label>
-                        <select id="approvedPersonId" name="approvedPersonId">
-                            <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
-                            @foreach (var personnel in ViewBag.PersonnelList)
+                        <label for="approvedDepartmentId">Onay Verecek Departman:</label>
+                        <select id="approvedDepartmentId" name="approvedDepartmentId">
+                            <option value="Please Select Responsible Department">Lütfen departman seçin...</option>
+                            @foreach (var department in ViewBag.DepartmentList)
                             {
-                                <option value="@personnel.Id">@(personnel.FirstName + " " + personnel.LastName)</option>
+                                <option value="@department.Id">@(department.Name)</option>
                             }
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:auto !important">
+                        <label for="approvedUserId">İlk Onay Verecek Kullanıcı:</label>
+                        <select id="approvedUserId" name="approvedUserId">
+                            <option value="Please Select Responsible User">Lütfen kullanıcı seçin...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="width:auto !important">
+                        <label for="approvedManagerId">Onay Verecek Yönetici:</label>
+                        <select id="approvedManagerId" name="approvedManagerId">
+                            <option value="Please Select Responsible Manager">Lütfen yönetici seçin...</option>
                         </select>
                     </div>
                     <input type="hidden" id="invoiceApprovedUpdatePopupInvoiceId" value="" />
                 </div>
-                <div class="form-group" style="width:auto !important">
+                <div class="form-group" style="width:auto !important;margin-top:10px; display:flex; justify-content:center;">
                     <a href="javascript:void(0)" class="update-button" onclick="invoiceApprovedUpdate()">Onaya Gönder</a>
                 </div>
             </div>
@@ -344,6 +392,82 @@
 </html>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+    function exportTableToExcel() {
+        const table = document.querySelector("#demandTable table");
+        if (!table) return;
+
+        // Sadece görünen satırları export etmek için geçici bir tablo kopyası oluşturuyoruz
+        const clonedTable = table.cloneNode(true);
+
+        // Aksiyon kolonu (son kolon) export edilmesin istersen kaldır
+        // (İstersen bu kısmı yorum satırı yapabilirsin)
+        const headerRow = clonedTable.querySelector("thead tr");
+        if (headerRow && headerRow.lastElementChild) headerRow.lastElementChild.remove();
+
+        // Filtre sonrası gizlenen satırları kaldır
+        const bodyRows = Array.from(clonedTable.querySelectorAll("tbody tr"));
+        bodyRows.forEach(r => {
+            // Orijinal tablodaki karşılığının display durumuna bak
+            const index = bodyRows.indexOf(r);
+            const originalRow = table.querySelectorAll("tbody tr")[index];
+            const isHidden = originalRow && window.getComputedStyle(originalRow).display === "none";
+
+            // Aksiyon kolonu kaldır
+            if (r.lastElementChild) r.lastElementChild.remove();
+
+            if (isHidden) r.remove();
+        });
+
+        // Excel'e çevir
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(clonedTable);
+        XLSX.utils.book_append_sheet(wb, ws, "ReddedilenFaturalar");
+
+        const fileName = `Reddedilen_Faturalar_${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+    }
+</script>
+
+<script>
+    const invoiceInput = document.getElementById("filterInvoiceNo");
+    const supplierInput = document.getElementById("filterSupplier");
+    const vknInput = document.getElementById("filterVkn");
+
+    const rows = document.querySelectorAll("tbody tr");
+
+    function filterTable() {
+        const invoiceVal = invoiceInput.value.toLowerCase();
+        const supplierVal = supplierInput.value.toLowerCase();
+        const vknVal = vknInput.value.toLowerCase();
+
+        rows.forEach(row => {
+            const invoiceNo = row.children[1].innerText.toLowerCase();
+            const supplier = row.children[2].innerText.toLowerCase();
+            const vkn = row.children[3].innerText.toLowerCase();
+
+            const visible =
+                invoiceNo.includes(invoiceVal) &&
+                supplier.includes(supplierVal) &&
+                vkn.includes(vknVal);
+
+            row.style.display = visible ? "" : "none";
+        });
+    }
+
+    invoiceInput.addEventListener("keyup", filterTable);
+    supplierInput.addEventListener("keyup", filterTable);
+    vknInput.addEventListener("keyup", filterTable);
+
+    function clearFilters() {
+        invoiceInput.value = "";
+        supplierInput.value = "";
+        vknInput.value = "";
+        filterTable();
+    }
+</script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const toggles = document.querySelectorAll(".submenu-toggle");
@@ -353,6 +477,60 @@
                 submenu.classList.toggle("open");
             });
         });
+    });
+
+    function reset($el, text) {
+        $el.empty().append($("<option/>").val("").text(text));
+    }
+
+    function getId(x) { return x.id || x.Id; }
+    function getText(x) { return x.text || x.Text; }
+    function getIsFirstCheck(x) { return x.isFirstCheck === true || x.IsFirstCheck === true; }
+
+    $("#approvedDepartmentId").on("change", function () {
+        const departmentId = $(this).val();
+
+        const $user = $("#approvedUserId");
+        const $manager = $("#approvedManagerId");
+
+        reset($user, "Lütfen kullanıcı seçin...");
+        reset($manager, "Lütfen yönetici seçin...");
+
+        if (!departmentId) return;
+
+        $.getJSON("/Invoice/GetUsersByDepartment", { departmentId: departmentId })
+            .done(function (data) {
+                const users = data.users || data.Users || [];
+                const managers = data.managers || data.Managers || [];
+
+                // --- USERS doldur ---
+                users.forEach(function (u) {
+                    $user.append($("<option/>").val(getId(u)).text(getText(u)));
+                });
+
+                // Kullanıcı auto-select:
+                // 1) isFirstCheck true olan varsa onu seç
+                // 2) yoksa tek kullanıcı geldiyse onu seç
+                const firstCheckUser = users.find(getIsFirstCheck);
+                if (firstCheckUser) {
+                    $user.val(String(getId(firstCheckUser)));
+                } else if (users.length === 1) {
+                    $user.val(String(getId(users[0])));
+                }
+
+                // --- MANAGERS doldur ---
+                managers.forEach(function (m) {
+                    $manager.append($("<option/>").val(getId(m)).text(getText(m)));
+                });
+
+                // Yönetici auto-select: tek yönetici geldiyse
+                if (managers.length === 1) {
+                    $manager.val(String(getId(managers[0])));
+                }
+            })
+            .fail(function () {
+                alert("Departmana bağlı kullanıcılar alınırken hata oluştu.");
+            });
     });
 
     function formatPrice(value) {
@@ -431,11 +609,15 @@
 
      function invoiceApprovedUpdate() {
         var invoiceId = $("#invoiceApprovedUpdatePopupInvoiceId").val();
-        var approvedPersonId = $("#approvedPersonId").val();
+        var approvedDepartmentId = $("#approvedDepartmentId").val();
+        var approvedManagerId = $("#approvedManagerId").val();
+        var approvedUserId = $("#approvedUserId").val();
 
         var data = {
             id: invoiceId,
-            approvedPersonId: parseInt(approvedPersonId)
+            approvedDepartmentId: parseInt(approvedDepartmentId),
+            approvedManagerId: parseInt(approvedManagerId),
+            approvedUserId: parseInt(approvedUserId)
         };
 
         $.ajax({

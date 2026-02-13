@@ -117,23 +117,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == (int)InvoiceStatusEnum.Rejected))
+                                @foreach (var invoice in Model.Where(x => x.IsViewInvoicePrivilege))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
                                         <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
                                         <td data-label="Firma">@invoice.CurrAccDescription</td>
                                         <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
-                                        @if (invoice.InvoiceDetailEntity != null)
-                                        {
-                                            <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
-                                        }
-                                        else
-                                        {
-                                            <td>
-                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
-                                            </td>
-                                        }
+                                        <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
                                         <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToString("yyyy-MM-dd"))</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
                                         <td data-label="Departman">@(invoice.InvoiceDetailEntity.SentToDepartment != null ? invoice.InvoiceDetailEntity.SentToDepartment.Name : "")</td>
@@ -141,15 +132,15 @@
                                         <td data-label="Red Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                         <td data-label="Red Açıklama">@(invoice.InvoiceDetailEntity.RejectionNote)</td>
                                         <td class="action-buttons">
-                                            @* @if (userId == invoice.InvoiceDetailEntity.ResponsiblePersonId)
-                                            { *@
-                                            <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
-                                                <i class="fa fa-paper-plane"></i>
-                                            </a>
-
-                                            <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
-                                                <i class="fa fa-search"></i>
-                                            </a>
+                                            @if (invoice.IsChangeStatusPrivilege)
+                                            {
+                                                <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </a>
+                                                <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
+                                                    <i class="fa fa-search"></i>
+                                                </a>
+                                            }
                                             <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID"
                                                target="_blank" title="Fatura Detayı">
                                                 <i class="fa fa-file-invoice"></i>

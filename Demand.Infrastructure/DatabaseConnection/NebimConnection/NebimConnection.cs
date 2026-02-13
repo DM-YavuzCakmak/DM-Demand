@@ -234,7 +234,8 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                                         	SPACE(0)) as ProductDescription,
                                         	(case when prItemCompanyBrand.CompanyBrandCode = 'AstelH' then 1 else 0 end) as CompanyBrandCode,
                                         	'1' as CompanyCode,
-                                            ci.ItemTaxGrCode
+                                            ci.ItemTaxGrCode,
+                                            ci.UnitOfMeasureCode1 as UnitOfMeasureCode
                                         from
                                         	cdItem ci WITH(NOLOCK)
                                         LEFT OUTER JOIN cdItemDesc WITH(NOLOCK) ON
@@ -274,6 +275,7 @@ namespace Demand.Core.DatabaseConnection.NebimConnection
                                 nebimProductModel.ProductCode = reader["ProductCode"].IsNotNull() ? reader["ProductCode"].ToString() : "";
                                 nebimProductModel.ProductDescription = reader["ProductDescription"].IsNotNull() ? reader["ProductDescription"].ToString() : "";
                                 nebimProductModel.ItemTaxGrCode = reader["ItemTaxGrCode"].IsNotNull() ? reader["ItemTaxGrCode"].ToString() : "";
+                                nebimProductModel.UnitOfMeasureCode = reader["UnitOfMeasureCode"].IsNotNull() ? reader["UnitOfMeasureCode"].ToString() : "";
                                 nebimProductModels.Add(nebimProductModel);
                             }
 

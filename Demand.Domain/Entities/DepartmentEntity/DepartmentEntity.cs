@@ -10,6 +10,7 @@ namespace Demand.Domain.Entities.DepartmentEntity
 
         [MaxLength(255)]
         public string Name { get; set; }
+        public decimal? ThirdLevelInvoiceApproveLimit { get; set; }
 
     }
 }

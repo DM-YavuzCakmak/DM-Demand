@@ -229,6 +229,7 @@
                             <div class="form-group">
                                 <label for="invoiceNo">Fatura No</label>
                                 <input type="text" id="invoiceNo" value="@Model.EInvoiceNumber" readonly />
+                                <input type="hidden" id="invoiceHeaderId" value="@Model.InvoiceHeaderID" />
                             </div>
                             <div class="form-group">
                                 <label for="requestDate">Fatura Tarihi</label>
@@ -257,6 +258,10 @@
                                 <select name="warehouse" class="form-control" id="warehouse">
                                     <option>Lütfen Seçiniz</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoiceDescription">Fatura Açıklama</label>
+                                <input type="text" id="invoiceDescription" value="@(string.Join(' ', Model.CurrAccDescription.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2)) + " FT." + Model.EInvoiceNumber)" />
                             </div>
                             <div class="form-group">
                                 <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@Model.FromIntegratorUUID"
@@ -370,6 +375,9 @@
                                     KDV Oranı
                                 </th>
                                 <th>
+                                    Birim
+                                </th>
+                                <th>
                                     Ürün Ana Grubu<br />
                                     <input type="text" class="column-filter" data-col="3" style="width: 95%;" />
                                 </th>
@@ -386,6 +394,7 @@
                                     <td>@product.ProductCode</td>
                                     <td>@product.ProductDescription</td>
                                     <td>@product.ItemTaxGrCode</td>
+                                    <td>@product.UnitOfMeasureCode</td>
                                     <td>@product.ProductHierarchyLevel01Description</td>
                                     <td>@product.ProductHierarchyLevel02Description</td>
                                 </tr>
@@ -597,6 +606,7 @@
         var productCode  = $(this).children().eq(0).text().trim(); // Ürün Kodu
         var productName  = $(this).children().eq(1).text().trim(); // Ürün Adı
         var productKdvRaw = $(this).children().eq(2).text().trim();
+        var productUnitOfMeasureCode = $(this).children().eq(3).text().trim(); // Birim
 
         // KDV aralık ise ilk kısmı al (%1-%10 → %1)
         var productKdv = productKdvRaw.includes('-')
@@ -606,7 +616,8 @@
         // Ana tabloda, popup'u açan satırdaki input'ları doldur
         currentProductRow.find('input.productCode').val(productCode);
         currentProductRow.find('input.productName').val(productName);
-        currentProductRow.find('input.vatrate').val(productKdv);   // vatrate senin mevcut alan
+        currentProductRow.find('input.vatrate').val(productKdv); 
+        currentProductRow.find('input.unit').val(productUnitOfMeasureCode); 
 
         // İstersen satırdaki başka alanları da resetleyebilirsin:
         // currentProductRow.find('input.unitprice').val('');
@@ -631,34 +642,13 @@
         cells.forEach(function (cell) {
             var newCell = document.createElement("td");
 
-            if (cell === 'unit' || cell === 'discounttype') {
+            if (cell === 'discounttype') {
                 var div = document.createElement("div");
                 div.className = "select-wrapper";
                 var select = document.createElement("select");
                 select.name = cell + "[]";
                 select.className = cell;
-                if (cell === 'unit') {
-                     var option1 = document.createElement("option");
-                    option1.text = "Adet";
-                    option1.value = "1";
-                    select.appendChild(option1);
-                    var option2 = document.createElement("option");
-                    option2.text = "Metre";
-                    option2.value = "2";
-                    select.appendChild(option2);
-                      var option3 = document.createElement("option");
-                    option3.text = "Gram";
-                    option3.value = "3";
-                    select.appendChild(option3);
-                      var option4 = document.createElement("option");
-                    option4.text = "KG";
-                    option4.value = "4";
-                    select.appendChild(option4);
-                      var option5 = document.createElement("option");
-                    option5.text = "Litre";
-                    option5.value = "5";
-                    select.appendChild(option5);
-                } else if (cell === 'discounttype') {
+                if (cell === 'discounttype') {
                     select.innerHTML = '';
                     var defaultOption = document.createElement('option');
                     defaultOption.text = "İskonto seçiniz";
@@ -730,7 +720,7 @@
                     });
                 }
                 if (cell === "totalamount") {
-                
+
                     input.type = "text";
 
                     input.addEventListener("input", function () {
@@ -833,13 +823,13 @@
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
                             }) + " ₺";
-                        }   
+                        }
                         calculateRowPrices(currentProductRow);
                         recalcTotals();
                     });
                 }
                 // READONLY OLACAK ALANLAR
-                var readonlyCells = ['productCode', 'productName', "vatrate", "unitprice", "vatrateamount"];
+                var readonlyCells = ['productCode', 'productName', "vatrate", "unit", "unitprice", "vatrateamount"];
                 if (readonlyCells.includes(cell)) {
                     input.readOnly = true;
                     input.style.backgroundColor = "#f2f2f2";  // İstersen gri yap
@@ -951,7 +941,7 @@
             .replace(/[₺\s\.]/g, "")
             .replace(",", ".");
         var discount = parseFloat(discountRaw) || 0;
-        
+
         // İskonto düşülmüş tutar (KDV bu tutar üzerinden hesaplanacak)
         var baseAmount = Math.max(total - discount, 0);
 
@@ -1039,6 +1029,20 @@
             errors.push("Tüm satırlarda 'Tutar' değeri 0'dan büyük olmalıdır.");
         }
 
+        allRowsValid = true;
+        rows.each(function () {
+            var totalVal = parseTL($(this).find('input.totalamount').val());
+            var discountVal = parseTL($(this).find('input.discount').val());
+            if (totalVal < discountVal) {
+                allRowsValid = false;
+                return false; // break
+            }
+        });
+
+        if (!allRowsValid) {
+            errors.push("İskonto tutarı satır tutarını geçemez.");
+        }
+
         // Validasyon hatası varsa işlemi durdur
         if (errors.length > 0) {
             e.preventDefault();
@@ -1046,9 +1050,80 @@
             return false;
         }
 
-        // Her şey doğru → işlem devam
-        toastr.success(`Fatura Nebime Aktarılmıştır.`, "Başarılı");
+        // ===============================
+        // ✅ BACKEND GÖNDERİMİ
+        // ===============================
+
+        var lines = [];
+
+        rows.each(function () {
+            const discountRate = calculateDiscountRate(this);
+
+            lines.push({
+                productCode: $(this).find('input.productCode').val(),
+                quantity: parseFloat($(this).find('input.quantity').val()),
+                unitPrice: parseTL($(this).find('input.unitprice').val()),
+                discount: parseFloat($(this).find('input.discount').val()),
+                vatAmount: parseTL($(this).find('input.vatrateamount').val()),
+                totalAmount: parseTL($(this).find('input.totalamount').val()),
+                lDisRate1: discountRate // 👈 ORAN olarak gönderiliyor
+            });
+        });
+
+
+        var payload = {
+            companyCode: $('#company').val() == "DEM" ? "1" : "2",
+            eInvoiceNumber: $('#invoiceNo').val(),
+            invoiceHeaderId: $('#invoiceHeaderId').val(),
+            invoiceDate: $('#requestDate').val(),
+            description: $('#invoiceDescription').val(),
+            officeCode: officeVal,
+            warehouseCode: warehouseVal,
+            lines: lines
+        };
+
+        console.log(payload);
+
+        $('#loadingOverlay').show();
+
+        $.ajax({
+            url: '/Invoice/TransferToNebimProduct',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function () {
+                toastr.success("Fatura başarıyla Nebim'e aktarıldı.", "Başarılı");
+            },
+            error: function (err) {
+                toastr.error(err.responseJSON?.message ?? "Nebim aktarımı başarısız", "Hata");
+                console.error(err);
+            },
+            complete: function () {
+                $('#loadingOverlay').hide();
+            }
+        });
     });
+
+     function calculateDiscountRate(row) {
+        const qty = parseFloat($(row).find('input.quantity').val()) || 0;
+        const unitPrice = parseTL($(row).find('input.unitprice').val()) || 0;
+        const discountAmount = parseTL($(row).find('input.discount').val()) || 0;
+
+        const grossAmount = qty * unitPrice;
+
+        if (grossAmount <= 0 || discountAmount <= 0) {
+            return 0;
+        }
+
+        return +( (discountAmount / grossAmount) * 100 ).toFixed(4);
+    }
+
+
+    function parseTL(val) {
+        if (!val) return 0;
+        return parseFloat(val.replace(/\./g, '').replace(',', '.'));
+    }
+
 </script>
 @functions {
     string GetInvoiceType(int type)

@@ -18,5 +18,6 @@ namespace Demand.Domain.NebimModels
         public string? ProductCode { get; set; }
         public string? ProductDescription { get; set; }
         public string? ItemTaxGrCode { get; set; }
+        public string? UnitOfMeasureCode { get; set; }
     }
 }

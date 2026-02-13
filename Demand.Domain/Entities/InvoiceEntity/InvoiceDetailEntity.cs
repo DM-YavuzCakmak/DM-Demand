@@ -7,6 +7,8 @@ namespace Demand.Domain.Entities.InvoiceEntity
     public class InvoiceDetailEntity : BaseEntity
     {
         public Guid InvoiceUUID { get; set; }
+        public string? EInvoiceNumber { get; set; }
+        public string? NebimInvoiceNumber { get; set; }
         public long? SentToDepartmentId { get; set; }
         public int InvoiceType { get; set; }
         public int Status { get; set; }

@@ -1,0 +1,92 @@
+﻿@using System.Security.Claims
+@{
+    var claimsIdentity = (ClaimsIdentity)User.Identity;
+    var claims = claimsIdentity.Claims;
+    var isViewNewInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewNewInvoice").Value);
+    var IsViewControlInvoice = bool.Parse(claims.FirstOrDefault(x => x.Type == "IsViewControlInvoice").Value);
+}
+
+<div id="hamburger">&#9776;</div>
+<div id="overlay"></div>
+<nav class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
+        <li>
+            <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
+            <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
+                @if (isViewNewInvoice)
+                {
+                    <li>
+                        <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
+                            Yeni
+                        </a>
+                    </li>
+                }
+                @if (IsViewControlInvoice)
+                {
+                    <li>
+                        <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
+                            Kontrol Bekleyen
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
+                        Onay Bekleyen
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
+                        Onaylanan
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
+                        Reddedilen
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
+            <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
+                <li>
+                    <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
+                        Yeni Başvuru
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
+                        Onaylı Tedarikçi Listesi
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
+                        Onay Bekleyenler
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+</nav>
+
+
+
+<script>
+     const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    // Menü aç/kapa
+    hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+    });
+
+    // Overlay'e tıklayınca menüyü kapat
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.style.display = 'none';
+    });
+</script>

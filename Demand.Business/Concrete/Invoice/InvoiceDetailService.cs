@@ -16,7 +16,7 @@ namespace Demand.Business.Concrete.Invoice
 
         public IDataResult<IList<InvoiceDetailEntity>> GetAll()
         {
-            return new SuccessDataResult<IList<InvoiceDetailEntity>>(_invoiceDetailRepository.GetAll());
+            return new SuccessDataResult<IList<InvoiceDetailEntity>>(_invoiceDetailRepository.GetList(x => x.IsDeleted == false));
         }
 
         public IDataResult<InvoiceDetailEntity> GetById(long id)
@@ -26,7 +26,7 @@ namespace Demand.Business.Concrete.Invoice
 
         public IDataResult<InvoiceDetailEntity> GetByUUID(Guid UUID)
         {
-            return new SuccessDataResult<InvoiceDetailEntity>(_invoiceDetailRepository.Get(x => x.InvoiceUUID == UUID));
+            return new SuccessDataResult<InvoiceDetailEntity>(_invoiceDetailRepository.Get(x => x.InvoiceUUID == UUID && x.IsDeleted == false));
         }
 
         public InvoiceDetailEntity Add(InvoiceDetailEntity invoiceDetailEntity)

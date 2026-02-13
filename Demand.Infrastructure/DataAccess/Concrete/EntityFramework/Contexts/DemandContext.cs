@@ -13,6 +13,7 @@ using Demand.Domain.Entities.InvoiceEntity;
 using Demand.Domain.Entities.OfferMediaEntity;
 using Demand.Domain.Entities.OfferRequestEntity;
 using Demand.Domain.Entities.Personnel;
+using Demand.Domain.Entities.PersonnelDepartmentEntity;
 using Demand.Domain.Entities.PersonnelRole;
 using Demand.Domain.Entities.ProductCategoryEntity;
 using Demand.Domain.Entities.ProviderEntity;
@@ -47,6 +48,7 @@ namespace Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Contexts
         public virtual DbSet<DemandProcessEntity> DemandProcesses { get; set; }
         public virtual DbSet<DepartmentEntity> Departments { get; set; }
         public virtual DbSet<PersonnelRoleEntity> PersonnelRoles { get; set; }
+        public virtual DbSet<PersonnelDepartmentEntity> PersonnelDepartments { get; set; }
         public virtual DbSet<RoleEntity> Roles { get; set; }
         public virtual DbSet<RequestInfoEntity> RequestInfos { get; set; }
         public virtual DbSet<CurrencyTypeEntity> CurrencyTypes { get; set; }

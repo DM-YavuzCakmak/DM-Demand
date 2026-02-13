@@ -75,70 +75,7 @@
     </div>
 
     <div class="layout">
-        <div id="hamburger">&#9776;</div>
-        <div id="overlay"></div>
-        <nav class="sidebar" id="sidebar">
-            <ul>
-                <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
-                        @if (isViewNewInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
-                                    Yeni
-                                </a>
-                            </li>
-                        }
-                        @if (IsViewControlInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
-                                    Kontrol Bekleyen
-                                </a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
-                                Onay Bekleyen
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
-                                Onaylanan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
-                                Reddedilen
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
-                        <li>
-                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
-                                Yeni Başvuru
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
-                                Onaylı Tedarikçi Listesi
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
-                                Onay Bekleyenler
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
-        </nav>
+        @Html.Partial("~/Views/Shared/_sidebar.cshtml")
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Yeni</h1>
@@ -164,14 +101,14 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Firma <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string">Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string">Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string">Firma <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string">VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string">Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="date">Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="number">Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -206,7 +143,7 @@
         </main>
         <div id="overlay"></div>
 
-        <div id="invoiceTypePopup" class="popup">
+        <div id="invoiceTypePopup" class="popup" style="width: 30% !important;height: 41% !important;">
             <div class="popup-header">
                 <h2>Fatura Tipi Güncelle</h2>
             </div>
@@ -225,26 +162,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group" style="width:auto !important">
-                        <label for="responsiblePersonId">Yönlendir:</label>
-                        <select id="responsiblePersonId" name="responsiblePersonId">
-                            <option value="Please Select Responsible Person">Lütfen kullanıcı seçin...</option>
-                            @foreach (var personnel in ViewBag.PersonnelList)
-                            {
-                                @if (personnel.Id == userId)
-                                {
-                                    <option value="@personnel.Id" selected>@(personnel.FirstName + " " + personnel.LastName)</option>
-                                }
-                                else if (personnel.IsViewNewInvoice == true)
-                                {
-                                    <option value="@personnel.Id">@(personnel.FirstName + " " + personnel.LastName)</option>
-                                }
-                            }
-                        </select>
-                    </div>
                     <input type="hidden" id="invoiceTypePopupInvoiceId" value="" />
-                    <div class="form-group" style="width:auto !important">
-                        <a href="javascript:void(0)" class="update-button" onclick="invoiceUpdate()">Güncelle</a>
+                    <div class="form-group" style="width:auto !important;align-items: anchor-center;">
+                        <a href="javascript:void(0)" class="update-button" onclick="invoiceUpdate()">Güncelle ve Kontrole Gönder</a>
 
                     </div>
                 </div>
@@ -259,29 +179,51 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
-
-    <script>
-         const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        // Menü aç/kapa
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        });
-
-        // Overlay'e tıklayınca menüyü kapat
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.style.display = 'none';
-        });
-    </script>
 </body>
 
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+    document.querySelectorAll("th[data-type]").forEach((th, index) => {
+        let asc = true;
+
+        th.addEventListener("click", () => {
+            const table = th.closest("table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const type = th.dataset.type;
+
+            // Diğer okları resetle
+            table.querySelectorAll(".icon-arrow").forEach(i => i.innerHTML = "&UpArrow;");
+
+            rows.sort((a, b) => {
+                let A = a.children[index].innerText.trim();
+                let B = b.children[index].innerText.trim();
+
+                if (type === "number") {
+                    A = parseFloat(A.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                    B = parseFloat(B.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                }
+
+                if (type === "date") {
+                    A = new Date(A);
+                    B = new Date(B);
+                }
+
+                if (A < B) return asc ? -1 : 1;
+                if (A > B) return asc ? 1 : -1;
+                return 0;
+            });
+
+            th.querySelector(".icon-arrow").innerHTML = asc ? "&DownArrow;" : "&UpArrow;";
+            asc = !asc;
+
+            tbody.append(...rows);
+        });
+    });
+</script>
+
 <script>
     function exportTableToExcel() {
         const table = document.querySelector("#demandTable table");
@@ -383,10 +325,7 @@
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
-            closePopup("invoiceDetailPopup");
             closePopup("invoiceTypePopup");
-            closePopup("invoiceApprovedUpdatePopup");
-            closePopup("invoiceRejectionPopup");
         }
     });
 
@@ -396,34 +335,13 @@
         $("#invoiceTypePopupInvoiceId").val(invoiceHeaderId);
     }
 
-    function invoiceApprovedUpdatePopUp(invoiceHeaderId){
-        openPopup("invoiceApprovedUpdatePopup");
-
-        $("#invoiceApprovedUpdatePopupInvoiceId").val(invoiceHeaderId);
-    }
-
-    function invoiceRejection2(){
-        closePopup("invoiceDetailPopup");
-
-        var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
-        invoiceRejectionPopUp(invoiceId);
-    }
-
-    function invoiceRejectionPopUp(invoiceHeaderId){
-        openPopup("invoiceRejectionPopup");
-
-        $("#invoiceRejectionPopupInvoiceId").val(invoiceHeaderId);
-    }
-
-     function invoiceUpdate() {
+    function invoiceUpdate() {
         var invoiceId = $("#invoiceTypePopupInvoiceId").val();
         var invoiceType = $("#invoiceType").val();
-        var responsiblePersonId = $("#responsiblePersonId").val();
 
         var data = {
             id: invoiceId,
             invoiceType: parseInt(invoiceType),
-            responsiblePersonId: parseInt(responsiblePersonId)
         };
 
         $.ajax({
@@ -441,102 +359,6 @@
         });
     }
 
-     function invoiceApprovedUpdate() {
-        var invoiceId = $("#invoiceApprovedUpdatePopupInvoiceId").val();
-        var approvedPersonId = $("#approvedPersonId").val();
-
-        var data = {
-            id: invoiceId,
-            approvedPersonId: parseInt(approvedPersonId)
-        };
-
-        $.ajax({
-            url: '/Invoice/InvoiceApprovedUpdate',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (response) {
-                toastr.success(`Fatura Onaya Gönderilmiştir.`, "Başarılı");
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-            }
-        });
-    }
-
-     function invoiceRejection() {
-        Swal.fire({
-            title: "Emin misiniz?",
-            text: "Bu faturayı onaylamak istediğinize emin misiniz?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Evet, onayla",
-            cancelButtonText: "Vazgeç",
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var invoiceId = $("#invoiceRejectionPopupInvoiceId").val();
-                var rejectionDesc = $("#rejectionDesc").val();
-
-                var data = {
-                    id: invoiceId,
-                    rejectionDesc: rejectionDesc
-                };
-
-                $.ajax({
-                    url: '/Invoice/InvoiceRejection',
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        toastr.success(`Fatura Ret Edilmiştir.`, "Başarılı");
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-                    }
-                });
-            }
-        });
-    }
-
-    function invoiceApproved2(){
-        closePopup("invoiceDetailPopup");
-
-        var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
-        invoiceApproved(invoiceId);
-    }
-
-    function invoiceApproved(invoiceHeaderId) {
-        Swal.fire({
-            title: "Emin misiniz?",
-            text: "Bu faturayı onaylamak istediğinize emin misiniz?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Evet, onayla",
-            cancelButtonText: "Vazgeç",
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/Invoice/InvoiceApproved',
-                    type: 'GET',
-                    data: { invoiceHeaderId: invoiceHeaderId },
-                    success: function (response) {
-                        toastr.success(`Fatura Onaylanmıştır.`, "Başarılı");
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-                    }
-                });
-            }
-        });
-    }
-
     $(document).on('change', '.chk-select', function () {
         var row = $(this).closest('tr');
         if ($(this).is(':checked')) {
@@ -545,195 +367,6 @@
             row.removeClass('matched-row');
         }
     });
-
-    function invoiceDetailPopup(invoiceHeaderId) {
-        $("#invoiceDetailPopupInvoiceId").val(invoiceHeaderId);
-
-        $.ajax({
-            url: '/Invoice/GetInvoiceDemands',
-            type: 'GET',
-            data: { invoiceHeaderId: invoiceHeaderId },
-            success: function (data) {
-                // Header bilgilerini doldur
-                $("#invoiceNo").val(data.invoice.eInvoiceNumber);
-                $("#requestDate").val(formatDate(data.invoice.invoiceDate));
-                // $("#description").val(data.invoice.description);
-                $("#payableAmount").val(formatPrice(data.invoice.payableAmount) + " " + data.invoice.docCurrencyCode);
-
-                $("#company").val(data.invoice.companyName);
-                $("#provider").val(data.invoice.currAccDescription);
-                $("#taxnumber").val(data.invoice.taxNumber);// IdentityNum
-
-                // Line bilgilerini tabloya bas
-                var tableInvoiceDetail = $("#dataTableInvoiceDetail tbody");
-                tableInvoiceDetail.empty();
-
-                if (!data.invoiceDetails || data.invoiceDetails.length === 0) {
-                    // ⚠️ Eğer kayıt yoksa uyarı satırı ekle
-                    tableInvoiceDetail.append(`
-                        <tr>
-                            <td colspan="10" style="text-align:center; color:#666; padding:10px;">
-                                Fatura Detayları Bulunmamaktadır
-                            </td>
-                        </tr>
-                    `);
-                } else {
-                    $.each(data.invoiceDetails, function (i, line) {
-                        tableInvoiceDetail.append(`
-                            <tr>
-                                <td data-label="Adı">${line.itemName}</td>
-                                <td data-label="Adet">${line.qty1}</td>
-                                <td data-label="KDV Oranı">${line.vatRate}</td>
-                                <td data-label="KDV Tutarı">${line.vat}</td>
-                                <td data-label="Toplam Tutar">${line.netAmount} ${line.priceCurrencyCode}</td>
-                            </tr>
-                        `);
-                                // <td>${line.lDisRate1}</td>
-                                // <td>${line.lDiscount1}</td>
-                    });
-                }
-
-                // Line bilgilerini tabloya bas
-                var table = $("#dataTable tbody");
-                table.empty();
-
-                if (!data.demands || data.demands.length === 0) {
-                    // ⚠️ Eğer kayıt yoksa uyarı satırı ekle
-                    table.append(`
-                        <tr>
-                            <td colspan="10" style="text-align:center; color:#666; padding:10px;">
-                                VKN/TCKN ait Satın Alma Talebi Bulunamamıştır.
-                            </td>
-                        </tr>
-                    `);
-
-                    const div = document.getElementById("saveInvoiceDemand");
-                    div.style.display = "none";
-                } else {
-                    const div = document.getElementById("saveInvoiceDemand");
-                    div.style.display = "block";
-
-                    $.each(data.demands, function (i, line) {
-                        // matchingPrice dolu mu kontrol et
-                        var isMatched = line.matchingPrice != null && line.matchingPrice !== "";
-                        var checkboxChecked = isMatched ? "checked" : "";
-                        var inputValue = isMatched ? line.matchingPrice : line.totalPrice;
-                        var rowClass = isMatched ? "matched-row" : "";
-
-                        table.append(`
-                            <tr class="${rowClass}"
-                                data-total="${line.remainingPrice}"
-                                data-id="${line.demandId}"
-                                data-invoicetotal="${data.invoice.payableAmount}"
-                                data-currency="${line.currencySymbol}">
-
-                                <td data-label="Seç">
-                                    <input type="checkbox" class="chk-select" ${checkboxChecked} />
-                                </td>
-                                <td data-label="Id">${line.demandId}</td>
-                                <td data-label="Başlık">${line.demandTitle}</td>
-                                <td data-label="Departman">${line.departmentName}</td>
-                                <td data-label="Kur">${formatPrice(line.exchangeRate)}</td>
-                                <td data-label="Toplam Tutar">${formatPrice(line.totalPrice)} ${line.currencySymbol}</td>
-                                <td data-label="Kalan Tutar">${formatPrice(line.remainingPrice)} ${line.currencySymbol}</td>
-                                <td data-label="Tutar Giriş">
-                                    <input type="number"
-                                           class="txt-tutar"
-                                           min="0"
-                                           max="${line.totalPrice}"
-                                           value="${inputValue}"
-                                           step="0.01"
-                                           style="width:80px;" />${line.currencySymbol}
-                                </td>
-                                <td data-label="Aksiyon">
-                                    <a target="_blank"
-                                       href="../api/Demands/DemandOfferDetail?DemandId=${line.demandId}"
-                                       style="text-align: center;display: inline-block;font-weight: bold;">
-                                       Teklif Detayı
-                                    </a>
-                                </td>
-                            </tr>
-                        `);
-                    });
-                }
-
-                // Popup aç
-                openPopup("invoiceDetailPopup");
-            }
-        });
-    }
-
-        // Eşle butonuna tıklanınca
-    function SaveInvoceDemand() {
-        var selectedItems = [];
-        var hasError = false; // ⚠️ Hata durumunu takip edecek bayrak
-        var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
-        var selectedInvoiceTotal = 0;
-
-        $("#dataTable tbody tr").each(function () {
-            debugger;
-            var checkbox = $(this).find(".chk-select");
-            if (checkbox.is(":checked")) {
-                var demandId = $(this).data("id");
-                var currencySymbol = $(this).data("currency");
-                var total = parseFloat($(this).data("total"));
-                var invoiceTotal = parseFloat($(this).data("invoicetotal"));
-                var tutar = parseFloat($(this).find(".txt-tutar").val());
-
-                if (isNaN(tutar) || tutar <= 0) {
-                    toastr.error(`Lütfen geçerli bir tutar giriniz.`, "Hata");
-                    hasError = true;
-                    return false;
-                }
-
-                if (tutar > total) {
-                    toastr.error(`Girilen tutar (${formatPrice(tutar)} ${currencySymbol}), satırın kalan tutarını (${formatPrice(total)} ${currencySymbol}) aşamaz!`, "Hata");
-                    hasError = true;
-                    return false;
-                }
-
-                selectedInvoiceTotal += tutar;
-                if (selectedInvoiceTotal > invoiceTotal) {
-                    toastr.error(`Girilen tutarların toplamı (${formatPrice(selectedInvoiceTotal)} ${currencySymbol}), fatura tutarını (${formatPrice(invoiceTotal)} ${currencySymbol}) aşamaz!`, "Hata");
-                    hasError = true;
-                    return false;
-                }
-
-                selectedItems.push({
-                    invoiceId: invoiceId,
-                    demandId: demandId,
-                    amount: tutar
-                });
-            }
-        });
-        debugger;
-
-        if (hasError) {
-            return; // ❌ Hata varsa işlem tamamen durur
-        }
-
-        if (selectedItems.length === 0) {
-            toastr.error(`Lütfen en az bir satır seçin.`, "Hata");
-            return;
-        }
-
-        // AJAX POST isteği
-        $.ajax({
-            url: '/Invoice/SaveInvoiceDemand',
-            type: 'PUT',
-            data: JSON.stringify(selectedItems),
-            contentType: 'application/json',
-            success: function (res) {
-                toastr.success(`Eşleştirme işlemi başarılı!`, "Başarılı");
-                closePopup("invoiceDetailPopup");
-            },
-            error: function (err) {
-                console.error(err);
-                toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-            }
-        });
-    }
-
 
 
     function openPopup(popupId) {
@@ -776,30 +409,6 @@
             case 1: return "Konsiye Alım";
             case 2: return "Masraf Alım";
             default: return type.ToString();
-        }
-    }
-
-    string GetStatusClass(int status)
-    {
-        switch (status)
-        {
-            case -1: return "new";
-            case 0: return "pending";
-            case 1: return "cancelled";
-            case 2: return "approved";
-            default: return "";
-        }
-    }
-
-    string GetStatusText(int status)
-    {
-        switch (status)
-        {
-            case -1: return "Yeni";
-            case 0: return "Beklemede";
-            case 1: return "Reddedildi";
-            case 2: return "Onaylandı";
-            default: return "";
         }
     }
 

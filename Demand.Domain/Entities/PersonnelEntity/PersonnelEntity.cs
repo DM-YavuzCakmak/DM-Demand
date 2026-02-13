@@ -14,7 +14,6 @@ public class PersonnelEntity : BaseEntity
 
     public bool? IsViewNewInvoice { get; set; } = false;
     public bool? IsViewControlInvoice { get; set; } = false;
-    public bool? IsFirstApprove { get; set; } = false;
 
     [ForeignKey("ParentId")]
     public virtual PersonnelEntity Parent { get; set; }

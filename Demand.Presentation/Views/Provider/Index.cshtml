@@ -54,70 +54,7 @@
     </div>
 
     <div class="layout">
-        <div id="hamburger">&#9776;</div>
-        <div id="overlay"></div>
-        <nav class="sidebar" id="sidebar">
-            <ul>
-                <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
-                        @if (isViewNewInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
-                                    Yeni
-                                </a>
-                            </li>
-                        }
-                        @if (IsViewControlInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
-                                    Kontrol Bekleyen
-                                </a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
-                                Onay Bekleyen
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
-                                Onaylanan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
-                                Reddedilen
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
-                        <li>
-                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
-                                Yeni Başvuru
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
-                                Onaylı Tedarikçi Listesi
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
-                                Onay Bekleyenler
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
-        </nav>
+        @Html.Partial("~/Views/Shared/_sidebar.cshtml")
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Reddedilen</h1>
@@ -136,7 +73,6 @@
                                     <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Döviz Tipi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Red Eden <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Red Tarihi <span class="icon-arrow">&UpArrow;</span></th>
                                     <th> Red Açıklama <span class="icon-arrow">&UpArrow;</span></th>
@@ -144,7 +80,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 1 ))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
@@ -161,19 +97,18 @@
                                                 <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
                                             </td>
                                         }
-                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToString("yyyy-MM-dd"))</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
-                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
-                                        <td data-label="Red Eden">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td data-label="Red Eden">@(invoice.InvoiceDetailEntity.UpdatedBy != null ? invoice.InvoiceDetailEntity.UpdatedBy.FirstName + " " + invoice.InvoiceDetailEntity.UpdatedBy.LastName : "")</td>
                                         <td data-label="Red Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                         <td data-label="Red Açıklama">@(invoice.InvoiceDetailEntity.RejectionNote)</td>
                                         <td class="action-buttons">
-                                            @if (userId == invoice.InvoiceDetailEntity.ResponsiblePersonId)
-                                            {
+                                            @* @if (userId == invoice.InvoiceDetailEntity.ResponsiblePersonId)
+                                            { *@
                                                 <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
                                                     <i class="fa fa-paper-plane"></i>
                                                 </a>
-                                            }
+                                            
                                             <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
                                                 <i class="fa fa-search"></i>
                                             </a>
@@ -322,23 +257,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
 
-    <script>
-         const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        // Menü aç/kapa
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        });
-
-        // Overlay'e tıklayınca menüyü kapat
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.style.display = 'none';
-        });
-    </script>
 </body>
 
 </html>

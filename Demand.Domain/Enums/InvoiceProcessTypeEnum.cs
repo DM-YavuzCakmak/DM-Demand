@@ -5,8 +5,11 @@
         InvoiceTypeChange = 1, //Fatura Tipi Seçme ve Yönlendirme
         SentToDepartment = 2, //Departman Onayına Gönderme
         MatchingToDemand = 3, //Satın Alma Talebi ile Eşleştirme
-        Approve = 4, //Onaylama
-        Reject = 5, //Reddetme
-        SentToNebim = 6 //Nebim'e Gönderme
+        FirstLevelApprove = 4, //Onaylama
+        SecondLevelApprove = 5, //Onaylama
+        ThirdLevelApprove = 6, //Onaylama
+        Reject = 7, //Reddetme
+        SentToNebim = 8, //Nebim'e Gönderme
+        Return = 9 //Hatalı İletilen Faturayı Geri Gönderme
     }
 }

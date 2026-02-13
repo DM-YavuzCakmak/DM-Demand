@@ -1,4 +1,5 @@
-﻿@using Demand.Domain.NebimModels
+﻿@using Demand.Domain.Enums
+@using Demand.Domain.NebimModels
 @using System.Security.Claims
 @using System.Text.Json
 @model List<IncomingEInvoiceHeaderModel>
@@ -76,70 +77,7 @@
     </div>
 
     <div class="layout">
-        <div id="hamburger">&#9776;</div>
-        <div id="overlay"></div>
-        <nav class="sidebar" id="sidebar">
-            <ul>
-                <li><a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a></li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
-                        @if (isViewNewInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
-                                    Yeni
-                                </a>
-                            </li>
-                        }
-                        @if (IsViewControlInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
-                                    Kontrol Bekleyen
-                                </a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
-                                Onay Bekleyen
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
-                                Onaylanan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
-                                Reddedilen
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
-                        <li>
-                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
-                                Yeni Başvuru
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
-                                Onaylı Tedarikçi Listesi
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
-                                Onay Bekleyenler
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
-        </nav>
+        @Html.Partial("~/Views/Shared/_sidebar.cshtml")
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Kontrol Bekleyen</h1>
@@ -165,19 +103,18 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Firma <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Firma <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="date"> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="number"> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 0 && x.InvoiceDetailEntity.SentToUserId == null && x.InvoiceDetailEntity.ResponsiblePersonId == userId))
+                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == (int)InvoiceStatusEnum.New && x.InvoiceDetailEntity.SentToDepartmentId == null && ((userId == 50 && (x.InvoiceDetailEntity.InvoiceType == 0 || x.InvoiceDetailEntity.InvoiceType == 1)) || isViewNewInvoice)))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
@@ -194,16 +131,21 @@
                                                 <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
                                             </td>
                                         }
-                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToString("yyyy-MM-dd"))</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
-                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
                                         <td class="action-buttons">
-                                            <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
-                                                <i class="fa fa-paper-plane"></i>
-                                            </a>
-                                            <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Güncelle">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                            @if (((invoice.InvoiceDetailEntity.InvoiceType == 0 || invoice.InvoiceDetailEntity.InvoiceType == 1) && userId == 50) || invoice.InvoiceDetailEntity.InvoiceType == 2)
+                                            {
+                                                <a href="javascript:void(0)" onclick="invoiceApprovedUpdatePopUp('@invoice.InvoiceHeaderID')" title="Onaya Gönder">
+                                                    <i class="fa fa-paper-plane"></i>
+                                                </a>
+                                                <a href="javascript:void(0)" onclick="invoiceReturn('@invoice.InvoiceHeaderID')" title="Geri Gönder">
+                                                    <i class="fa fa-reply"></i>
+                                                </a>
+                                                <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Güncelle">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            }
                                             <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID"
                                                target="_blank" title="Fatura Detayı">
                                                 <i class="fa fa-file-invoice"></i>
@@ -336,18 +278,6 @@
                             }
                         </select>
                     </div>
-                    <div class="form-group" style="width:auto !important">
-                        <label for="approvedUserId">İlk Onay Verecek Kullanıcı:</label>
-                        <select id="approvedUserId" name="approvedUserId">
-                            <option value="Please Select Responsible User">Lütfen kullanıcı seçin...</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="width:auto !important">
-                        <label for="approvedManagerId">Onay Verecek Yönetici:</label>
-                        <select id="approvedManagerId" name="approvedManagerId">
-                            <option value="Please Select Responsible Manager">Lütfen yönetici seçin...</option>
-                        </select>
-                    </div>
                     <input type="hidden" id="invoiceApprovedUpdatePopupInvoiceId" value="" />
                 </div>
                 <div class="form-group" style="width:auto !important;margin-top:10px; display:flex; justify-content:center;">
@@ -364,28 +294,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
 
-    <script>
-         const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        // Menü aç/kapa
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        });
-
-        // Overlay'e tıklayınca menüyü kapat
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.style.display = 'none';
-        });
-    </script>
 </body>
 
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+    document.querySelectorAll("th[data-type]").forEach((th, index) => {
+        let asc = true;
+
+        th.addEventListener("click", () => {
+            const table = th.closest("table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const type = th.dataset.type;
+
+            // Diğer okları resetle
+            table.querySelectorAll(".icon-arrow").forEach(i => i.innerHTML = "&UpArrow;");
+
+            rows.sort((a, b) => {
+                let A = a.children[index].innerText.trim();
+                let B = b.children[index].innerText.trim();
+
+                if (type === "number") {
+                    A = parseFloat(A.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                    B = parseFloat(B.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                }
+
+                if (type === "date") {
+                    A = new Date(A);
+                    B = new Date(B);
+                }
+
+                if (A < B) return asc ? -1 : 1;
+                if (A > B) return asc ? 1 : -1;
+                return 0;
+            });
+
+            th.querySelector(".icon-arrow").innerHTML = asc ? "&DownArrow;" : "&UpArrow;";
+            asc = !asc;
+
+            tbody.append(...rows);
+        });
+    });
+</script>
+
 <script>
     function exportTableToExcel() {
         const table = document.querySelector("#demandTable table");
@@ -471,60 +424,6 @@
         });
     });
 
-    function reset($el, text) {
-        $el.empty().append($("<option/>").val("").text(text));
-    }
-
-    function getId(x) { return x.id || x.Id; }
-    function getText(x) { return x.text || x.Text; }
-    function getIsFirstCheck(x) { return x.isFirstCheck === true || x.IsFirstCheck === true; }
-
-    $("#approvedDepartmentId").on("change", function () {
-        const departmentId = $(this).val();
-
-        const $user = $("#approvedUserId");
-        const $manager = $("#approvedManagerId");
-
-        reset($user, "Lütfen kullanıcı seçin...");
-        reset($manager, "Lütfen yönetici seçin...");
-
-        if (!departmentId) return;
-
-        $.getJSON("/Invoice/GetUsersByDepartment", { departmentId: departmentId })
-            .done(function (data) {
-                const users = data.users || data.Users || [];
-                const managers = data.managers || data.Managers || [];
-
-                // --- USERS doldur ---
-                users.forEach(function (u) {
-                    $user.append($("<option/>").val(getId(u)).text(getText(u)));
-                });
-
-                // Kullanıcı auto-select:
-                // 1) isFirstCheck true olan varsa onu seç
-                // 2) yoksa tek kullanıcı geldiyse onu seç
-                const firstCheckUser = users.find(getIsFirstCheck);
-                if (firstCheckUser) {
-                    $user.val(String(getId(firstCheckUser)));
-                } else if (users.length === 1) {
-                    $user.val(String(getId(users[0])));
-                }
-
-                // --- MANAGERS doldur ---
-                managers.forEach(function (m) {
-                    $manager.append($("<option/>").val(getId(m)).text(getText(m)));
-                });
-
-                // Yönetici auto-select: tek yönetici geldiyse
-                if (managers.length === 1) {
-                    $manager.val(String(getId(managers[0])));
-                }
-            })
-            .fail(function () {
-                alert("Departmana bağlı kullanıcılar alınırken hata oluştu.");
-            });
-    });
-
     function formatPrice(value) {
         if (value == null || value === "") return "";
         return Number(value).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -560,41 +459,35 @@
         $("#invoiceApprovedUpdatePopupInvoiceId").val(invoiceHeaderId);
     }
 
-    function invoiceRejection2(){
-        closePopup("invoiceDetailPopup");
+    function invoiceReturn(invoiceHeaderId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu faturanın hatalı iletildiğini ve geri göndermek istediğinize emin misiniz?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Evet, onayla",
+            cancelButtonText: "Vazgeç",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var data = {
+                    id: invoiceHeaderId
+                };
 
-        var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
-        invoiceRejectionPopUp(invoiceId);
-    }
-
-    function invoiceRejectionPopUp(invoiceHeaderId){
-        openPopup("invoiceRejectionPopup");
-
-        $("#invoiceRejectionPopupInvoiceId").val(invoiceHeaderId);
-    }
-
-     function invoiceUpdate() {
-        var invoiceId = $("#invoiceTypePopupInvoiceId").val();
-        var invoiceType = $("#invoiceType").val();
-        var responsiblePersonId = $("#responsiblePersonId").val();
-
-        var data = {
-            id: invoiceId,
-            invoiceType: parseInt(invoiceType),
-            responsiblePersonId: parseInt(responsiblePersonId)
-        };
-
-        $.ajax({
-            url: '/Invoice/InvoiceUpdate',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (response) {
-                toastr.success(`Fatura Bilgileri Güncellenmiştir.`, "Başarılı");
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
+                $.ajax({
+                    url: '/Invoice/InvoiceReturn',
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        toastr.success(`Fatura Başarıyla Geri Gönderilmiştir.`, "Başarılı");
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
+                    }
+                });
             }
         });
     }
@@ -602,14 +495,10 @@
      function invoiceApprovedUpdate() {
         var invoiceId = $("#invoiceApprovedUpdatePopupInvoiceId").val();
         var approvedDepartmentId = $("#approvedDepartmentId").val();
-        var approvedManagerId = $("#approvedManagerId").val();
-        var approvedUserId = $("#approvedUserId").val();
 
         var data = {
             id: invoiceId,
             approvedDepartmentId: parseInt(approvedDepartmentId),
-            approvedManagerId: parseInt(approvedManagerId),
-            approvedUserId: parseInt(approvedUserId)
         };
 
         $.ajax({
@@ -623,78 +512,6 @@
             },
             error: function (xhr, status, error) {
                 toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-            }
-        });
-    }
-
-     function invoiceRejection() {
-        Swal.fire({
-            title: "Emin misiniz?",
-            text: "Bu faturayı onaylamak istediğinize emin misiniz?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Evet, onayla",
-            cancelButtonText: "Vazgeç",
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var invoiceId = $("#invoiceRejectionPopupInvoiceId").val();
-                var rejectionDesc = $("#rejectionDesc").val();
-
-                var data = {
-                    id: invoiceId,
-                    rejectionDesc: rejectionDesc
-                };
-
-                $.ajax({
-                    url: '/Invoice/InvoiceRejection',
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        toastr.success(`Fatura Ret Edilmiştir.`, "Başarılı");
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-                    }
-                });
-            }
-        });
-    }
-
-    function invoiceApproved2(){
-        closePopup("invoiceDetailPopup");
-
-        var invoiceId = $("#invoiceDetailPopupInvoiceId").val();
-        invoiceApproved(invoiceId);
-    }
-
-    function invoiceApproved(invoiceHeaderId) {
-        Swal.fire({
-            title: "Emin misiniz?",
-            text: "Bu faturayı onaylamak istediğinize emin misiniz?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Evet, onayla",
-            cancelButtonText: "Vazgeç",
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/Invoice/InvoiceApproved',
-                    type: 'GET',
-                    data: { invoiceHeaderId: invoiceHeaderId },
-                    success: function (response) {
-                        toastr.success(`Fatura Onaylanmıştır.`, "Başarılı");
-                        location.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        toastr.error(`Bir hata oluştu, lütfen tekrar deneyin.`, "Hata");
-                    }
-                });
             }
         });
     }
@@ -938,30 +755,6 @@
             case 1: return "Konsiye Alım";
             case 2: return "Masraf Alım";
             default: return type.ToString();
-        }
-    }
-
-    string GetStatusClass(int status)
-    {
-        switch (status)
-        {
-            case -1: return "new";
-            case 0: return "pending";
-            case 1: return "cancelled";
-            case 2: return "approved";
-            default: return "";
-        }
-    }
-
-    string GetStatusText(int status)
-    {
-        switch (status)
-        {
-            case -1: return "Yeni";
-            case 0: return "Beklemede";
-            case 1: return "Reddedildi";
-            case 2: return "Onaylandı";
-            default: return "";
         }
     }
 

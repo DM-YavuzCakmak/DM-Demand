@@ -12,6 +12,7 @@ using Demand.Business.Abstract.Department;
 using Demand.Business.Abstract.InvoiceService;
 using Demand.Business.Abstract.OfferMediaService;
 using Demand.Business.Abstract.OfferRequestService;
+using Demand.Business.Abstract.PersonnelDepartmentService;
 using Demand.Business.Abstract.PersonnelRole;
 using Demand.Business.Abstract.PersonnelService;
 using Demand.Business.Abstract.ProductCategoryService;
@@ -32,6 +33,7 @@ using Demand.Business.Concrete.DepartmentService;
 using Demand.Business.Concrete.Invoice;
 using Demand.Business.Concrete.OfferMediaService;
 using Demand.Business.Concrete.OfferRequestService;
+using Demand.Business.Concrete.PersonnelDepartmentService;
 using Demand.Business.Concrete.PersonnelRoleService;
 using Demand.Business.Concrete.PersonnelService;
 using Demand.Business.Concrete.ProductCategoryService;
@@ -53,6 +55,7 @@ using Demand.Infrastructure.DataAccess.Abstract.Invoice;
 using Demand.Infrastructure.DataAccess.Abstract.OfferMedia;
 using Demand.Infrastructure.DataAccess.Abstract.OfferRequest;
 using Demand.Infrastructure.DataAccess.Abstract.Personnel;
+using Demand.Infrastructure.DataAccess.Abstract.PersonnelDepartment;
 using Demand.Infrastructure.DataAccess.Abstract.PersonnelRole;
 using Demand.Infrastructure.DataAccess.Abstract.ProductCategory;
 using Demand.Infrastructure.DataAccess.Abstract.Provider;
@@ -73,6 +76,7 @@ using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Invoice;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferMedia;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.OfferRequest;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Personnel;
+using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.PersonnelDepartment;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.PersonnelRole;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.ProductCategory;
 using Demand.Infrastructure.DataAccess.Concrete.EntityFramework.Provider;
@@ -207,6 +211,10 @@ builder.Services.AddScoped<IPersonnelRoleRepository, PersonnelRoleRepository>();
 builder.Services.AddScoped<IPersonnelRoleService, PersonnelRoleService>();
 #endregion
 
+#region PersonnelDepartmnet
+builder.Services.AddScoped<IPersonnelDepartmentRepository, PersonnelDepartmentRepository>();
+builder.Services.AddScoped<IPersonnelDepartmentService, PersonnelDepartmentService>();
+#endregion
 
 builder.Services.AddScoped<EMailService>();
 builder.Services.AddScoped<TokenService>();

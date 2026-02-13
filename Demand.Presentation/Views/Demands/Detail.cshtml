@@ -297,12 +297,12 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="requestDate">Talep Tarihi:</label>
-                    <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate?.ToShortDateString()" readonly />
+                    <input type="text" id="requestDate" name="requestDate" value="@Model.CreatedDate?.ToString("yyyy-MM-dd")" readonly />
                 </div>
 
                 <div class="form-group">
                     <label for="requirementDate">Gereklilik Tarihi:</label>
-                    <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate?.ToShortDateString()" readonly />
+                    <input type="text" id="requirementDate" name="requirementDate" value="@Model.RequirementDate?.ToString("yyyy-MM-dd")" readonly />
                 </div>
             </div>
 

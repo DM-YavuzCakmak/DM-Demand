@@ -38,6 +38,10 @@ namespace Demand.Domain.NebimModels
         [NotMapped]
         public int Status { get; set; } = -1;
         [NotMapped]
+        public bool IsViewInvoicePrivilege { get; set; } = false;
+        [NotMapped]
+        public bool IsChangeStatusPrivilege { get; set; } = false;
+        [NotMapped]
         public InvoiceDetailEntity? InvoiceDetailEntity { get; set; }
         [NotMapped]
         public List<NebimCategoryModel>? NebimCategoryModels { get; set; }

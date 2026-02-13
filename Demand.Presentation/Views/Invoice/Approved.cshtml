@@ -1,4 +1,5 @@
-﻿@using Demand.Domain.NebimModels
+﻿@using Demand.Domain.Enums
+@using Demand.Domain.NebimModels
 @using System.Security.Claims
 @using System.Text.Json
 @model List<IncomingEInvoiceHeaderModel>
@@ -75,71 +76,7 @@
     </div>
 
     <div class="layout">
-        <div id="hamburger">&#9776;</div>
-        <div id="overlay"></div>
-        <nav class="sidebar" id="sidebar">
-            <ul>
-                <li>
-                    <a href="@Url.Action("Index", "Home")" class="@(ViewData["ActivePage"] as string == "Home" ? "active" : "")">Talep Listesi</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Fatura Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Invoice") == true ? "open" : "" )">
-                        @if (isViewNewInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("New", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceNew" ? "active" : "")">
-                                    Yeni
-                                </a>
-                            </li>
-                        }
-                        @if (IsViewControlInvoice)
-                        {
-                            <li>
-                                <a href="@Url.Action("Control", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceControl" ? "active" : "")">
-                                    Kontrol Bekleyen
-                                </a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("Pending", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoicePending" ? "active" : "")">
-                                Onay Bekleyen
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceApproved" ? "active" : "")">
-                                Onaylanan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Reject", "Invoice")" class="@(ViewData["ActivePage"] as string == "InvoiceReject" ? "active" : "")">
-                                Reddedilen
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="submenu-toggle">Tedarikçi Listesi ▾</a>
-                    <ul class="submenu @( (ViewData["ActivePage"] as string)?.StartsWith("Provider") == true ? "open" : "" )">
-                        <li>
-                            <a href="@Url.Action("New", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderNew" ? "active" : "")">
-                                Yeni Başvuru
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Approved", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderApproved" ? "active" : "")">
-                                Onaylı Tedarikçi Listesi
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Pending", "Provider")" class="@(ViewData["ActivePage"] as string == "ProviderPending" ? "active" : "")">
-                                Onay Bekleyenler
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+        @Html.Partial("~/Views/Shared/_sidebar.cshtml")
         <main class="table" id="demandTable">
             <section class="table__header">
                 <h1>Fatura Listesi - Onaylanan</h1>
@@ -165,44 +102,33 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th> Şirket <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Sorumlu <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Onaylayan <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Onay Tarihi <span class="icon-arrow">&UpArrow;</span></th>
-                                    <th> Aksiyon <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Şirket <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Fatura No <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Şirket Bilgisi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> VKN/TCKN <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Fatura Tipi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="date"> Fatura Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="number"> Fatura Tutarı <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="string"> Onaylayan Departman <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th data-type="date"> Onay Tarihi <span class="icon-arrow">&UpArrow;</span></th>
+                                    <th> Aksiyon </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var invoice in Model.Where(x => x.InvoiceDetailEntity != null && x.InvoiceDetailEntity.Status == 2 && (x.InvoiceDetailEntity.SentToUserId == userId || x.InvoiceDetailEntity.SentToManagerId == userId || x.InvoiceDetailEntity.ResponsiblePersonId == userId)))
+                                @foreach (var invoice in Model.Where(x => x.IsViewInvoicePrivilege))
                                 {
                                     <tr>
                                         <td data-label="Şirket">@invoice.CompanyName</td>
                                         <td data-label="Fatura No">@invoice.EInvoiceNumber</td>
                                         <td data-label="Firma">@invoice.CurrAccDescription</td>
                                         <td data-label="VKN/TCKN">@(string.IsNullOrWhiteSpace(invoice.TaxNumber) ? invoice.IdentityNum : invoice.TaxNumber)</td>
-                                        @if (invoice.InvoiceDetailEntity != null)
-                                        {
-                                            <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
-                                        }
-                                        else
-                                        {
-                                            <td>
-                                                <a href="javascript:void(0)" class="update-button" onclick="invoiceTypeUpdatePopUp('@invoice.InvoiceHeaderID')">Fatura Tipi Güncelle</a>
-                                            </td>
-                                        }
-                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToShortDateString())</td>
+                                        <td data-label="Fatura Tipi">@(GetInvoiceType(invoice.InvoiceDetailEntity.InvoiceType))</td>
+                                        <td data-label="Fatura Tarihi">@(invoice.InvoiceDate.ToString("yyyy-MM-dd"))</td>
                                         <td data-label="Fatura Tutarı">@(invoice.PayableAmount.ToString("N2") + " " + GetCurrencyIco(invoice.DocCurrencyCode))</td>
-                                        <td data-label="Sorumlu">@(invoice.InvoiceDetailEntity.ResponsiblePerson != null ? invoice.InvoiceDetailEntity.ResponsiblePerson.FirstName + " " + invoice.InvoiceDetailEntity.ResponsiblePerson.LastName : "")</td>
-                                        <td data-label="Onaylayan">@(invoice.InvoiceDetailEntity.SentToUser != null ? invoice.InvoiceDetailEntity.SentToUser.FirstName + " " + invoice.InvoiceDetailEntity.SentToUser.LastName : "")</td>
+                                        <td data-label="Onaylayan Departman">@(invoice.InvoiceDetailEntity.SentToDepartment != null ? invoice.InvoiceDetailEntity.SentToDepartment.Name : "")</td>
                                         <td data-label="Onay Tarihi">@(invoice.InvoiceDetailEntity.ReturnDate != null ? invoice.InvoiceDetailEntity.ReturnDate : "")</td>
                                         <td class="action-buttons">
-                                            @if (invoice.InvoiceDetailEntity.ResponsiblePersonId == userId)
+                                            @if (invoice.IsChangeStatusPrivilege)
                                             {
                                                 @if (invoice.InvoiceDetailEntity.InvoiceType == 2)
                                                 {
@@ -216,10 +142,10 @@
                                                         <i class="fa fa-paper-plane"></i>
                                                     </a>
                                                 }
+                                                <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
+                                                    <i class="fa fa-search"></i>
+                                                </a>
                                             }
-                                            <a href="javascript:void(0)" onclick="invoiceDetailPopup('@invoice.InvoiceHeaderID')" title="Görüntüle">
-                                                <i class="fa fa-search"></i>
-                                            </a>
                                             <a href="https://portal.qnbesolutions.com.tr/efatura/display?cmd=GELEN_FATURA_GOSTER&type=html&invoiceUuid=@invoice.FromIntegratorUUID"
                                                target="_blank" title="Fatura Detayı">
                                                 <i class="fa fa-file-invoice"></i>
@@ -359,29 +285,51 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
     <script src="~/js/script.js"></script>
-
-    <script>
-         const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        // Menü aç/kapa
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        });
-
-        // Overlay'e tıklayınca menüyü kapat
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.style.display = 'none';
-        });
-    </script>
 </body>
 
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+    document.querySelectorAll("th[data-type]").forEach((th, index) => {
+        let asc = true;
+
+        th.addEventListener("click", () => {
+            const table = th.closest("table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const type = th.dataset.type;
+
+            // Diğer okları resetle
+            table.querySelectorAll(".icon-arrow").forEach(i => i.innerHTML = "&UpArrow;");
+
+            rows.sort((a, b) => {
+                let A = a.children[index].innerText.trim();
+                let B = b.children[index].innerText.trim();
+
+                if (type === "number") {
+                    A = parseFloat(A.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                    B = parseFloat(B.replace(/[^\d,-]/g, "").replace(",", ".")) || 0;
+                }
+
+                if (type === "date") {
+                    A = new Date(A);
+                    B = new Date(B);
+                }
+
+                if (A < B) return asc ? -1 : 1;
+                if (A > B) return asc ? 1 : -1;
+                return 0;
+            });
+
+            th.querySelector(".icon-arrow").innerHTML = asc ? "&DownArrow;" : "&UpArrow;";
+            asc = !asc;
+
+            tbody.append(...rows);
+        });
+    });
+</script>
+
 <script>
     function exportTableToExcel() {
         const table = document.querySelector("#demandTable table");
@@ -870,30 +818,6 @@
             case 1: return "Konsiye Alım";
             case 2: return "Masraf Alım";
             default: return type.ToString();
-        }
-    }
-
-    string GetStatusClass(int status)
-    {
-        switch (status)
-        {
-            case -1: return "new";
-            case 0: return "pending";
-            case 1: return "cancelled";
-            case 2: return "approved";
-            default: return "";
-        }
-    }
-
-    string GetStatusText(int status)
-    {
-        switch (status)
-        {
-            case -1: return "Yeni";
-            case 0: return "Beklemede";
-            case 1: return "Reddedildi";
-            case 2: return "Onaylandı";
-            default: return "";
         }
     }
 

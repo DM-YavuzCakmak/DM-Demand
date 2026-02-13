@@ -61,7 +61,7 @@ public class AuthorizationsController : Controller
             new Claim(ClaimConstants.FirstName, user.FirstName),
             new Claim(ClaimConstants.LastName, user.LastName),
             new Claim(ClaimConstants.IsViewNewInvoice, user.IsViewNewInvoice.ToString()),
-            new Claim(ClaimConstants.IsViewControlInvoice, user.IsViewNewInvoice.ToString())
+            new Claim(ClaimConstants.IsViewControlInvoice, user.IsViewControlInvoice.ToString())
         }, CookieAuthenticationDefaults.AuthenticationScheme);
     }
 

@@ -23,7 +23,7 @@ namespace Demand.Business.Concrete.DepartmentService
         }
         public IDataResult<IList<DepartmentEntity>> GetAll()
         {
-            return new SuccessDataResult<IList<DepartmentEntity>>(_departmentRepository.GetAll());
+            return new SuccessDataResult<IList<DepartmentEntity>>(_departmentRepository.GetList(x => x.IsDeleted == false));
         }
 
         public IDataResult<DepartmentEntity> GetById(long id)

@@ -284,7 +284,20 @@
                                     <td><input type="text" name="quantity[]" class="quantity"  value="@offerRequestViewModel.Quantity" /></td>
                                     <td>
                                         <select name="unit[]" class="unit">
-                                            <option value="@offerRequestViewModel.Unit">@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")</option>
+                                            <option value="@offerRequestViewModel.Unit">
+                                                @{
+                                                    var unitText = offerRequestViewModel.Unit switch
+                                                    {
+                                                        "1" => "Adet",
+                                                        "2" => "Metre",
+                                                        "3" => "Gram",
+                                                        "4" => "KG",
+                                                        "5" => "Litre",
+                                                        _ => "-"
+                                                    };
+                                                }
+                                                @unitText
+                                            </option>
                                         </select>
                                     </td>
                                     @* <td><input type="text" name="unit[]" class="unit" readonly value="@(offerRequestViewModel.Unit == "1" ? "Adet" : "Metre")" /></td> *@

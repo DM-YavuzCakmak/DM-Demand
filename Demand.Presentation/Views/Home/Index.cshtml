@@ -410,10 +410,10 @@
                         <label for="department">Departman:</label>
                         <select id="department" name="department">
                             <option value="Please Select department">Lütfen departman seçin..</option>
-                        @foreach (var department in ViewBag.Department)
-                        {
+                            @foreach (var department in ViewBag.Department)
+                            {
                                 <option value="@department.Id">@department.Name</option>
-                        }
+                            }
                         </select>
                     </div>
 
@@ -442,7 +442,7 @@
                             <th>Ürün Kodu</th>
                             <th>Ürün Adı</th>
                             <th>Birim</th>
-                            <th>Adet</th>
+                            <th>Miktar</th>
                         </tr>
                     <tbody></tbody>
                     </thead>
@@ -781,7 +781,7 @@
             }
         });
     });
-    
+
     function addRow() {
         if (typeof rowCount === 'undefined') rowCount = 0;
         rowCount++;
@@ -802,7 +802,7 @@
                 select.className = cell;
 
                 if (cell === 'unit') {
-                    var option1 = document.createElement("option");
+                       var option1 = document.createElement("option");
                     option1.text = "Adet";
                     option1.value = "1";
                     select.appendChild(option1);
@@ -810,6 +810,18 @@
                     option2.text = "Metre";
                     option2.value = "2";
                     select.appendChild(option2);
+                      var option3 = document.createElement("option");
+                    option3.text = "Gram";
+                    option3.value = "3";
+                    select.appendChild(option3);
+                      var option4 = document.createElement("option");
+                    option4.text = "KG";
+                    option4.value = "4";
+                    select.appendChild(option4);
+                      var option5 = document.createElement("option");
+                    option5.text = "Litre";
+                    option5.value = "5";
+                    select.appendChild(option5);
                 } else if (cell === 'category') {
                     var locationUnitId = $('#locationUnits').val();
                     var companyBrandCode = 1;
@@ -985,10 +997,10 @@
         }
     }
 
-        function validateForm() {
-        let demandTitle = $("#demandTitle").val().trim();
-        let description = $("#description").val().trim();
-        let rowCount = $("#yourTableId tbody tr").length;
+            function validateForm() {
+                let demandTitle = $("#demandtitle").val().trim();
+                let description = $("#description").val().trim();
+                let rows = $("#dataTable tbody tr");
 
         if (demandTitle === "") {
             toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");
@@ -1000,30 +1012,50 @@
             return false;
         }
 
+             if (rows.length === 0) {
+            toastr.error("En az 1 satır eklenmelidir.", "Hata");
+            return false;
+        }
+
+        let hasError = false;
+
+        rows.each(function (index) {
+            let productName = $(this).find(".productName").val();
+            let quantity = $(this).find(".quantity").val();
+
+            productName = productName ? productName.trim() : "";
+            quantity = quantity ? quantity.trim() : "";
+
+            if (productName === "" || quantity === "") {
+                toastr.error(
+                    (index + 1) + ". satırda Ürün Adı ve Miktar alanları zorunludur.",
+                    "Hata"
+                );
+                hasError = true;
+                return false; 
+            }
+        });
+
+        if (hasError) return false;
+
         return true;
     }
 
     function sendDemand() {
+
+          if (!validateForm()) {
+        return;
+    }
         document.getElementById("loadingOverlay").style.display = "block";
 
         var demandTitle = document.getElementById('demandtitle').value.trim();
         var description = document.getElementById('description').value.trim();
 
-        if (demandTitle === "") {
-            toastr.error("Talep başlığı girilmesi zorunludur.", "Hata");
-            document.getElementById("loadingOverlay").style.display = "none";
-            return;
-        }
 
-    if (description === "") {
-        toastr.error("Açıklama alanı girilmesi zorunludur.", "Hata");
-        document.getElementById("loadingOverlay").style.display = "none";
-        return;
-    }
 
     var table = document.getElementById("dataTable");
     var rows = table.getElementsByTagName("tr");
-    if (rows.length <= 1) {
+    if (rows.length < 1) {
         toastr.error("En az bir veri satırı eklenmelidir.", "Hata");
         document.getElementById("loadingOverlay").style.display = "none";
         return;
@@ -1048,7 +1080,7 @@
         var table = document.getElementById("dataTable");
         var rows = table.getElementsByTagName("tr");
 
-        if (rows.length <= 1) {
+        if (rows.length < 1) {
             toastr.error("En az bir veri satırı eklenmelidir.", "Hata");
             return;
         }
